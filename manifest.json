@@ -1,0 +1,38 @@
+{
+  "name": "GlutenGo",
+  "short_name": "GlutenGo",
+  "description": "Encontrá dónde comer sin gluten en Uruguay. Validado por celíacos.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF5EC",
+  "theme_color": "#166534",
+  "lang": "es-UY",
+  "categories": ["food", "health", "lifestyle"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%23166534'/><text x='96' y='130' font-size='110' text-anchor='middle'>🌾</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%23166534'/><text x='256' y='340' font-size='290' text-anchor='middle'>🌾</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Ver mapa",
+      "url": "/#mapa",
+      "description": "Ver mapa de lugares celíaco-seguros"
+    },
+    {
+      "name": "Directorio",
+      "url": "/#directorio",
+      "description": "Explorar todos los lugares"
+    }
+  ]
+}
