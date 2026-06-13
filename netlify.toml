@@ -1,0 +1,32 @@
+# GlutenGo — Netlify config
+[build]
+  functions = "netlify/functions"
+  publish   = "."
+
+[functions]
+  node_bundler = "esbuild"
+
+# Redirect para API interna
+[[redirects]]
+  from   = "/api/*"
+  to     = "/.netlify/functions/:splat"
+  status = 200
+
+# Headers de seguridad
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options        = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type  = "application/manifest+json"
+    Cache-Control = "public, max-age=86400"
