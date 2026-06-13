@@ -1,295 +1,795 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GlutenGo — Encontrá lugares donde comer tranquilo</title>
-<meta name="description" content="Directorio de lugares para comer sin gluten en Montevideo, Uruguay. Restaurantes, panaderías y cafeterías aptas para celíacos, con validación de la comunidad.">
-<meta property="og:title" content="GlutenGo — Tu mapa de confianza sin gluten">
-<meta property="og:description" content="Encontrá dónde comer tranquilo en Uruguay. Directorio sin gluten validado por la comunidad celíaca.">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="es_UY">
-<meta name="theme-color" content="#166534">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23166534'/><text x='50' y='66' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>G</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-<style>
-  :root{
-    --cream:#FAF5EC; --paper:#FFFDF8; --ink:#22201B; --muted:#7A7468;
-    --green:#166534; --green-deep:#0E3D22; --green-soft:#DCEFE0;
-    --terra:#C4654A; --amber:#E8A93C; --amber-soft:#FBEED3;
-    --display:'Fraunces',serif; --body:'DM Sans',sans-serif;
-    --r:22px;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{font-family:var(--body);background:var(--cream);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.05;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
-  .wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlutenGo — Dónde comer sin gluten en Uruguay</title>
+  <meta name="description" content="Encontrá restaurantes, cafeterías y panaderías 100% libres de gluten o con opciones seguras en Montevideo. Validado por la comunidad celíaca." />
+  <meta name="keywords" content="celíaco uruguay, sin gluten montevideo, restaurantes sin gluten, opciones gf uruguay, glutengo" />
 
-  /* HEADER */
-  header{position:sticky;top:0;z-index:50;background:rgba(250,245,236,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,32,27,.07)}
-  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-  .logo{font-family:var(--display);font-weight:900;font-size:26px;color:var(--green-deep);text-decoration:none;letter-spacing:-.5px}
-  .logo span{color:var(--terra)}
-  .nav a.cta-mini{background:var(--green);color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:10px 18px;border-radius:999px;transition:transform .2s}
-  .nav a.cta-mini:hover{transform:translateY(-2px)}
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#166534" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="GlutenGo" />
 
-  /* HERO */
-  .hero{position:relative;padding:64px 0 84px;overflow:hidden}
-  .blob{position:absolute;border-radius:52% 48% 61% 39%/55% 46% 54% 45%;filter:blur(2px);z-index:-1}
-  .blob.b1{width:420px;height:420px;background:var(--green-soft);top:-130px;right:-140px;animation:drift 14s ease-in-out infinite alternate}
-  .blob.b2{width:280px;height:280px;background:var(--amber-soft);bottom:-90px;left:-110px;animation:drift 18s ease-in-out infinite alternate-reverse}
-  @keyframes drift{from{transform:translate(0,0) rotate(0)}to{transform:translate(24px,18px) rotate(8deg)}}
-  .kicker{display:inline-block;background:var(--ink);color:var(--cream);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:7px 14px;border-radius:6px;transform:rotate(-2deg)}
-  .hero h1{font-family:var(--display);font-weight:900;font-size:clamp(46px,9vw,92px);line-height:.98;letter-spacing:-.02em;margin-top:22px}
-  .hero h1 em{font-style:italic;color:var(--green)}
-  .hero h1 .under{position:relative;white-space:nowrap}
-  .hero h1 .under::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:.18em;background:var(--amber);z-index:-1;transform:rotate(-1deg)}
-  .hero p.lead{max-width:520px;font-size:19px;color:var(--muted);margin-top:20px}
-  .hero .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
-  .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:16px;padding:16px 28px;border-radius:14px;transition:transform .2s,box-shadow .2s}
-  .btn:hover{transform:translateY(-3px)}
-  .btn.solid{background:var(--green);color:#fff;box-shadow:0 8px 24px rgba(22,101,52,.28)}
-  .btn.line{border:2px solid var(--ink);color:var(--ink)}
-  .stats{display:flex;gap:22px;flex-wrap:wrap;margin-top:42px}
-  .stat{transform:rotate(-1deg)}
-  .stat b{font-family:var(--display);font-weight:900;font-size:34px;color:var(--green-deep);display:block;line-height:1}
-  .stat small{font-size:13px;color:var(--muted)}
-  .stat:nth-child(2){transform:rotate(1.5deg)}
-  .stat:nth-child(3){transform:rotate(-1deg)}
+  <!-- OG / Twitter -->
+  <meta property="og:title" content="GlutenGo — Dónde comer sin gluten en Uruguay" />
+  <meta property="og:description" content="Directorio validado por celíacos. 23 lugares en Montevideo, curados con amor." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://glutengo.netlify.app" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-  /* SEMAFORO STRIP */
-  .strip{background:var(--green-deep);color:var(--cream);padding:18px 0;transform:rotate(-1.2deg) scale(1.02);margin:8px -10px}
-  .strip .inner{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;font-size:14px;font-weight:600}
-  .strip i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px}
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  /* SECTIONS */
-  section{padding:72px 0 0}
-  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:8px}
-  h2{font-family:var(--display);font-weight:900;font-size:clamp(30px,5vw,46px);letter-spacing:-.02em}
-  h2 em{font-style:italic;color:var(--terra)}
-  .sec-head p{color:var(--muted);font-size:15px}
+  <!-- AOS -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 
-  /* RAIL 100% GF */
-  .rail{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:18px 4px 26px;-webkit-overflow-scrolling:touch}
-  .rail::-webkit-scrollbar{height:6px}
-  .rail::-webkit-scrollbar-thumb{background:var(--green-soft);border-radius:99px}
-  .rcard{scroll-snap-align:start;flex:0 0 240px;background:var(--green-deep);color:var(--cream);border-radius:var(--r);padding:22px;text-decoration:none;position:relative;transition:transform .25s;display:block}
-  .rcard:hover{transform:translateY(-6px) rotate(-1deg)}
-  .rcard .emoji{font-size:38px}
-  .rcard h3{font-family:var(--display);font-weight:700;font-size:21px;margin-top:12px;line-height:1.15;color:#fff}
-  .rcard p{font-size:13px;color:#BBD8C2;margin-top:6px}
-  .rcard .sello{position:absolute;top:14px;right:14px;background:var(--amber);color:var(--ink);font-size:10px;font-weight:800;letter-spacing:.06em;padding:5px 9px;border-radius:6px;transform:rotate(6deg)}
-  .rail-hint{font-size:12px;color:var(--muted);text-align:right;margin-top:-16px}
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,700..900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
 
-  /* DIRECTORIO */
-  .toolbar{position:sticky;top:62px;z-index:40;background:var(--cream);padding:12px 0 10px}
-  .search{width:100%;border:2px solid var(--ink);border-radius:14px;padding:15px 18px;font-size:16px;font-family:var(--body);background:var(--paper)}
-  .search:focus{outline:4px solid var(--green-soft)}
-  .chips{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin-top:12px;padding-bottom:4px}
-  .chip{flex:0 0 auto;border:1.5px solid var(--ink);background:var(--paper);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;transition:all .15s;font-family:var(--body)}
-  .chip:hover{transform:translateY(-2px)}
-  .chip.on{background:var(--ink);color:var(--cream)}
-  .count{font-size:13px;color:var(--muted);margin:14px 2px 6px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;padding-bottom:8px}
-  .pcard{background:var(--paper);border:1.5px solid rgba(34,32,27,.12);border-radius:var(--r);padding:20px;text-decoration:none;color:inherit;position:relative;transition:transform .22s,box-shadow .22s;display:flex;gap:14px}
-  .pcard:hover{transform:translateY(-5px);box-shadow:0 14px 30px rgba(34,32,27,.10);border-color:var(--green)}
-  .pcard .avatar{flex:0 0 52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;background:var(--green-soft)}
-  .pcard.mx .avatar{background:var(--amber-soft)}
-  .pcard h3{font-family:var(--display);font-weight:700;font-size:19px;line-height:1.15}
-  .pcard .meta{font-size:13px;color:var(--muted);margin-top:4px}
-  .pcard .tag{display:inline-block;margin-top:10px;font-size:10px;font-weight:800;letter-spacing:.07em;padding:4px 10px;border-radius:6px;transform:rotate(-1.5deg)}
-  .pcard .tag.ex{background:var(--green);color:#fff}
-  .pcard .tag.mx{background:var(--amber);color:var(--ink)}
-  .empty{color:var(--muted);padding:30px 4px;font-size:15px}
-  .note{background:var(--amber-soft);border:1.5px dashed var(--amber);border-radius:var(--r);padding:18px 20px;font-size:14px;color:#6b4a12;margin-top:26px}
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────────── */
+    :root{
+      --cream:#FAF5EC;
+      --green:#166534;
+      --green-deep:#0E3D22;
+      --green-mid:#1A7A3E;
+      --green-light:#DCFCE7;
+      --terra:#C4654A;
+      --amber:#E8A93C;
+      --gray:#6B7280;
+      --gray-light:#F3F4F6;
+      --border:#E5E7EB;
+      --radius:14px;
+      --shadow:0 2px 16px rgba(0,0,0,.07);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--cream);color:#1a1a1a;overflow-x:hidden}
+    img{max-width:100%;display:block}
+    a{color:inherit}
 
-  /* PASOS */
-  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:26px}
-  .step{background:var(--paper);border:1.5px solid rgba(34,32,27,.12);border-radius:var(--r);padding:24px}
-  .step:nth-child(2){transform:rotate(.8deg)}
-  .step:nth-child(3){transform:rotate(-.8deg)}
-  .step .n{font-family:var(--display);font-weight:900;font-size:44px;color:var(--terra);line-height:1}
-  .step h3{font-family:var(--display);font-size:20px;margin-top:10px}
-  .step p{font-size:14px;color:var(--muted);margin-top:6px}
+    /* ─── HEADER ─────────────────────────────────────────────── */
+    .site-header{
+      position:sticky;top:0;z-index:300;
+      background:var(--green-deep);
+      padding:.85rem 1.25rem;
+      display:flex;align-items:center;justify-content:space-between;
+      box-shadow:0 2px 8px rgba(0,0,0,.2);
+    }
+    .logo{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:1.4rem;font-weight:900;color:#fff;
+      text-decoration:none;letter-spacing:-.02em;
+    }
+    .logo span{color:var(--amber)}
+    .nav-links{display:flex;gap:.25rem}
+    .nav-link{
+      color:#fff;text-decoration:none;font-size:.85rem;font-weight:500;
+      padding:.4rem .75rem;border-radius:8px;opacity:.8;
+      transition:opacity .2s,background .2s;
+    }
+    .nav-link:hover{opacity:1;background:rgba(255,255,255,.12)}
+    .nav-cta{
+      background:var(--amber);color:var(--green-deep)!important;
+      font-weight:700;opacity:1!important;
+    }
+    .nav-cta:hover{background:#d4941f!important}
 
-  /* CTA LISTA */
-  .cta-panel{position:relative;background:var(--green-deep);color:var(--cream);border-radius:30px;padding:46px 30px;margin-top:80px;overflow:hidden}
-  .cta-panel .blob{width:300px;height:300px;background:rgba(232,169,60,.18);top:-90px;right:-80px}
-  .cta-panel .sello-beta{position:absolute;top:22px;right:22px;background:var(--amber);color:var(--ink);font-weight:800;font-size:12px;letter-spacing:.08em;padding:8px 14px;border-radius:8px;transform:rotate(7deg)}
-  .cta-panel h2{color:#fff}
-  .cta-panel p{color:#BBD8C2;font-size:16px;margin-top:10px;max-width:480px}
-  form{display:flex;flex-direction:column;gap:12px;margin-top:24px;max-width:440px}
-  input[type=email]{border:0;border-radius:14px;padding:16px 18px;font-size:16px;font-family:var(--body)}
-  input[type=email]:focus{outline:4px solid rgba(232,169,60,.5)}
-  .check{display:flex;align-items:center;gap:9px;font-size:14px;color:#BBD8C2}
-  button{border:0;border-radius:14px;padding:16px;font-size:16px;font-weight:800;background:var(--amber);color:var(--ink);cursor:pointer;font-family:var(--body);transition:transform .2s}
-  button:hover{transform:translateY(-3px)}
+    /* ─── HERO ───────────────────────────────────────────────── */
+    .hero{
+      background:var(--green-deep);
+      color:#fff;
+      padding:3.5rem 1.25rem 4.5rem;
+      text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .hero::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 70% 0%,rgba(232,169,60,.15) 0%,transparent 65%);
+      pointer-events:none;
+    }
+    .hero-eyebrow{
+      display:inline-block;
+      font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--amber);margin-bottom:1rem;
+    }
+    .hero h1{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:clamp(2rem,7vw,3.4rem);
+      font-weight:900;line-height:1.1;
+      margin-bottom:1rem;
+      position:relative;
+    }
+    .hero h1 em{
+      font-style:italic;color:var(--amber);
+    }
+    .hero-sub{
+      font-size:clamp(.95rem,2.5vw,1.1rem);
+      opacity:.82;max-width:520px;margin:0 auto 2rem;
+      line-height:1.6;
+    }
+    .hero-search{
+      max-width:480px;margin:0 auto;
+      position:relative;
+    }
+    .hero-search input{
+      width:100%;padding:.9rem 1.25rem .9rem 3rem;
+      border:none;border-radius:50px;
+      font-size:1rem;font-family:inherit;
+      background:#fff;color:#1a1a1a;
+      box-shadow:0 4px 20px rgba(0,0,0,.2);
+    }
+    .hero-search input:focus{outline:2px solid var(--amber)}
+    .hero-search .search-icon{
+      position:absolute;left:1rem;top:50%;transform:translateY(-50%);
+      color:var(--gray);pointer-events:none;
+    }
+    .hero-search input::placeholder{color:#9ca3af}
 
-  footer{margin-top:70px;border-top:1.5px solid rgba(34,32,27,.1);padding:30px 0 46px;text-align:center;font-size:12.5px;color:var(--muted)}
-  footer p+p{margin-top:8px}
-  @media (max-width:640px){
-    .hero{padding:42px 0 60px}
-    .toolbar{top:58px}
-    .grid{grid-template-columns:1fr}
-    .rcard{flex-basis:210px}
-  }
-</style>
+    /* ─── STATS STRIP ────────────────────────────────────────── */
+    .stats-strip{
+      background:var(--amber);
+      display:flex;justify-content:center;gap:0;
+    }
+    .stat{
+      flex:1;max-width:180px;text-align:center;
+      padding:1rem .5rem;
+    }
+    .stat strong{
+      display:block;
+      font-family:'Fraunces',Georgia,serif;
+      font-size:1.8rem;font-weight:900;
+      line-height:1;color:var(--green-deep);
+    }
+    .stat span{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green-deep);opacity:.75}
+
+    /* ─── SECCIÓN GENÉRICA ───────────────────────────────────── */
+    .section{padding:3.5rem 1.25rem}
+    .section-header{
+      text-align:center;margin-bottom:2.5rem;
+    }
+    .section-label{
+      display:inline-block;
+      font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--terra);margin-bottom:.5rem;
+    }
+    .section-title{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:clamp(1.6rem,4vw,2.2rem);
+      font-weight:900;line-height:1.15;
+    }
+    .section-sub{
+      margin-top:.6rem;color:var(--gray);
+      font-size:.95rem;max-width:500px;margin-left:auto;margin-right:auto;
+    }
+
+    /* ─── MAPA ───────────────────────────────────────────────── */
+    .map-section{
+      background:#fff;
+      padding:3rem 0 0;
+    }
+    .map-section .section-header{padding:0 1.25rem}
+    .map-controls{
+      display:flex;gap:.5rem;flex-wrap:wrap;
+      padding:0 1.25rem 1rem;
+      justify-content:center;
+    }
+    .map-chip{
+      padding:.4rem 1rem;border-radius:50px;
+      border:1.5px solid var(--border);
+      background:#fff;font-size:.82rem;font-weight:600;
+      cursor:pointer;transition:all .15s;white-space:nowrap;
+    }
+    .map-chip.active,.map-chip:hover{
+      background:var(--green);color:#fff;border-color:var(--green);
+    }
+    .map-chip-geo{
+      background:var(--green-deep);color:#fff;border-color:var(--green-deep);
+      display:flex;align-items:center;gap:.35rem;
+    }
+    .map-chip-geo:hover{background:var(--green);border-color:var(--green)}
+    #map{
+      height:420px;width:100%;
+    }
+    @media(max-width:600px){#map{height:320px}}
+
+    /* ─── RAIL 100% GF ───────────────────────────────────────── */
+    .rail-section{background:var(--cream)}
+    .rail{
+      display:flex;gap:1rem;
+      overflow-x:auto;padding:.5rem 1.25rem 1.5rem;
+      scroll-snap-type:x mandatory;
+      scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    }
+    .rail::-webkit-scrollbar{display:none}
+    .rail-card{
+      flex:0 0 auto;width:200px;
+      background:#fff;border-radius:var(--radius);
+      padding:1.25rem;box-shadow:var(--shadow);
+      scroll-snap-align:start;
+      border-top:3px solid var(--green);
+      text-decoration:none;color:inherit;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .rail-card:hover{transform:translateY(-3px);box-shadow:0 6px 24px rgba(0,0,0,.1)}
+    .rail-card .icon{font-size:1.8rem;margin-bottom:.6rem}
+    .rail-card .rc-name{font-weight:700;font-size:.95rem;margin-bottom:.2rem}
+    .rail-card .rc-hood{font-size:.78rem;color:var(--gray)}
+    .rail-card .rc-tag{
+      display:inline-block;margin-top:.5rem;
+      background:var(--green-light);color:var(--green);
+      font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+      padding:.15rem .5rem;border-radius:20px;
+    }
+
+    /* ─── DIRECTORIO ─────────────────────────────────────────── */
+    .dir-section{background:var(--cream)}
+    .filter-row{
+      display:flex;gap:.5rem;flex-wrap:wrap;
+      margin-bottom:1.5rem;justify-content:center;
+    }
+    .chip{
+      padding:.4rem 1rem;border-radius:50px;
+      border:1.5px solid var(--border);
+      background:#fff;font-size:.82rem;font-weight:600;
+      cursor:pointer;transition:all .15s;
+    }
+    .chip.active,.chip:hover{background:var(--green);color:#fff;border-color:var(--green)}
+
+    .dir-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:1rem;
+      max-width:900px;margin:0 auto;
+    }
+    .dir-card{
+      background:#fff;border-radius:var(--radius);
+      padding:1.25rem;box-shadow:var(--shadow);
+      text-decoration:none;color:inherit;
+      display:flex;flex-direction:column;gap:.4rem;
+      transition:transform .2s,box-shadow .2s;
+      border-left:4px solid transparent;
+    }
+    .dir-card.exclusivo{border-left-color:var(--green)}
+    .dir-card.mixto{border-left-color:var(--amber)}
+    .dir-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.1)}
+    .dc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+    .dc-name{font-weight:700;font-size:1rem}
+    .dc-badge{
+      flex-shrink:0;font-size:.65rem;font-weight:700;
+      text-transform:uppercase;letter-spacing:.04em;
+      padding:.2rem .55rem;border-radius:20px;
+    }
+    .dc-badge.exclusivo{background:var(--green-light);color:var(--green)}
+    .dc-badge.mixto{background:#FEF3C7;color:#92400E}
+    .dc-meta{display:flex;gap:.5rem;align-items:center;font-size:.8rem;color:var(--gray)}
+    .dc-sep{opacity:.4}
+    .dc-desc{font-size:.85rem;color:#374151;line-height:1.55;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .dc-cta{
+      margin-top:.4rem;font-size:.8rem;font-weight:700;
+      color:var(--green);display:flex;align-items:center;gap:.3rem;
+    }
+    .dc-cta svg{width:12px;height:12px}
+
+    #dir-empty{
+      grid-column:1/-1;text-align:center;
+      padding:3rem 1rem;color:var(--gray);
+    }
+
+    /* ─── CÓMO FUNCIONA ──────────────────────────────────────── */
+    .how-section{background:#fff}
+    .steps{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:2rem;max-width:800px;margin:0 auto;
+    }
+    .step{text-align:center}
+    .step-num{
+      width:52px;height:52px;border-radius:50%;
+      background:var(--green);color:#fff;
+      font-family:'Fraunces',Georgia,serif;
+      font-size:1.5rem;font-weight:900;
+      display:flex;align-items:center;justify-content:center;
+      margin:0 auto .75rem;
+    }
+    .step h3{font-size:1rem;font-weight:700;margin-bottom:.35rem}
+    .step p{font-size:.88rem;color:var(--gray);line-height:1.55}
+
+    /* ─── FOUNDER STORY ──────────────────────────────────────── */
+    .story-section{
+      background:var(--green-deep);
+      color:#fff;
+      padding:4rem 1.25rem;
+    }
+    .story-inner{
+      max-width:680px;margin:0 auto;
+      display:grid;gap:2rem;
+    }
+    @media(min-width:640px){
+      .story-inner{grid-template-columns:auto 1fr;align-items:start}
+    }
+    .story-avatar{
+      width:80px;height:80px;border-radius:50%;
+      background:var(--amber);
+      display:flex;align-items:center;justify-content:center;
+      font-size:2rem;flex-shrink:0;
+      box-shadow:0 0 0 4px rgba(232,169,60,.3);
+    }
+    .story-label{
+      font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--amber);margin-bottom:.5rem;
+    }
+    .story-quote{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:clamp(1.2rem,3vw,1.55rem);
+      font-weight:700;line-height:1.35;
+      font-style:italic;
+      margin-bottom:1rem;
+    }
+    .story-body{
+      font-size:.95rem;line-height:1.7;opacity:.85;
+    }
+    .story-body p+p{margin-top:.75rem}
+    .story-sig{
+      margin-top:1.25rem;
+      font-weight:700;font-size:.95rem;
+    }
+    .story-sig small{display:block;font-weight:400;font-size:.82rem;opacity:.7}
+
+    /* ─── CTA FINAL ──────────────────────────────────────────── */
+    .cta-section{
+      background:var(--cream);
+      padding:4rem 1.25rem;text-align:center;
+    }
+    .cta-box{
+      max-width:520px;margin:0 auto;
+      background:#fff;border-radius:var(--radius);
+      padding:2.5rem;box-shadow:var(--shadow);
+    }
+    .cta-icon{font-size:2.5rem;margin-bottom:.75rem}
+    .cta-box h2{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:1.7rem;font-weight:900;margin-bottom:.5rem;
+    }
+    .cta-box p{color:var(--gray);font-size:.95rem;margin-bottom:1.5rem;line-height:1.6}
+    .cta-form{display:flex;gap:.5rem;flex-wrap:wrap}
+    .cta-form input{
+      flex:1 1 200px;padding:.75rem 1rem;
+      border:1.5px solid var(--border);border-radius:10px;
+      font-size:.95rem;font-family:inherit;
+    }
+    .cta-form input:focus{outline:2px solid var(--green);border-color:var(--green)}
+    .cta-form button{
+      padding:.75rem 1.5rem;
+      background:var(--green);color:#fff;
+      border:none;border-radius:10px;
+      font-size:.95rem;font-weight:700;cursor:pointer;
+      transition:background .2s;white-space:nowrap;
+    }
+    .cta-form button:hover{background:var(--green-deep)}
+    .cta-note{font-size:.75rem;color:var(--gray);margin-top:.75rem}
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    footer{
+      background:var(--green-deep);color:rgba(255,255,255,.7);
+      padding:2rem 1.25rem;text-align:center;
+      font-size:.82rem;
+    }
+    footer a{color:var(--amber);text-decoration:none}
+    footer a:hover{text-decoration:underline}
+    .footer-logo{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:1.3rem;font-weight:900;color:#fff;
+      margin-bottom:.5rem;
+    }
+    .footer-logo span{color:var(--amber)}
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media(max-width:600px){
+      .nav-links .nav-link:not(.nav-cta){display:none}
+      .stats-strip{gap:0}
+      .stat strong{font-size:1.4rem}
+    }
+  </style>
 </head>
 <body>
-<header>
-  <div class="wrap nav">
-    <a class="logo" href="/">Gluten<span>Go</span></a>
-    <a class="cta-mini" href="#lista">Quiero la beta</a>
+
+  <!-- ── HEADER ──────────────────────────────────────────────── -->
+  <header class="site-header">
+    <a href="/" class="logo">Gluten<span>Go</span></a>
+    <nav class="nav-links">
+      <a href="#mapa" class="nav-link">Mapa</a>
+      <a href="#directorio" class="nav-link">Directorio</a>
+      <a href="#como-funciona" class="nav-link">Cómo funciona</a>
+      <a href="#waitlist" class="nav-link nav-cta">Unirme →</a>
+    </nav>
+  </header>
+
+  <!-- ── HERO ────────────────────────────────────────────────── -->
+  <section class="hero">
+    <p class="hero-eyebrow">🌾 Uruguay · Comunidad Celíaca</p>
+    <h1>Comé sin miedo,<br><em>comé con confianza</em></h1>
+    <p class="hero-sub">
+      23 lugares en Montevideo validados por celíacos reales.
+      Sin guías desactualizadas. Sin depender del mesero de turno.
+    </p>
+    <div class="hero-search">
+      <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="search" id="hero-search" placeholder="Buscar por nombre o barrio…" oninput="filterDir()" onkeydown="scrollToDir(event)" autocomplete="off" />
+    </div>
+  </section>
+
+  <!-- ── STATS STRIP ──────────────────────────────────────────── -->
+  <div class="stats-strip">
+    <div class="stat">
+      <strong>23</strong>
+      <span>lugares validados</span>
+    </div>
+    <div class="stat">
+      <strong>9</strong>
+      <span>100% sin gluten</span>
+    </div>
+    <div class="stat">
+      <strong>0%</strong>
+      <span>listings pagados</span>
+    </div>
   </div>
-</header>
 
-<section class="hero">
-  <div class="blob b1"></div><div class="blob b2"></div>
-  <div class="wrap">
-    <span class="kicker">Montevideo · Uruguay</span>
-    <h1>Comé<br><em>tranquilo</em>,<br><span class="under">sin gluten.</span></h1>
-    <p class="lead">El directorio hecho con la comunidad celíaca: lugares reales, protocolos y experiencias de gente que entiende lo que te jugás en cada plato.</p>
-    <div class="actions">
-      <a class="btn solid" href="#directorio">Explorar lugares</a>
-      <a class="btn line" href="#como">¿Cómo funciona?</a>
+  <!-- ── MAPA ────────────────────────────────────────────────── -->
+  <section class="map-section" id="mapa">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-label">Mapa Interactivo</span>
+      <h2 class="section-title">Encontrá tu próximo lugar</h2>
+      <p class="section-sub">Verde = 100% libre de gluten · Naranja = con opciones seguras</p>
     </div>
-    <div class="stats">
-      <div class="stat"><b id="st-total">23</b><small>lugares relevados</small></div>
-      <div class="stat"><b id="st-ex">9</b><small>locales 100% sin gluten</small></div>
-      <div class="stat"><b>0%</b><small>comercios pagan por aparecer</small></div>
-    </div>
-  </div>
-</section>
 
-<div class="strip"><div class="inner wrap">
-  <span><i style="background:#4ade80"></i>Comé tranquilo</span>
-  <span><i style="background:#facc15"></i>Consultá antes</span>
-  <span><i style="background:#f87171"></i>Requiere validación</span>
-</div></div>
-
-<section id="exclusivos">
-  <div class="wrap">
-    <div class="sec-head" data-aos="fade-up">
-      <h2>100% <em>sin gluten</em></h2>
-      <p>Locales con cocina exclusiva. Cero contaminación cruzada por diseño.</p>
+    <div class="map-controls">
+      <button class="map-chip active" data-filter="todos" onclick="setMapFilter(this,'todos')">Todos</button>
+      <button class="map-chip" data-filter="exclusivo" onclick="setMapFilter(this,'exclusivo')">🌟 Solo 100% GF</button>
+      <button class="map-chip" data-filter="mixto" onclick="setMapFilter(this,'mixto')">⚡ Con opciones</button>
+      <button class="map-chip map-chip-geo" onclick="geolocateMe()">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        Cerca de mí
+      </button>
     </div>
-  </div>
-  <div class="wrap"><div class="rail" id="rail"></div><p class="rail-hint">Deslizá para ver más →</p></div>
-</section>
 
-<section id="directorio">
-  <div class="wrap">
-    <div class="sec-head" data-aos="fade-up">
-      <h2>El <em>directorio</em></h2>
-      <p>Buscá por nombre, barrio o tipo de local.</p>
-    </div>
-    <div class="toolbar">
-      <input class="search" id="q" type="search" placeholder="¿Dónde querés comer hoy? Probá “Pocitos” o “pizza”…" aria-label="Buscar">
-      <div class="chips" id="chips"></div>
-    </div>
-    <p class="count" id="count"></p>
-    <div class="grid" id="list"></div>
-    <div class="note"><strong>En validación:</strong> directorio inicial compilado de fuentes públicas de la comunidad celíaca uruguaya. Llamá antes de ir, sobre todo a los de cocina mixta. Pronto vas a poder registrar tu visita y construir el GlutenGo Score.</div>
-  </div>
-</section>
+    <div id="map"></div>
+  </section>
 
-<section id="como">
-  <div class="wrap">
-    <div class="sec-head" data-aos="fade-up"><h2>Cómo va a <em>funcionar</em></h2></div>
+  <!-- ── RAIL 100% GF ─────────────────────────────────────────── -->
+  <section class="section rail-section">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-label">Sin riesgo, sin preguntas</span>
+      <h2 class="section-title">Locales 100% Sin Gluten</h2>
+      <p class="section-sub">En estos lugares todo el menú es libre de gluten. Sin contaminación cruzada.</p>
+    </div>
+    <div class="rail" id="rail-exclusivos" data-aos="fade-up" data-aos-delay="100"></div>
+  </section>
+
+  <!-- ── DIRECTORIO ───────────────────────────────────────────── -->
+  <section class="section dir-section" id="directorio">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-label">Directorio Completo</span>
+      <h2 class="section-title">Todos los lugares</h2>
+      <p class="section-sub">Filtrate por tipo o barrio y encontrá dónde comer.</p>
+    </div>
+
+    <div class="filter-row" data-aos="fade-up" data-aos-delay="50">
+      <button class="chip active" data-filter="todos" onclick="setDirFilter(this,'todos')">Todos</button>
+      <button class="chip" data-filter="exclusivo" onclick="setDirFilter(this,'exclusivo')">🌟 100% GF</button>
+      <button class="chip" data-filter="mixto" onclick="setDirFilter(this,'mixto')">⚡ Mixtos</button>
+      <button class="chip" data-filter="Centro" onclick="setDirFilter(this,'Centro')">Centro</button>
+      <button class="chip" data-filter="Pocitos" onclick="setDirFilter(this,'Pocitos')">Pocitos</button>
+      <button class="chip" data-filter="Punta Carretas" onclick="setDirFilter(this,'Punta Carretas')">P. Carretas</button>
+      <button class="chip" data-filter="Cordón" onclick="setDirFilter(this,'Cordón')">Cordón</button>
+      <button class="chip" data-filter="Carrasco" onclick="setDirFilter(this,'Carrasco')">Carrasco</button>
+    </div>
+
+    <div class="dir-grid" id="dir-grid" data-aos="fade-up" data-aos-delay="100"></div>
+  </section>
+
+  <!-- ── CÓMO FUNCIONA ─────────────────────────────────────────── -->
+  <section class="section how-section" id="como-funciona">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-label">El sistema</span>
+      <h2 class="section-title">Cómo funciona GlutenGo</h2>
+    </div>
     <div class="steps">
-      <div class="step" data-aos="fade-up" data-aos-delay="0"><span class="n">1</span><h3>Buscás</h3><p>Restaurantes, panaderías, heladerías y más, por barrio o por antojo.</p></div>
-      <div class="step" data-aos="fade-up" data-aos-delay="100"><span class="n">2</span><h3>Mirás el Score</h3><p>Un índice de 0 a 100 construido solo con visitas reales de personas celíacas.</p></div>
-      <div class="step" data-aos="fade-up" data-aos-delay="200"><span class="n">3</span><h3>Aportás</h3><p>Registrás tu visita en menos de un minuto y le ahorrás la duda al resto.</p></div>
+      <div class="step" data-aos="fade-up" data-aos-delay="0">
+        <div class="step-num">1</div>
+        <h3>Encontrás el lugar</h3>
+        <p>Usás el mapa, el buscador o el directorio para dar con un restaurante o cafetería cerca tuyo.</p>
+      </div>
+      <div class="step" data-aos="fade-up" data-aos-delay="100">
+        <div class="step-num">2</div>
+        <h3>Ves el Score real</h3>
+        <p>El GlutenGo Score refleja experiencias de celíacos que ya fueron. No es autopromocional — es comunidad.</p>
+      </div>
+      <div class="step" data-aos="fade-up" data-aos-delay="200">
+        <div class="step-num">3</div>
+        <h3>Vas y valorás</h3>
+        <p>Después de tu visita reportás tu experiencia. Tu voz protege a otros celíacos y mejora la guía.</p>
+      </div>
     </div>
+  </section>
 
-    <div class="cta-panel" id="lista" data-aos="zoom-in-up">
-      <div class="blob"></div>
-      <span class="sello-beta">BETA</span>
-      <h2>Sé de la primera tanda</h2>
-      <p>Estamos armando la beta con la comunidad celíaca de Montevideo, Canelones y Maldonado. Dejá tu email y entrás antes que nadie.</p>
-      <form name="lista-espera" method="POST" action="/gracias.html" data-netlify="true">
-        <input type="hidden" name="form-name" value="lista-espera">
-        <input type="email" name="email" required placeholder="tu@email.com" aria-label="Tu email">
-        <label class="check"><input type="checkbox" name="es_celiaco" value="si"> Soy celíaco/a o sensible al gluten</label>
-        <button type="submit">Quiero entrar a la beta</button>
+  <!-- ── FOUNDER STORY ─────────────────────────────────────────── -->
+  <section class="story-section" id="por-que">
+    <div class="story-inner" data-aos="fade-up">
+      <div class="story-avatar">👨‍🍳</div>
+      <div>
+        <p class="story-label">Por qué existimos</p>
+        <blockquote class="story-quote">
+          "¿Tenés gluten? Sacale el pan y listo."
+        </blockquote>
+        <div class="story-body">
+          <p>
+            Esa respuesta —o alguna variante de ella— la escuchó demasiadas veces alguien cercano a nosotros
+            diagnosticada como celíaca. Cada salida a comer era un juego de azar: ¿el cocinero entendió
+            lo que es contaminación cruzada? ¿La cocina compartida tiene las mismas sartenes? ¿El mozo
+            me está diciendo que sí porque realmente sabe, o porque quiere vender?
+          </p>
+          <p>
+            GlutenGo nació de esa frustración. No como un blog de recomendaciones pagas, sino como un
+            sistema de validación real: celíacos que fueron, comieron, y reportaron su experiencia honesta.
+            Un Score que baja si alguien tuvo síntomas. Un directorio que distingue "100% sin gluten"
+            de "tiene opciones" porque esa diferencia importa enormemente.
+          </p>
+          <p>
+            Hoy somos un MVP. Mañana queremos ser la referencia para cualquier celíaco en Uruguay —
+            y después en toda América Latina. Pero antes de escalar, queremos hacerlo bien, con datos
+            reales de personas reales.
+          </p>
+        </div>
+        <div class="story-sig">
+          El equipo de GlutenGo
+          <small>Montevideo, 2026</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA WAITLIST ──────────────────────────────────────────── -->
+  <section class="cta-section" id="waitlist">
+    <div class="cta-box" data-aos="fade-up">
+      <div class="cta-icon">🌾</div>
+      <h2>Sé de los primeros</h2>
+      <p>
+        Cuando lancemos la app vas a poder reportar tus visitas, guardar tus lugares favoritos
+        y ayudar a construir la guía más confiable de Uruguay para celíacos.
+      </p>
+      <form class="cta-form" name="waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleWaitlist(event)">
+        <input type="hidden" name="form-name" value="waitlist" />
+        <input type="hidden" name="bot-field" />
+        <input type="email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+        <button type="submit">Anotarme ✨</button>
       </form>
+      <p class="cta-note">Sin spam. Te avisamos solo cuando lancemos.</p>
     </div>
-  </div>
-</section>
+  </section>
 
-<footer>
-  <div class="wrap">
-    <p>GlutenGo muestra información aportada por la comunidad y fuentes públicas. No constituye garantía sanitaria ni consejo médico: ante dudas, consultá siempre en el establecimiento.</p>
-    <p>© 2026 GlutenGo · Hecho en Uruguay 🇺🇾</p>
-  </div>
-</footer>
+  <!-- ── FOOTER ────────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-logo">Gluten<span>Go</span></div>
+    <p>Hecho con 💚 en Montevideo · Todos los listings son gratuitos y sin publicidad</p>
+    <p style="margin-top:.5rem">
+      <a href="mailto:hola@glutengo.uy">hola@glutengo.uy</a>
+      &nbsp;·&nbsp;
+      <a href="https://instagram.com/glutengo.uy" target="_blank">@glutengo.uy</a>
+    </p>
+    <p style="margin-top:.75rem;font-size:.75rem;opacity:.5">
+      © 2026 GlutenGo · <a href="#waitlist">Lista de espera</a>
+    </p>
+  </footer>
 
-<script src="data.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-<script>
-(function(){
-  var EMOJI = { restaurante:"🍽️", cafeteria:"☕", panaderia:"🥖", heladeria:"🍦", rotiseria:"🥘" };
-  var q = document.getElementById('q'), list = document.getElementById('list'),
-      chipsEl = document.getElementById('chips'), countEl = document.getElementById('count'),
-      rail = document.getElementById('rail');
-  document.getElementById('st-total').textContent = PLACES.length;
-  document.getElementById('st-ex').textContent = PLACES.filter(function(p){return p.tipo==='exclusivo';}).length;
+  <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
+  <script src="/data.js"></script>
+  <script>
+  // ────────────────────────────────────────────────────
+  // UTILIDADES
+  // ────────────────────────────────────────────────────
+  var catIcon = {
+    restaurante:'🍽️', cafeteria:'☕', panaderia:'🥐',
+    heladeria:'🍦', rotiseria:'🥡', hotel:'🏨', almacen:'🛒', otro:'📍'
+  };
 
-  rail.innerHTML = PLACES.filter(function(p){ return p.tipo==='exclusivo'; }).map(function(p,i){
-    return '<a class="rcard" href="lugar.html?l='+p.slug+'" data-aos="fade-left" data-aos-delay="'+(i*60)+'">'
-      + '<span class="sello">100% GF</span>'
-      + '<div class="emoji">'+(EMOJI[p.category]||'🍽️')+'</div>'
-      + '<h3>'+p.name+'</h3><p>'+CATEGORY_LABEL[p.category]+' · '+p.neighborhood+'</p></a>';
-  }).join('');
+  var dirFilter  = 'todos';
+  var searchTerm = '';
 
-  var filters = [
-    {key:'todos', label:'Todos'},
-    {key:'exclusivo', label:'✓ 100% sin gluten'},
-    {key:'restaurante', label:'🍽️ Restaurantes'},
-    {key:'cafeteria', label:'☕ Cafeterías'},
-    {key:'panaderia', label:'🥖 Panaderías'},
-    {key:'rotiseria', label:'🥘 Rotiserías'},
-    {key:'heladeria', label:'🍦 Heladerías'}
-  ];
-  var active = 'todos';
-  function norm(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+  // ────────────────────────────────────────────────────
+  // MAPA LEAFLET
+  // ────────────────────────────────────────────────────
+  var map, markers = [], mapFilter = 'todos';
 
-  function render(){
-    var term = norm(q.value);
-    var rows = PLACES.filter(function(p){
-      var okFilter = active==='todos' || p.tipo===active || p.category===active;
-      var hay = norm(p.name+' '+p.neighborhood+' '+p.address+' '+CATEGORY_LABEL[p.category]+' '+p.desc);
-      return okFilter && (!term || hay.indexOf(term)>-1);
+  function initMap(){
+    map = L.map('map', {
+      center: [-34.9058, -56.1882],
+      zoom: 13,
+      zoomControl: true,
+      attributionControl: true
     });
-    countEl.textContent = rows.length + ' lugar' + (rows.length===1?'':'es') + (active!=='todos'||term ? ' encontrados' : ' en Montevideo');
-    list.innerHTML = rows.map(function(p){
-      return '<a class="pcard '+(p.tipo==='exclusivo'?'ex':'mx')+'" href="lugar.html?l='+p.slug+'">'
-        + '<div class="avatar">'+(EMOJI[p.category]||'🍽️')+'</div>'
-        + '<div><h3>'+p.name+'</h3>'
-        + '<div class="meta">'+CATEGORY_LABEL[p.category]+' · '+p.neighborhood+'</div>'
-        + '<span class="tag '+(p.tipo==='exclusivo'?'ex':'mx')+'">'+(p.tipo==='exclusivo'?'100% SIN GLUTEN':'COCINA MIXTA')+'</span>'
-        + '</div></a>';
-    }).join('') || '<p class="empty">Nada por acá con esa búsqueda. Probá con otro barrio u otra categoría 🤔</p>';
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>'
+    }).addTo(map);
+
+    lugares.forEach(function(l){
+      var color = l.tipo === 'exclusivo' ? '#166534' : '#E8A93C';
+      var icon = L.divIcon({
+        className: '',
+        html: '<div style="background:'+color+';width:24px;height:24px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer"></div>',
+        iconSize: [24,24], iconAnchor: [12,24], popupAnchor: [0,-28]
+      });
+
+      var popup = L.popup({maxWidth:220}).setContent(
+        '<div style="font-family:DM Sans,sans-serif;padding:.25rem">' +
+        '<strong style="font-size:.95rem">' + l.name + '</strong><br>' +
+        '<span style="font-size:.78rem;color:#6B7280">' + l.address + ' · ' + l.neighborhood + '</span><br>' +
+        '<span style="display:inline-block;margin:.3rem 0;font-size:.72rem;font-weight:700;padding:.15rem .4rem;border-radius:20px;background:' + (l.tipo==='exclusivo'?'#DCFCE7':'#FEF3C7') + ';color:' + (l.tipo==='exclusivo'?'#166534':'#92400E') + '">' +
+        (l.tipo==='exclusivo'?'🌟 100% Sin Gluten':'⚡ Con Opciones SG') +
+        '</span><br>' +
+        '<a href="/lugar.html?slug=' + l.slug + '" style="font-size:.82rem;font-weight:700;color:#166534">Ver ficha completa →</a>' +
+        '</div>'
+      );
+
+      var marker = L.marker([l.lat, l.lng], {icon:icon}).bindPopup(popup).addTo(map);
+      marker._lugartipo = l.tipo;
+      markers.push(marker);
+    });
   }
 
-  chipsEl.innerHTML = filters.map(function(f){
-    return '<button type="button" class="chip'+(f.key===active?' on':'')+'" data-k="'+f.key+'">'+f.label+'</button>';
-  }).join('');
-  chipsEl.addEventListener('click', function(e){
-    var b = e.target.closest('.chip'); if(!b) return;
-    active = b.dataset.k;
-    chipsEl.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c.dataset.k===active); });
-    render();
+  function setMapFilter(btn, filter){
+    document.querySelectorAll('.map-chip').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    mapFilter = filter;
+    markers.forEach(function(m){
+      if(filter === 'todos' || m._lugartipo === filter){
+        if(!map.hasLayer(m)) m.addTo(map);
+      } else {
+        if(map.hasLayer(m)) map.removeLayer(m);
+      }
+    });
+  }
+
+  function geolocateMe(){
+    if(!navigator.geolocation){ alert('Tu navegador no soporta geolocalización.'); return; }
+    var btn = document.querySelector('.map-chip-geo');
+    var prev = btn.innerHTML;
+    btn.innerHTML = '📍 Buscando…';
+    btn.disabled = true;
+    navigator.geolocation.getCurrentPosition(
+      function(pos){
+        map.setView([pos.coords.latitude, pos.coords.longitude], 15);
+        var you = L.circle([pos.coords.latitude, pos.coords.longitude], {
+          radius: 200, color: '#3B82F6', fillColor: '#BFDBFE', fillOpacity: .4
+        }).addTo(map);
+        L.marker([pos.coords.latitude, pos.coords.longitude], {
+          icon: L.divIcon({
+            className:'',
+            html:'<div style="background:#3B82F6;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>',
+            iconSize:[16,16],iconAnchor:[8,8]
+          })
+        }).addTo(map).bindPopup('📍 Estás acá').openPopup();
+        btn.innerHTML = prev; btn.disabled = false;
+      },
+      function(){
+        btn.innerHTML = '⚠️ Sin permiso'; btn.disabled = false;
+        setTimeout(function(){btn.innerHTML=prev;},2500);
+      }
+    );
+  }
+
+  // ────────────────────────────────────────────────────
+  // RAIL EXCLUSIVOS
+  // ────────────────────────────────────────────────────
+  function buildRail(){
+    var rail = document.getElementById('rail-exclusivos');
+    var excl = lugares.filter(function(l){ return l.tipo === 'exclusivo'; });
+    rail.innerHTML = excl.map(function(l){
+      return '<a href="/lugar.html?slug='+l.slug+'" class="rail-card">' +
+        '<div class="icon">'+catIcon[l.category]+'</div>' +
+        '<div class="rc-name">'+l.name+'</div>' +
+        '<div class="rc-hood">'+l.neighborhood+'</div>' +
+        '<span class="rc-tag">100% libre de gluten</span>' +
+        '</a>';
+    }).join('');
+  }
+
+  // ────────────────────────────────────────────────────
+  // DIRECTORIO
+  // ────────────────────────────────────────────────────
+  function buildDir(filter, q){
+    var grid = document.getElementById('dir-grid');
+    var filtered = lugares.filter(function(l){
+      var matchFilter =
+        filter === 'todos' ||
+        l.tipo === filter ||
+        l.neighborhood === filter;
+      var matchQ = !q ||
+        l.name.toLowerCase().indexOf(q) !== -1 ||
+        l.neighborhood.toLowerCase().indexOf(q) !== -1 ||
+        l.desc.toLowerCase().indexOf(q) !== -1;
+      return matchFilter && matchQ;
+    });
+
+    if(!filtered.length){
+      grid.innerHTML = '<div id="dir-empty"><p style="font-size:2rem">🤷</p><p>Ningún lugar encontrado para ese filtro.</p></div>';
+      return;
+    }
+
+    grid.innerHTML = filtered.map(function(l){
+      return '<a href="/lugar.html?slug='+l.slug+'" class="dir-card '+l.tipo+'">' +
+        '<div class="dc-header">' +
+          '<span class="dc-name">'+catIcon[l.category]+' '+l.name+'</span>' +
+          '<span class="dc-badge '+l.tipo+'">'+(l.tipo==='exclusivo'?'100% GF':'Mixto')+'</span>' +
+        '</div>' +
+        '<div class="dc-meta"><span>'+l.neighborhood+'</span><span class="dc-sep">·</span><span>'+l.category+'</span></div>' +
+        '<p class="dc-desc">'+l.desc+'</p>' +
+        '<span class="dc-cta">Ver ficha <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>' +
+      '</a>';
+    }).join('');
+  }
+
+  function setDirFilter(btn, filter){
+    document.querySelectorAll('.chip').forEach(function(b){b.classList.remove('active')});
+    btn.classList.add('active');
+    dirFilter = filter;
+    buildDir(dirFilter, searchTerm);
+  }
+
+  function filterDir(){
+    searchTerm = document.getElementById('hero-search').value.toLowerCase().trim();
+    buildDir(dirFilter, searchTerm);
+  }
+
+  function scrollToDir(e){
+    if(e.key === 'Enter'){
+      document.getElementById('directorio').scrollIntoView({behavior:'smooth'});
+    }
+  }
+
+  // ────────────────────────────────────────────────────
+  // WAITLIST
+  // ────────────────────────────────────────────────────
+  function handleWaitlist(e){
+    e.preventDefault();
+    var form = e.target;
+    fetch('/', {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: new URLSearchParams(new FormData(form)).toString()
+    }).then(function(){
+      window.location.href = '/gracias.html';
+    }).catch(function(){
+      window.location.href = '/gracias.html';
+    });
+  }
+
+  // ────────────────────────────────────────────────────
+  // INIT
+  // ────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function(){
+    initMap();
+    buildRail();
+    buildDir('todos','');
+    AOS.init({duration:600, once:true, offset:60});
   });
-  q.addEventListener('input', render);
-  render();
-  if (window.AOS) AOS.init({ duration:650, once:true, offset:60 });
-})();
-</script>
+
+  // Service Worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  }
+  </script>
+
 </body>
 </html>
