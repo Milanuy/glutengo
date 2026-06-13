@@ -152,7 +152,9 @@ exports.handler = async function (event) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'GlutenGo <hola@glutengo.uy>',
+          // onboarding@resend.dev funciona sin verificar dominio propio (MVP)
+          // Cuando tengamos glutengo.uy verificado, cambiar a hola@glutengo.uy
+          from: 'GlutenGo <onboarding@resend.dev>',
           to: [email],
           subject: '¡Ya estás en la lista de GlutenGo! 🌾',
           html: buildEmailHtml(email),
@@ -163,12 +165,4 @@ exports.handler = async function (event) {
       console.error('Resend error:', err.message);
     }
   } else {
-    console.warn('RESEND_API_KEY no configurada — email no enviado');
-  }
-
-  return {
-    statusCode: 200,
-    headers: corsHeaders,
-    body: JSON.stringify({ ok: true, ...results }),
-  };
-};
+    console.warn('RESEND_API_KE
