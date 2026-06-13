@@ -29,9 +29,9 @@
   <a href="/" class="logo">Gluten<span>Go</span></a>
   <div class="card">
     <div class="emoji">🌾</div>
-    <div class="badge">Lista de espera confirmada</div>
-    <h1>¡Ya estás adentro!</h1>
-    <p>Gracias por sumarte. Cuando lancemos la app vas a ser de los primeros en saberlo.</p>
+    <div class="badge">📬 Revisá tu email</div>
+    <h1>¡Ya casi estás!</h1>
+    <p>Te mandamos un email con tu link de activación. Hacé click en el botón del email para activar tu cuenta y empezar a votar.</p>
     <p>Mientras tanto, el directorio ya está disponible. Explorá los 23 lugares validados por la comunidad.</p>
     <a href="/" class="btn-back">Ver el directorio →</a>
     <p class="share-note">
@@ -42,8 +42,4 @@
 
   <script>
     if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('/sw.js').catch(function(){});
-    }
-  </script>
-</body>
-</html>
+      navigator.serviceWorker.register('/sw.js').catch(function(){})
