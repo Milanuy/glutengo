@@ -192,6 +192,73 @@
     }
     .share-btn:hover{border-color:var(--green);color:var(--green)}
 
+    /* RATING PANEL */
+    .rating-panel{
+      background:#fff;border-radius:var(--radius);
+      padding:1.5rem;box-shadow:var(--shadow);
+      margin-bottom:1rem;
+    }
+    .rating-panel h2{
+      font-size:.75rem;font-weight:700;letter-spacing:.08em;
+      text-transform:uppercase;color:var(--green);
+      margin-bottom:1rem;display:flex;align-items:center;gap:.4rem;
+    }
+
+    /* Stars */
+    .star-group{display:flex;gap:.5rem;margin-bottom:1rem;justify-content:center}
+    .star-btn{
+      font-size:2.25rem;background:none;border:none;cursor:pointer;
+      filter:grayscale(1);opacity:.4;transition:filter .15s,opacity .15s,transform .1s;
+      padding:.1rem;line-height:1;
+    }
+    .star-btn.selected,.star-btn.hovered{filter:none;opacity:1}
+    .star-btn:hover{transform:scale(1.15)}
+    .star-label{text-align:center;font-size:.85rem;color:var(--gray);min-height:1.2em;margin-bottom:.75rem}
+
+    /* Textarea comentario */
+    .rating-comment{
+      width:100%;border:1.5px solid var(--border,#E5E7EB);border-radius:10px;
+      padding:.65rem .85rem;font-size:.9rem;font-family:inherit;
+      resize:vertical;min-height:70px;
+      transition:border-color .2s;
+    }
+    .rating-comment:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(22,101,52,.1)}
+
+    .btn-rate{
+      width:100%;background:var(--green);color:#fff;
+      border:none;border-radius:10px;padding:.9rem;
+      font-size:.95rem;font-weight:700;cursor:pointer;
+      margin-top:.75rem;transition:background .2s;
+    }
+    .btn-rate:hover{background:var(--green-deep)}
+    .btn-rate:disabled{opacity:.5;cursor:not-allowed}
+
+    /* Auth CTA */
+    .rating-auth{
+      background:var(--green-light,#DCFCE7);
+      border-radius:var(--radius);padding:1.25rem;
+      text-align:center;margin-bottom:1rem;
+    }
+    .rating-auth p{font-size:.88rem;color:var(--green-deep);margin-bottom:.75rem;line-height:1.55}
+    .btn-auth{
+      display:inline-block;background:var(--green);color:#fff;
+      font-weight:700;font-size:.88rem;padding:.65rem 1.35rem;
+      border-radius:10px;text-decoration:none;
+    }
+
+    /* Rating result / toast */
+    .rating-toast{
+      position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);
+      background:var(--green-deep);color:#fff;
+      font-size:.9rem;font-weight:600;
+      padding:.75rem 1.5rem;border-radius:12px;
+      box-shadow:0 4px 20px rgba(0,0,0,.25);
+      opacity:0;pointer-events:none;
+      transition:opacity .3s;z-index:9999;
+      white-space:nowrap;
+    }
+    .rating-toast.show{opacity:1}
+
     /* LOADING */
     .loading{text-align:center;padding:4rem 1rem;color:var(--gray)}
 
@@ -245,25 +312,33 @@
     document.getElementById('page-desc').content =
       lugar.desc.slice(0,155) + '…';
 
-    // ── Score placeholder (en construcción — sin visitas todavía)
-    const scorePct = null; // null = aún sin datos
-    const scoreNum = scorePct !== null ? scorePct : '—';
-    const bandClass = scorePct === null ? 'band-construcion'
-      : scorePct >= 95 ? 'band-come-tranquilo'
-      : scorePct >= 80 ? 'band-muy-recomendado'
-      : scorePct >= 60 ? 'band-consulta-antes'
-      : 'band-requiere-validacion';
-    const bandLabel = scorePct === null ? 'Aún sin valoraciones'
-      : scorePct >= 95 ? '✅ Come tranquilo'
-      : scorePct >= 80 ? '👍 Muy recomendado'
-      : scorePct >= 60 ? '⚠️ Consultá antes'
-      : '🔴 Requiere validación';
+    // ── Score (se carga dinámicamente desde /api/rating)
     const r = 30; const circ = 2*Math.PI*r;
-    const dash = scorePct !== null ? circ * (1 - scorePct/100) : circ;
-    const ringColor = scorePct === null ? '#d1d5db'
-      : scorePct >= 80 ? '#166534'
-      : scorePct >= 60 ? '#D97706'
-      : '#EF4444';
+
+    function scoreInfo(scorePct) {
+      return {
+        scoreNum: scorePct !== null ? scorePct : '—',
+        bandClass: scorePct === null ? 'band-construcion'
+          : scorePct >= 95 ? 'band-come-tranquilo'
+          : scorePct >= 80 ? 'band-muy-recomendado'
+          : scorePct >= 60 ? 'band-consulta-antes'
+          : 'band-requiere-validacion',
+        bandLabel: scorePct === null ? 'Aún sin valoraciones'
+          : scorePct >= 95 ? '✅ Come tranquilo'
+          : scorePct >= 80 ? '👍 Muy recomendado'
+          : scorePct >= 60 ? '⚠️ Consultá antes'
+          : '🔴 Requiere validación',
+        dash: scorePct !== null ? circ * (1 - scorePct/100) : circ,
+        ringColor: scorePct === null ? '#d1d5db'
+          : scorePct >= 80 ? '#166534'
+          : scorePct >= 60 ? '#D97706'
+          : '#EF4444',
+      };
+    }
+
+    // Iniciar con null mientras carga
+    var currentScore = null;
+    var si = scoreInfo(null);
 
     // ── Horarios
     function renderHours(h){
@@ -317,37 +392,33 @@
       </div>
 
       <!-- SCORE -->
-      <div class="score-card">
+      <div class="score-card" id="score-card">
         <div class="score-ring" title="GlutenGo Score">
           <svg width="72" height="72" viewBox="0 0 72 72">
             <circle cx="36" cy="36" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="7"/>
-            <circle cx="36" cy="36" r="${r}" fill="none"
-              stroke="${ringColor}" stroke-width="7"
+            <circle id="score-arc" cx="36" cy="36" r="${r}" fill="none"
+              stroke="${si.ringColor}" stroke-width="7"
               stroke-linecap="round"
               stroke-dasharray="${circ}"
-              stroke-dashoffset="${dash}"/>
+              stroke-dashoffset="${si.dash}"/>
           </svg>
           <div class="score-number">
-            ${scoreNum}
+            <span id="score-num">${si.scoreNum}</span>
             <span class="score-label">score</span>
           </div>
         </div>
         <div class="score-info">
           <h3>GlutenGo Score</h3>
-          <span class="score-band-pill ${bandClass}">${bandLabel}</span>
-          <p style="margin-top:.4rem">Puntaje calculado con visitas reales de la comunidad celíaca. Lanzamos pronto — ¡vos podés ser el primero en valorar este lugar!</p>
+          <span class="score-band-pill ${si.bandClass}" id="score-band">${si.bandLabel}</span>
+          <p id="score-desc" style="margin-top:.4rem">Calculando con visitas reales…</p>
         </div>
       </div>
 
       <!-- CUERPO -->
       <div class="lugar-body">
 
-        <!-- CTA Registrar Visita -->
-        <button class="cta-visit" id="btn-visita" onclick="handleVisita()">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          Fui y quiero valorar este lugar
-        </button>
-        <p class="cta-visit-note">Tu experiencia ayuda a otros celíacos a decidir dónde comer seguros</p>
+        <!-- VALORACIÓN (se renderiza según si hay token o no) -->
+        <div id="rating-section"></div>
 
         <!-- DESCRIPCIÓN -->
         <div class="card" style="margin-top:1rem">
@@ -420,67 +491,4 @@
 
       var icon = L.divIcon({
         className:'',
-        html:'<div style="background:' + (lugar.tipo==='exclusivo'?'#166534':'#E8A93C') + ';width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>',
-        iconSize:[28,28],iconAnchor:[14,28]
-      });
-
-      L.marker([lugar.lat, lugar.lng], {icon:icon})
-        .addTo(map)
-        .bindPopup('<strong>'+lugar.name+'</strong><br>'+lugar.address);
-    }
-
-    // Esperar a que el DOM esté listo para el mapa
-    setTimeout(initMiniMap, 50);
-
-    // ── Share
-    function renderHours(h){
-      if(!h) return '<p>Horario no confirmado</p>';
-      return Object.entries(h).map(function(e){
-        var k=e[0], v=e[1];
-        return '<div class="hour-row"><span class="day">'+k.replace('_',' ')+'</span><span class="time '+(v==='Cerrado'?'hour-closed':'')+'">'+v+'</span></div>';
-      }).join('');
-    }
-
-    window.shareNative = function(){
-      var shareData = {
-        title: lugar.name + ' — GlutenGo',
-        text: lugar.tipo==='exclusivo'
-          ? lugar.name+' es 100% libre de gluten. Encontré este lugar en GlutenGo.'
-          : lugar.name+' tiene buenas opciones sin gluten. Encontré esto en GlutenGo.',
-        url: location.href
-      };
-      if(navigator.share){
-        navigator.share(shareData).catch(function(){});
-      } else {
-        copyLink();
-      }
-    };
-
-    window.copyLink = function(){
-      navigator.clipboard.writeText(location.href).then(function(){
-        var btn = document.querySelectorAll('.share-btn')[1];
-        var prev = btn.innerHTML;
-        btn.innerHTML = '✅ ¡Copiado!';
-        setTimeout(function(){btn.innerHTML=prev;},2000);
-      });
-    };
-
-    window.handleVisita = function(){
-      var btn = document.getElementById('btn-visita');
-      btn.style.background = '#0E3D22';
-      btn.innerHTML = '🚧 Próximamente — ¡registrá tu cuenta y sé el primero!';
-      setTimeout(function(){
-        btn.style.background='';
-        btn.innerHTML='<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Fui y quiero valorar este lugar';
-      }, 3000);
-    };
-
-  })();
-
-  // ── Service Worker
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(function(){});
-  }
-  </script>
-</body>
-</html>
+        html:'<div style="background:' + (lugar.tipo==='exclus
