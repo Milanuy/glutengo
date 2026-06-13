@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>¡Estás en la lista! — GlutenGo</title>
-<meta name="robots" content="noindex">
-<meta name="theme-color" content="#166534">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'DM Sans',sans-serif;background:#0E3D22;color:#fff;display:flex;min-height:100vh;align-items:center;justify-content:center;text-align:center;padding:20px;overflow:hidden}
-  .blob{position:fixed;border-radius:52% 48% 61% 39%/55% 46% 54% 45%;background:rgba(232,169,60,.16);width:380px;height:380px;top:-130px;right:-120px;animation:drift 14s ease-in-out infinite alternate}
-  @keyframes drift{from{transform:translate(0,0)}to{transform:translate(20px,16px) rotate(8deg)}}
-  .box{max-width:460px;position:relative;animation:pop .5s ease both}
-  @keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  .emoji{font-size:64px}
-  h1{font-family:'Fraunces',serif;font-weight:900;font-size:42px;letter-spacing:-.02em;margin-top:14px}
-  p{margin-top:14px;color:#BBD8C2;font-size:16px}
-  a{display:inline-block;margin-top:30px;background:#E8A93C;color:#22201B;font-weight:800;text-decoration:none;padding:15px 30px;border-radius:14px;transition:transform .2s}
-  a:hover{transform:translateY(-3px)}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¡Gracias! — GlutenGo</title>
+  <meta name="robots" content="noindex" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#166534" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{--cream:#FAF5EC;--green:#166534;--green-deep:#0E3D22;--amber:#E8A93C;--terra:#C4654A}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--green-deep);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
+    .logo{font-family:'Fraunces',Georgia,serif;font-size:1.5rem;font-weight:900;color:#fff;text-decoration:none;margin-bottom:2rem;display:block}
+    .logo span{color:var(--amber)}
+    .card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:2.5rem;max-width:460px;width:100%}
+    .emoji{font-size:3.5rem;margin-bottom:1rem}
+    h1{font-family:'Fraunces',Georgia,serif;font-size:2.2rem;font-weight:900;margin-bottom:.75rem;line-height:1.1}
+    p{font-size:1rem;opacity:.8;line-height:1.6;margin-bottom:1rem}
+    .badge{display:inline-block;background:var(--amber);color:var(--green-deep);font-weight:700;font-size:.85rem;padding:.4rem 1rem;border-radius:50px;margin-bottom:1.5rem}
+    .btn-back{display:inline-block;background:var(--amber);color:var(--green-deep);font-weight:700;padding:.8rem 1.75rem;border-radius:12px;text-decoration:none;transition:opacity .2s;font-size:1rem}
+    .btn-back:hover{opacity:.85}
+    .share-note{margin-top:1.5rem;font-size:.82rem;opacity:.6}
+    .share-note a{color:var(--amber)}
+  </style>
 </head>
 <body>
-<div class="blob"></div>
-<div class="box">
-  <div class="emoji">🎉</div>
-  <h1>¡Estás en la lista!</h1>
-  <p>Te vamos a escribir cuando la beta de GlutenGo esté lista. Gracias por sumarte a construir el mapa de confianza sin gluten de Uruguay.</p>
-  <a href="/">Volver al directorio</a>
-</div>
+  <a href="/" class="logo">Gluten<span>Go</span></a>
+  <div class="card">
+    <div class="emoji">🌾</div>
+    <div class="badge">Lista de espera confirmada</div>
+    <h1>¡Ya estás adentro!</h1>
+    <p>Gracias por sumarte. Cuando lancemos la app vas a ser de los primeros en saberlo.</p>
+    <p>Mientras tanto, el directorio ya está disponible. Explorá los 23 lugares validados por la comunidad.</p>
+    <a href="/" class="btn-back">Ver el directorio →</a>
+    <p class="share-note">
+      ¿Conocés otro celíaco que necesite esto?<br>
+      Compartí <a href="https://glutengo.netlify.app">glutengo.netlify.app</a> 💚
+    </p>
+  </div>
+
+  <script>
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
+    }
+  </script>
 </body>
 </html>
