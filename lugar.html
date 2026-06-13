@@ -1,101 +1,486 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GlutenGo — Ficha del lugar</title>
-<meta name="description" content="Ficha de establecimiento en el directorio sin gluten de GlutenGo Uruguay.">
-<meta name="theme-color" content="#166534">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23166534'/><text x='50' y='66' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>G</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --cream:#FAF5EC; --paper:#FFFDF8; --ink:#22201B; --muted:#7A7468;
-    --green:#166534; --green-deep:#0E3D22; --green-soft:#DCEFE0;
-    --terra:#C4654A; --amber:#E8A93C; --amber-soft:#FBEED3;
-    --display:'Fraunces',serif; --body:'DM Sans',sans-serif; --r:22px;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:var(--body);background:var(--cream);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.05;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
-  .wrap{max-width:640px;margin:0 auto;padding:0 20px 60px}
-  header{position:sticky;top:0;z-index:50;background:rgba(250,245,236,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,32,27,.07)}
-  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;max-width:640px;margin:0 auto;padding-left:20px;padding-right:20px}
-  .logo{font-family:var(--display);font-weight:900;font-size:26px;color:var(--green-deep);text-decoration:none;letter-spacing:-.5px}
-  .logo span{color:var(--terra)}
-  .back{font-size:14px;color:var(--green);text-decoration:none;font-weight:700}
-  .hero-card{position:relative;background:var(--paper);border:1.5px solid rgba(34,32,27,.12);border-radius:28px;padding:30px 26px;margin-top:26px;overflow:hidden;animation:pop .5s ease both}
-  @keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  .blob{position:absolute;border-radius:52% 48% 61% 39%/55% 46% 54% 45%;z-index:0}
-  .blob.g{width:220px;height:220px;background:var(--green-soft);top:-80px;right:-70px}
-  .hero-card>*{position:relative;z-index:1}
-  .avatar{width:72px;height:72px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:38px;background:var(--green-soft);transform:rotate(-3deg)}
-  .mx .avatar{background:var(--amber-soft)}
-  h1{font-family:var(--display);font-weight:900;font-size:clamp(32px,7vw,44px);line-height:1.02;letter-spacing:-.02em;margin-top:16px}
-  .meta{color:var(--muted);font-size:15px;margin-top:8px}
-  .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.07em;padding:6px 13px;border-radius:7px;margin-top:14px;transform:rotate(-1.5deg)}
-  .tag.ex{background:var(--green);color:#fff}
-  .tag.mx{background:var(--amber);color:var(--ink)}
-  .desc{margin-top:16px;font-size:16px;color:#46423b}
-  .row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
-  .btn{flex:1;min-width:140px;text-align:center;text-decoration:none;font-weight:700;font-size:15px;padding:15px 12px;border-radius:14px;transition:transform .2s}
-  .btn:hover{transform:translateY(-3px)}
-  .btn.primary{background:var(--green);color:#fff;box-shadow:0 8px 22px rgba(22,101,52,.25)}
-  .btn.ghost{border:2px solid var(--ink);color:var(--ink)}
-  .score{margin-top:22px;background:var(--cream);border:1.5px dashed rgba(34,32,27,.25);border-radius:18px;padding:20px;text-align:center}
-  .score .pin{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--muted);font-family:var(--display);font-size:18px}
-  .score .pin i{width:13px;height:13px;border-radius:50%;background:#d6d3d1;display:inline-block}
-  .score p{font-size:13.5px;color:var(--muted);margin-top:8px}
-  .warn{background:var(--amber-soft);border:1.5px dashed var(--amber);border-radius:16px;padding:15px 17px;font-size:14px;color:#6b4a12;margin-top:16px}
-  .cta{position:relative;background:var(--green-deep);color:#fff;border-radius:24px;padding:28px 24px;margin-top:22px;text-align:center;overflow:hidden}
-  .cta .blob{width:180px;height:180px;background:rgba(232,169,60,.18);bottom:-70px;left:-60px}
-  .cta p{position:relative;font-size:15px;color:#BBD8C2}
-  .cta strong{color:#fff;font-family:var(--display);font-size:18px}
-  .cta a{position:relative;display:inline-block;margin-top:14px;background:var(--amber);color:var(--ink);font-weight:800;text-decoration:none;padding:13px 26px;border-radius:13px;transition:transform .2s}
-  .cta a:hover{transform:translateY(-3px)}
-  footer{border-top:1.5px solid rgba(34,32,27,.1);padding:24px 0;text-align:center;font-size:12px;color:var(--muted);max-width:640px;margin:40px auto 0}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Lugar — GlutenGo</title>
+  <meta name="description" id="page-desc" content="Ficha de establecimiento en GlutenGo">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#166534">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    :root {
+      --cream: #FAF5EC;
+      --green: #166534;
+      --green-deep: #0E3D22;
+      --green-light: #DCFCE7;
+      --terra: #C4654A;
+      --amber: #E8A93C;
+      --gray: #6B7280;
+      --gray-light: #F3F4F6;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0,0,0,.08);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--cream);color:#1a1a1a;min-height:100vh}
+
+    /* HEADER */
+    .site-header{
+      position:sticky;top:0;z-index:200;
+      background:var(--green-deep);
+      padding:.9rem 1.25rem;
+      display:flex;align-items:center;gap:1rem;
+    }
+    .back-btn{
+      display:flex;align-items:center;gap:.4rem;
+      color:#fff;text-decoration:none;font-size:.9rem;
+      opacity:.85;transition:opacity .2s;
+    }
+    .back-btn:hover{opacity:1}
+    .back-btn svg{width:18px;height:18px}
+    .logo-sm{
+      margin-left:auto;
+      font-family:'Fraunces',Georgia,serif;
+      font-size:1.15rem;color:#fff;font-weight:900;
+      text-decoration:none;letter-spacing:-.01em;
+    }
+    .logo-sm span{color:var(--amber)}
+
+    /* HERO DEL LUGAR */
+    .lugar-hero{
+      background:var(--green-deep);
+      color:#fff;
+      padding:2rem 1.25rem 2.5rem;
+    }
+    .tipo-badge{
+      display:inline-flex;align-items:center;gap:.4rem;
+      font-size:.75rem;font-weight:700;letter-spacing:.06em;
+      text-transform:uppercase;
+      padding:.25rem .65rem;border-radius:20px;
+      margin-bottom:.75rem;
+    }
+    .tipo-badge.exclusivo{background:var(--green);color:#fff}
+    .tipo-badge.mixto{background:var(--amber);color:#1a1a1a}
+    h1.lugar-name{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:clamp(1.6rem,5vw,2.4rem);
+      font-weight:900;line-height:1.1;
+      margin-bottom:.5rem;
+    }
+    .lugar-meta{
+      display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;
+      margin-top:.75rem;opacity:.85;font-size:.9rem;
+    }
+    .lugar-meta span{display:flex;align-items:center;gap:.3rem}
+
+    /* SCORE */
+    .score-card{
+      margin:1.5rem 1.25rem;
+      background:#fff;border-radius:var(--radius);
+      padding:1.25rem 1.5rem;
+      box-shadow:var(--shadow);
+      display:flex;align-items:center;gap:1.25rem;
+    }
+    .score-ring{
+      position:relative;width:72px;height:72px;flex-shrink:0;
+    }
+    .score-ring svg{transform:rotate(-90deg)}
+    .score-ring circle{transition:stroke-dashoffset .8s ease}
+    .score-number{
+      position:absolute;inset:0;
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      font-weight:900;font-size:1.25rem;line-height:1;
+    }
+    .score-number .score-label{font-size:.5rem;font-weight:600;text-transform:uppercase;opacity:.6;margin-top:.1rem}
+    .score-info h3{font-size:1rem;font-weight:700;margin-bottom:.2rem}
+    .score-info p{font-size:.82rem;color:var(--gray)}
+    .score-band-pill{
+      display:inline-block;
+      padding:.2rem .6rem;border-radius:20px;
+      font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+      margin-top:.4rem;
+    }
+    .band-construcion{background:#f0f0f0;color:#888}
+    .band-come-tranquilo{background:#DCFCE7;color:#166534}
+    .band-muy-recomendado{background:#D1FAE5;color:#065F46}
+    .band-consulta-antes{background:#FEF3C7;color:#92400E}
+    .band-requiere-validacion{background:#FEE2E2;color:#991B1B}
+
+    /* CUERPO */
+    .lugar-body{padding:0 1.25rem 3rem}
+
+    /* CARD GENÉRICA */
+    .card{
+      background:#fff;border-radius:var(--radius);
+      padding:1.25rem 1.5rem;box-shadow:var(--shadow);
+      margin-bottom:1rem;
+    }
+    .card h2{
+      font-size:.75rem;font-weight:700;letter-spacing:.08em;
+      text-transform:uppercase;color:var(--green);
+      margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem;
+    }
+
+    /* DESCRIPCIÓN */
+    .desc-text{font-size:.95rem;line-height:1.65;color:#374151}
+
+    /* HORARIOS */
+    .hours-grid{display:grid;gap:.35rem}
+    .hour-row{
+      display:flex;justify-content:space-between;
+      font-size:.88rem;padding:.3rem 0;
+      border-bottom:1px solid var(--gray-light);
+    }
+    .hour-row:last-child{border-bottom:none}
+    .hour-row .day{font-weight:600}
+    .hour-row .time{color:var(--gray)}
+    .hour-closed{color:#EF4444;font-style:italic}
+
+    /* CONTACTO */
+    .contact-links{display:flex;flex-direction:column;gap:.6rem}
+    .contact-link{
+      display:flex;align-items:center;gap:.75rem;
+      color:var(--green-deep);text-decoration:none;
+      font-size:.9rem;font-weight:500;
+      padding:.5rem .75rem;border-radius:8px;
+      background:var(--gray-light);
+      transition:background .15s;
+    }
+    .contact-link:hover{background:var(--green-light)}
+    .contact-link svg{width:18px;height:18px;color:var(--green)}
+
+    /* MAPA MINI */
+    #mini-map{
+      height:220px;border-radius:var(--radius);
+      overflow:hidden;margin-bottom:.75rem;
+    }
+    .how-to-get{
+      font-size:.85rem;color:var(--gray);
+      display:flex;align-items:center;gap:.4rem;
+      cursor:pointer;
+    }
+    .how-to-get:hover{color:var(--green)}
+
+    /* CTA — REGISTRAR VISITA */
+    .cta-visit{
+      background:var(--green);color:#fff;
+      border:none;border-radius:var(--radius);
+      padding:1rem 1.5rem;width:100%;
+      font-size:1rem;font-weight:700;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:.5rem;
+      margin-bottom:.75rem;transition:background .2s;
+    }
+    .cta-visit:hover{background:var(--green-deep)}
+    .cta-visit-note{font-size:.75rem;color:var(--gray);text-align:center}
+
+    /* SHARE */
+    .share-row{
+      display:flex;gap:.75rem;margin-top:.75rem;
+    }
+    .share-btn{
+      flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;
+      padding:.65rem;border-radius:8px;border:1.5px solid #E5E7EB;
+      background:#fff;cursor:pointer;font-size:.85rem;font-weight:600;
+      color:#374151;transition:border-color .15s;
+    }
+    .share-btn:hover{border-color:var(--green);color:var(--green)}
+
+    /* LOADING */
+    .loading{text-align:center;padding:4rem 1rem;color:var(--gray)}
+
+    /* CHIP TIPO */
+    .not-found{
+      text-align:center;padding:4rem 1.25rem;
+    }
+    .not-found h2{font-size:1.5rem;margin-bottom:.5rem}
+
+    /* Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@400;500;700&display=swap');
+  </style>
 </head>
 <body>
-<header><div class="nav">
-  <a class="logo" href="/">Gluten<span>Go</span></a>
-  <a class="back" href="/#directorio">← Directorio</a>
-</div></header>
-<div class="wrap"><div id="ficha"></div></div>
-<footer><p>Información de fuentes públicas, sin validación comunitaria todavía. No constituye garantía sanitaria.</p></footer>
-<script src="data.js"></script>
-<script>
-(function(){
-  var EMOJI = { restaurante:"🍽️", cafeteria:"☕", panaderia:"🥖", heladeria:"🍦", rotiseria:"🥘" };
-  var slug = new URLSearchParams(location.search).get('l');
-  var p = PLACES.find(function(x){ return x.slug===slug; });
-  var el = document.getElementById('ficha');
-  if(!p){
-    el.innerHTML = '<div class="hero-card"><h1>No encontramos ese lugar</h1><p class="meta">Volvé al directorio para ver todos los lugares.</p><div class="row"><a class="btn primary" href="/#directorio">Ir al directorio</a></div></div>';
-    return;
+
+  <header class="site-header">
+    <a href="/" class="back-btn">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+      Volver
+    </a>
+    <a href="/" class="logo-sm">Gluten<span>Go</span></a>
+  </header>
+
+  <div id="app">
+    <div class="loading">Cargando…</div>
+  </div>
+
+  <script src="/data.js"></script>
+  <script>
+  (function(){
+    // ── Leer slug de la URL
+    const params = new URLSearchParams(location.search);
+    const slug   = params.get('slug');
+    const lugar  = slug ? lugares.find(l => l.slug === slug) : null;
+
+    const app = document.getElementById('app');
+
+    if (!lugar) {
+      app.innerHTML = `
+        <div class="not-found">
+          <div style="font-size:3rem;margin-bottom:1rem">🤷‍♀️</div>
+          <h2>Lugar no encontrado</h2>
+          <p style="color:#6B7280;margin-bottom:1.5rem">El slug "<strong>${slug||''}</strong>" no existe en nuestro directorio.</p>
+          <a href="/" style="display:inline-block;background:var(--green);color:#fff;padding:.75rem 1.5rem;border-radius:12px;text-decoration:none;font-weight:700">Ver todos los lugares</a>
+        </div>`;
+      return;
+    }
+
+    // ── Actualizar meta
+    document.getElementById('page-title').textContent = lugar.name + ' — GlutenGo';
+    document.getElementById('page-desc').content =
+      lugar.desc.slice(0,155) + '…';
+
+    // ── Score placeholder (en construcción — sin visitas todavía)
+    const scorePct = null; // null = aún sin datos
+    const scoreNum = scorePct !== null ? scorePct : '—';
+    const bandClass = scorePct === null ? 'band-construcion'
+      : scorePct >= 95 ? 'band-come-tranquilo'
+      : scorePct >= 80 ? 'band-muy-recomendado'
+      : scorePct >= 60 ? 'band-consulta-antes'
+      : 'band-requiere-validacion';
+    const bandLabel = scorePct === null ? 'Aún sin valoraciones'
+      : scorePct >= 95 ? '✅ Come tranquilo'
+      : scorePct >= 80 ? '👍 Muy recomendado'
+      : scorePct >= 60 ? '⚠️ Consultá antes'
+      : '🔴 Requiere validación';
+    const r = 30; const circ = 2*Math.PI*r;
+    const dash = scorePct !== null ? circ * (1 - scorePct/100) : circ;
+    const ringColor = scorePct === null ? '#d1d5db'
+      : scorePct >= 80 ? '#166534'
+      : scorePct >= 60 ? '#D97706'
+      : '#EF4444';
+
+    // ── Horarios
+    function renderHours(h){
+      if(!h) return '<p style="color:#6B7280;font-size:.88rem">Horario no confirmado</p>';
+      return Object.entries(h).map(([k,v])=>`
+        <div class="hour-row">
+          <span class="day">${k.replace('_',' ')}</span>
+          <span class="time ${v==='Cerrado'?'hour-closed':''}">${v}</span>
+        </div>`).join('');
+    }
+
+    // ── Contacto
+    const phone = lugar.phone || null;
+    const instagram = lugar.instagram || null;
+    let contactHtml = '';
+    if(phone){
+      const wp = 'https://wa.me/'+phone.replace(/\D/g,'');
+      contactHtml += `
+        <a href="${wp}" target="_blank" class="contact-link">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>`;
+    }
+    if(instagram){
+      const handle = instagram.replace('@','');
+      contactHtml += `
+        <a href="https://instagram.com/${handle}" target="_blank" class="contact-link">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          ${instagram}
+        </a>`;
+    }
+    if(!contactHtml){
+      contactHtml = '<p style="color:#6B7280;font-size:.88rem">Sin datos de contacto aún.</p>';
+    }
+
+    // ── Render completo
+    app.innerHTML = `
+      <div class="lugar-hero">
+        <span class="tipo-badge ${lugar.tipo}">${lugar.tipo === 'exclusivo' ? '🌟 100% Sin Gluten' : '⚡ Con Opciones SG'}</span>
+        <h1 class="lugar-name">${lugar.name}</h1>
+        <div class="lugar-meta">
+          <span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            ${lugar.address}, ${lugar.neighborhood}
+          </span>
+          <span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+            ${lugar.category}
+          </span>
+        </div>
+      </div>
+
+      <!-- SCORE -->
+      <div class="score-card">
+        <div class="score-ring" title="GlutenGo Score">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="7"/>
+            <circle cx="36" cy="36" r="${r}" fill="none"
+              stroke="${ringColor}" stroke-width="7"
+              stroke-linecap="round"
+              stroke-dasharray="${circ}"
+              stroke-dashoffset="${dash}"/>
+          </svg>
+          <div class="score-number">
+            ${scoreNum}
+            <span class="score-label">score</span>
+          </div>
+        </div>
+        <div class="score-info">
+          <h3>GlutenGo Score</h3>
+          <span class="score-band-pill ${bandClass}">${bandLabel}</span>
+          <p style="margin-top:.4rem">Puntaje calculado con visitas reales de la comunidad celíaca. Lanzamos pronto — ¡vos podés ser el primero en valorar este lugar!</p>
+        </div>
+      </div>
+
+      <!-- CUERPO -->
+      <div class="lugar-body">
+
+        <!-- CTA Registrar Visita -->
+        <button class="cta-visit" id="btn-visita" onclick="handleVisita()">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Fui y quiero valorar este lugar
+        </button>
+        <p class="cta-visit-note">Tu experiencia ayuda a otros celíacos a decidir dónde comer seguros</p>
+
+        <!-- DESCRIPCIÓN -->
+        <div class="card" style="margin-top:1rem">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Sobre este lugar
+          </h2>
+          <p class="desc-text">${lugar.desc}</p>
+        </div>
+
+        <!-- HORARIOS -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Horarios
+          </h2>
+          <div class="hours-grid">${renderHours(lugar.hours)}</div>
+        </div>
+
+        <!-- MAPA -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-10l6-3m6 3l-6 3m6-3v10.382a1 1 0 01-.553.894L15 20m0 0l-6-3m6 3V7"/></svg>
+            Cómo llegar
+          </h2>
+          <div id="mini-map"></div>
+          <a href="https://www.google.com/maps/search/?api=1&query=${lugar.lat},${lugar.lng}" target="_blank" class="how-to-get">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            Abrir en Google Maps
+          </a>
+        </div>
+
+        <!-- CONTACTO -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            Contacto
+          </h2>
+          <div class="contact-links">${contactHtml}</div>
+        </div>
+
+        <!-- COMPARTIR -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+            Compartir
+          </h2>
+          <div class="share-row">
+            <button class="share-btn" onclick="shareNative()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+              Compartir
+            </button>
+            <button class="share-btn" onclick="copyLink()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar link
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /lugar-body -->
+    `;
+
+    // ── Mini mapa con Leaflet
+    function initMiniMap(){
+      var map = L.map('mini-map', { zoomControl: false, attributionControl: false })
+        .setView([lugar.lat, lugar.lng], 16);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+      }).addTo(map);
+
+      var icon = L.divIcon({
+        className:'',
+        html:'<div style="background:' + (lugar.tipo==='exclusivo'?'#166534':'#E8A93C') + ';width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>',
+        iconSize:[28,28],iconAnchor:[14,28]
+      });
+
+      L.marker([lugar.lat, lugar.lng], {icon:icon})
+        .addTo(map)
+        .bindPopup('<strong>'+lugar.name+'</strong><br>'+lugar.address);
+    }
+
+    // Esperar a que el DOM esté listo para el mapa
+    setTimeout(initMiniMap, 50);
+
+    // ── Share
+    function renderHours(h){
+      if(!h) return '<p>Horario no confirmado</p>';
+      return Object.entries(h).map(function(e){
+        var k=e[0], v=e[1];
+        return '<div class="hour-row"><span class="day">'+k.replace('_',' ')+'</span><span class="time '+(v==='Cerrado'?'hour-closed':'')+'">'+v+'</span></div>';
+      }).join('');
+    }
+
+    window.shareNative = function(){
+      var shareData = {
+        title: lugar.name + ' — GlutenGo',
+        text: lugar.tipo==='exclusivo'
+          ? lugar.name+' es 100% libre de gluten. Encontré este lugar en GlutenGo.'
+          : lugar.name+' tiene buenas opciones sin gluten. Encontré esto en GlutenGo.',
+        url: location.href
+      };
+      if(navigator.share){
+        navigator.share(shareData).catch(function(){});
+      } else {
+        copyLink();
+      }
+    };
+
+    window.copyLink = function(){
+      navigator.clipboard.writeText(location.href).then(function(){
+        var btn = document.querySelectorAll('.share-btn')[1];
+        var prev = btn.innerHTML;
+        btn.innerHTML = '✅ ¡Copiado!';
+        setTimeout(function(){btn.innerHTML=prev;},2000);
+      });
+    };
+
+    window.handleVisita = function(){
+      var btn = document.getElementById('btn-visita');
+      btn.style.background = '#0E3D22';
+      btn.innerHTML = '🚧 Próximamente — ¡registrá tu cuenta y sé el primero!';
+      setTimeout(function(){
+        btn.style.background='';
+        btn.innerHTML='<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Fui y quiero valorar este lugar';
+      }, 3000);
+    };
+
+  })();
+
+  // ── Service Worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
   }
-  document.title = 'GlutenGo — ' + p.name;
-  var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p.name + ' ' + p.address + ' Montevideo Uruguay');
-  var telBtn = p.phone ? '<a class="btn ghost" href="tel:+598'+p.phone.replace(/[^0-9]/g,'')+'">📞 Llamar</a>' : '';
-  el.innerHTML =
-    '<div class="hero-card '+(p.tipo==='exclusivo'?'ex':'mx')+'">'
-    + '<div class="blob g"></div>'
-    + '<div class="avatar">'+(EMOJI[p.category]||'🍽️')+'</div>'
-    + '<h1>'+p.name+'</h1>'
-    + '<div class="meta">'+CATEGORY_LABEL[p.category]+' · '+p.neighborhood+'<br>'+p.address+(p.phone ? ' · Tel: '+p.phone : '')+'</div>'
-    + '<span class="tag '+(p.tipo==='exclusivo'?'ex':'mx')+'">'+(p.tipo==='exclusivo'?'LOCAL 100% SIN GLUTEN':'COCINA MIXTA — CONSULTAR PROTOCOLOS')+'</span>'
-    + '<p class="desc">'+p.desc+'</p>'
-    + '<div class="row"><a class="btn primary" href="'+mapsUrl+'" target="_blank" rel="noopener">📍 Cómo llegar</a>'+telBtn+'</div>'
-    + '<div class="score"><span class="pin"><i></i>Score: requiere validación</span>'
-    + '<p>Ningún usuario registró todavía una visita acá. El GlutenGo Score se construye solo con experiencias reales de celíacos.</p></div>'
-    + (p.tipo==='mixto' ? '<div class="warn"><strong>Cocina mixta:</strong> llamá antes de ir y avisá que sos celíaco/a. Preguntá por separación de utensilios y superficies.</div>' : '')
-    + '</div>'
-    + '<div class="cta"><div class="blob"></div><p><strong>¿Estuviste en '+p.name+'?</strong><br>Muy pronto vas a poder registrar tu visita y ayudar a toda la comunidad.</p>'
-    + '<a href="/#lista">Avisame cuando se pueda</a></div>';
-})();
-</script>
+  </script>
 </body>
 </html>
