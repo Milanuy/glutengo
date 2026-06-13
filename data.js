@@ -1,0 +1,30 @@
+// GlutenGo — datos seed v0.2 (2026-06-12)
+// Fuente principal: directorio comunitario Chau Gluten (chaugluten.com/comercios)
+// y guías públicas. SIN validación comunitaria todavía: status = requiere_validacion.
+// "tipo": exclusivo = local 100% sin gluten | mixto = cocina mixta con opción GF.
+const PLACES = [
+  { slug:"la-panaderia-de-ramona-centro", name:"La Panadería de Ramona", category:"panaderia", tipo:"exclusivo", address:"San José 894", neighborhood:"Centro", phone:"2900 5247", desc:"Primera panadería 100% sin gluten certificada del país. Panes, baguettes, pan lactal, bizcochos y dulces." },
+  { slug:"cafe-ramona-centro", name:"Café Ramona (Centro)", category:"cafeteria", tipo:"exclusivo", address:"San José 900", neighborhood:"Centro", phone:"2900 5247", desc:"Cafetería y restaurante 100% sin gluten: desayunos, meriendas, menú ejecutivo, tartas y pizzas." },
+  { slug:"cafe-ramona-wtc", name:"Café Ramona (WTC)", category:"cafeteria", tipo:"exclusivo", address:"L. A. de Herrera 1196 esq. 26 de Marzo", neighborhood:"Buceo", phone:"2623 6228", desc:"Sucursal WTC de Ramona, carta 100% libre de gluten." },
+  { slug:"gluteno", name:"Gluteno", category:"rotiseria", tipo:"exclusivo", address:"Scoseria 2637 esq. Francisco Aguilar", neighborhood:"Punta Carretas", phone:"2710 0913", desc:"Local exclusivo sin gluten. Comida preparada para consumir en el local o llevar." },
+  { slug:"gout-gluten-free", name:"Gout Gluten Free", category:"cafeteria", tipo:"exclusivo", address:"Solano García 2496 esq. Ellauri", neighborhood:"Punta Carretas", phone:"2710 9665", desc:"Café y tienda 100% sin gluten. Abierto todos los días excepto miércoles, de 8 a 20 h." },
+  { slug:"mi-cocina-sin-gluten", name:"Mi Cocina Sin Gluten", category:"rotiseria", tipo:"exclusivo", address:"Solano García 2411 casi Bv. Artigas", neighborhood:"Punta Carretas", phone:"2726 2088", desc:"Rotisería y panadería exclusiva sin gluten." },
+  { slug:"nutriciencia", name:"Nutriciencia", category:"rotiseria", tipo:"exclusivo", address:"Gral. Urquiza 2828", neighborhood:"La Blanqueada", phone:"2480 2945", desc:"Local exclusivo: comida hecha para llevar y materia prima sin gluten para cocinar." },
+  { slug:"recobeco-gluten-free", name:"RecoBeco Gluten Free", category:"cafeteria", tipo:"exclusivo", address:"Tacuarembó 1487 esq. Colonia", neighborhood:"Cordón", phone:"099 654 785", desc:"Minutas, dulces y bizcochos sin gluten, para comer en el lugar o llevar." },
+  { slug:"cocina-inclusiva", name:"Cocina Inclusiva", category:"restaurante", tipo:"exclusivo", address:"Colonia 1779", neighborhood:"Cordón", phone:"", desc:"Menú 100% sin gluten para almuerzo o cena, con opciones vegetarianas y veganas." },
+  { slug:"la-commedia", name:"La Commedia", category:"restaurante", tipo:"mixto", address:"Viejo Pancho 2414", neighborhood:"Pocitos", phone:"2706 8655", desc:"Trattoría italiana y parrilla con menúes aptos para celíacos. Cocina mixta: consultá protocolos." },
+  { slug:"almacen-de-pizzas", name:"Almacén de Pizzas", category:"restaurante", tipo:"mixto", address:"Av. Alfredo Arocena 1624", neighborhood:"Carrasco", phone:"2605 7050", desc:"Pizzería con sector de calentado exclusivo sin gluten. Cocina mixta." },
+  { slug:"sano-deleite", name:"Sano Deleite", category:"rotiseria", tipo:"mixto", address:"18 de Julio 2344 casi Bv. Artigas", neighborhood:"Cordón", phone:"2400 1701", desc:"Comida para llevar con y sin gluten, elaborada en cocinas separadas." },
+  { slug:"los-lenos", name:"Los Leños", category:"restaurante", tipo:"mixto", address:"San José 909 esq. Convención", neighborhood:"Centro", phone:"2900 2285", desc:"Restaurante y parrillada con opciones aptas para celíacos." },
+  { slug:"la-lupita", name:"La Lupita", category:"restaurante", tipo:"mixto", address:"Luis de la Torre 565", neighborhood:"Pocitos", phone:"2712 1966", desc:"Comida mexicana preparada con harina de maíz. Consultá por contaminación cruzada." },
+  { slug:"tuit", name:"Tuit", category:"cafeteria", tipo:"mixto", address:"Ituzaingó 1434", neighborhood:"Ciudad Vieja", phone:"2916 3636", desc:"Bocatas, tartas, ensaladas y postres. Trabajan con dos cocinas separadas." },
+  { slug:"porto-vanilla-carrasco", name:"Porto Vanilla", category:"panaderia", tipo:"mixto", address:"Av. Alfredo Arocena 1558", neighborhood:"Carrasco", phone:"2604 3770", desc:"Panificados sin gluten envasados aparte y congelados. Varias sucursales en Montevideo." },
+  { slug:"bulebar", name:"Bulebar", category:"restaurante", tipo:"mixto", address:"Williman 647", neighborhood:"Punta Carretas", phone:"2716 1973", desc:"Hamburguesería con opción sin gluten." },
+  { slug:"cafetto-prado", name:"Cafetto Prado", category:"cafeteria", tipo:"mixto", address:"Joaquín Suárez 3640", neighborhood:"Prado", phone:"2336 7144", desc:"Cafetería con opciones sin TACC." },
+  { slug:"la-otra", name:"La Otra", category:"restaurante", tipo:"mixto", address:"Tomás Diago 758", neighborhood:"Pocitos", phone:"2711 3006", desc:"Parrilla con opciones para celíacos." },
+  { slug:"locos-de-asar", name:"Locos de Asar", category:"restaurante", tipo:"mixto", address:"San José 1065", neighborhood:"Centro", phone:"2900 8127", desc:"Parrilla y sopas con opciones sin gluten. Martes a domingo, 11:30 a 00:30." },
+  { slug:"heladeria-las-delicias", name:"Las Delicias", category:"heladeria", tipo:"mixto", address:"21 de Setiembre 2837", neighborhood:"Punta Carretas", phone:"2710 9857", desc:"Heladería con opciones aptas. Avisá en mostrador que sos celíaco/a." },
+  { slug:"los-trovadores", name:"Los Trovadores", category:"heladeria", tipo:"mixto", address:"Gabriel Pereira 3202", neighborhood:"Pocitos", phone:"2707 5165", desc:"Heladería con opciones aptas, incluida la cassatta. Avisá en mostrador." },
+  { slug:"artesania-pastelera", name:"Artesanía Pastelera", category:"panaderia", tipo:"mixto", address:"Av. Rivera 3431", neighborhood:"Pocitos", phone:"099 451 099", desc:"Tortas, bombones y dulces. Venta en local y por encargo." }
+];
+const CATEGORY_LABEL = { restaurante:"Restaurante", cafeteria:"Cafetería", panaderia:"Panadería", heladeria:"Heladería", rotiseria:"Rotisería" };

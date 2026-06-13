@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlutenGo — Encontrá lugares donde comer tranquilo</title>
+<meta name="description" content="Directorio de lugares para comer sin gluten en Montevideo, Uruguay. Restaurantes, panaderías y cafeterías aptas para celíacos, con validación de la comunidad.">
+<meta property="og:title" content="GlutenGo — Tu mapa de confianza sin gluten">
+<meta property="og:description" content="Encontrá dónde comer tranquilo en Uruguay. Directorio sin gluten validado por la comunidad celíaca.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_UY">
+<meta name="theme-color" content="#166534">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23166534'/><text x='50' y='66' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>G</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF5EC; --paper:#FFFDF8; --ink:#22201B; --muted:#7A7468;
+    --green:#166534; --green-deep:#0E3D22; --green-soft:#DCEFE0;
+    --terra:#C4654A; --amber:#E8A93C; --amber-soft:#FBEED3;
+    --display:'Fraunces',serif; --body:'DM Sans',sans-serif;
+    --r:22px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--body);background:var(--cream);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+
+  /* HEADER */
+  header{position:sticky;top:0;z-index:50;background:rgba(250,245,236,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,32,27,.07)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+  .logo{font-family:var(--display);font-weight:900;font-size:26px;color:var(--green-deep);text-decoration:none;letter-spacing:-.5px}
+  .logo span{color:var(--terra)}
+  .nav a.cta-mini{background:var(--green);color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:10px 18px;border-radius:999px;transition:transform .2s}
+  .nav a.cta-mini:hover{transform:translateY(-2px)}
+
+  /* HERO */
+  .hero{position:relative;padding:64px 0 84px;overflow:hidden}
+  .blob{position:absolute;border-radius:52% 48% 61% 39%/55% 46% 54% 45%;filter:blur(2px);z-index:-1}
+  .blob.b1{width:420px;height:420px;background:var(--green-soft);top:-130px;right:-140px;animation:drift 14s ease-in-out infinite alternate}
+  .blob.b2{width:280px;height:280px;background:var(--amber-soft);bottom:-90px;left:-110px;animation:drift 18s ease-in-out infinite alternate-reverse}
+  @keyframes drift{from{transform:translate(0,0) rotate(0)}to{transform:translate(24px,18px) rotate(8deg)}}
+  .kicker{display:inline-block;background:var(--ink);color:var(--cream);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:7px 14px;border-radius:6px;transform:rotate(-2deg)}
+  .hero h1{font-family:var(--display);font-weight:900;font-size:clamp(46px,9vw,92px);line-height:.98;letter-spacing:-.02em;margin-top:22px}
+  .hero h1 em{font-style:italic;color:var(--green)}
+  .hero h1 .under{position:relative;white-space:nowrap}
+  .hero h1 .under::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:.18em;background:var(--amber);z-index:-1;transform:rotate(-1deg)}
+  .hero p.lead{max-width:520px;font-size:19px;color:var(--muted);margin-top:20px}
+  .hero .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+  .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:16px;padding:16px 28px;border-radius:14px;transition:transform .2s,box-shadow .2s}
+  .btn:hover{transform:translateY(-3px)}
+  .btn.solid{background:var(--green);color:#fff;box-shadow:0 8px 24px rgba(22,101,52,.28)}
+  .btn.line{border:2px solid var(--ink);color:var(--ink)}
+  .stats{display:flex;gap:22px;flex-wrap:wrap;margin-top:42px}
+  .stat{transform:rotate(-1deg)}
+  .stat b{font-family:var(--display);font-weight:900;font-size:34px;color:var(--green-deep);display:block;line-height:1}
+  .stat small{font-size:13px;color:var(--muted)}
+  .stat:nth-child(2){transform:rotate(1.5deg)}
+  .stat:nth-child(3){transform:rotate(-1deg)}
+
+  /* SEMAFORO STRIP */
+  .strip{background:var(--green-deep);color:var(--cream);padding:18px 0;transform:rotate(-1.2deg) scale(1.02);margin:8px -10px}
+  .strip .inner{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;font-size:14px;font-weight:600}
+  .strip i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px}
+
+  /* SECTIONS */
+  section{padding:72px 0 0}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+  h2{font-family:var(--display);font-weight:900;font-size:clamp(30px,5vw,46px);letter-spacing:-.02em}
+  h2 em{font-style:italic;color:var(--terra)}
+  .sec-head p{color:var(--muted);font-size:15px}
+
+  /* RAIL 100% GF */
+  .rail{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:18px 4px 26px;-webkit-overflow-scrolling:touch}
+  .rail::-webkit-scrollbar{height:6px}
+  .rail::-webkit-scrollbar-thumb{background:var(--green-soft);border-radius:99px}
+  .rcard{scroll-snap-align:start;flex:0 0 240px;background:var(--green-deep);color:var(--cream);border-radius:var(--r);padding:22px;text-decoration:none;position:relative;transition:transform .25s;display:block}
+  .rcard:hover{transform:translateY(-6px) rotate(-1deg)}
+  .rcard .emoji{font-size:38px}
+  .rcard h3{font-family:var(--display);font-weight:700;font-size:21px;margin-top:12px;line-height:1.15;color:#fff}
+  .rcard p{font-size:13px;color:#BBD8C2;margin-top:6px}
+  .rcard .sello{position:absolute;top:14px;right:14px;background:var(--amber);color:var(--ink);font-size:10px;font-weight:800;letter-spacing:.06em;padding:5px 9px;border-radius:6px;transform:rotate(6deg)}
+  .rail-hint{font-size:12px;color:var(--muted);text-align:right;margin-top:-16px}
+
+  /* DIRECTORIO */
+  .toolbar{position:sticky;top:62px;z-index:40;background:var(--cream);padding:12px 0 10px}
+  .search{width:100%;border:2px solid var(--ink);border-radius:14px;padding:15px 18px;font-size:16px;font-family:var(--body);background:var(--paper)}
+  .search:focus{outline:4px solid var(--green-soft)}
+  .chips{display:flex;gap:8px;flex-wrap:nowrap;overflow-x:auto;margin-top:12px;padding-bottom:4px}
+  .chip{flex:0 0 auto;border:1.5px solid var(--ink);background:var(--paper);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;transition:all .15s;font-family:var(--body)}
+  .chip:hover{transform:translateY(-2px)}
+  .chip.on{background:var(--ink);color:var(--cream)}
+  .count{font-size:13px;color:var(--muted);margin:14px 2px 6px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;padding-bottom:8px}
+  .pcard{background:var(--paper);border:1.5px solid rgba(34,32,27,.12);border-radius:var(--r);padding:20px;text-decoration:none;color:inherit;position:relative;transition:transform .22s,box-shadow .22s;display:flex;gap:14px}
+  .pcard:hover{transform:translateY(-5px);box-shadow:0 14px 30px rgba(34,32,27,.10);border-color:var(--green)}
+  .pcard .avatar{flex:0 0 52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;background:var(--green-soft)}
+  .pcard.mx .avatar{background:var(--amber-soft)}
+  .pcard h3{font-family:var(--display);font-weight:700;font-size:19px;line-height:1.15}
+  .pcard .meta{font-size:13px;color:var(--muted);margin-top:4px}
+  .pcard .tag{display:inline-block;margin-top:10px;font-size:10px;font-weight:800;letter-spacing:.07em;padding:4px 10px;border-radius:6px;transform:rotate(-1.5deg)}
+  .pcard .tag.ex{background:var(--green);color:#fff}
+  .pcard .tag.mx{background:var(--amber);color:var(--ink)}
+  .empty{color:var(--muted);padding:30px 4px;font-size:15px}
+  .note{background:var(--amber-soft);border:1.5px dashed var(--amber);border-radius:var(--r);padding:18px 20px;font-size:14px;color:#6b4a12;margin-top:26px}
+
+  /* PASOS */
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:26px}
+  .step{background:var(--paper);border:1.5px solid rgba(34,32,27,.12);border-radius:var(--r);padding:24px}
+  .step:nth-child(2){transform:rotate(.8deg)}
+  .step:nth-child(3){transform:rotate(-.8deg)}
+  .step .n{font-family:var(--display);font-weight:900;font-size:44px;color:var(--terra);line-height:1}
+  .step h3{font-family:var(--display);font-size:20px;margin-top:10px}
+  .step p{font-size:14px;color:var(--muted);margin-top:6px}
+
+  /* CTA LISTA */
+  .cta-panel{position:relative;background:var(--green-deep);color:var(--cream);border-radius:30px;padding:46px 30px;margin-top:80px;overflow:hidden}
+  .cta-panel .blob{width:300px;height:300px;background:rgba(232,169,60,.18);top:-90px;right:-80px}
+  .cta-panel .sello-beta{position:absolute;top:22px;right:22px;background:var(--amber);color:var(--ink);font-weight:800;font-size:12px;letter-spacing:.08em;padding:8px 14px;border-radius:8px;transform:rotate(7deg)}
+  .cta-panel h2{color:#fff}
+  .cta-panel p{color:#BBD8C2;font-size:16px;margin-top:10px;max-width:480px}
+  form{display:flex;flex-direction:column;gap:12px;margin-top:24px;max-width:440px}
+  input[type=email]{border:0;border-radius:14px;padding:16px 18px;font-size:16px;font-family:var(--body)}
+  input[type=email]:focus{outline:4px solid rgba(232,169,60,.5)}
+  .check{display:flex;align-items:center;gap:9px;font-size:14px;color:#BBD8C2}
+  button{border:0;border-radius:14px;padding:16px;font-size:16px;font-weight:800;background:var(--amber);color:var(--ink);cursor:pointer;font-family:var(--body);transition:transform .2s}
+  button:hover{transform:translateY(-3px)}
+
+  footer{margin-top:70px;border-top:1.5px solid rgba(34,32,27,.1);padding:30px 0 46px;text-align:center;font-size:12.5px;color:var(--muted)}
+  footer p+p{margin-top:8px}
+  @media (max-width:640px){
+    .hero{padding:42px 0 60px}
+    .toolbar{top:58px}
+    .grid{grid-template-columns:1fr}
+    .rcard{flex-basis:210px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="/">Gluten<span>Go</span></a>
+    <a class="cta-mini" href="#lista">Quiero la beta</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div class="wrap">
+    <span class="kicker">Montevideo · Uruguay</span>
+    <h1>Comé<br><em>tranquilo</em>,<br><span class="under">sin gluten.</span></h1>
+    <p class="lead">El directorio hecho con la comunidad celíaca: lugares reales, protocolos y experiencias de gente que entiende lo que te jugás en cada plato.</p>
+    <div class="actions">
+      <a class="btn solid" href="#directorio">Explorar lugares</a>
+      <a class="btn line" href="#como">¿Cómo funciona?</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="st-total">23</b><small>lugares relevados</small></div>
+      <div class="stat"><b id="st-ex">9</b><small>locales 100% sin gluten</small></div>
+      <div class="stat"><b>0%</b><small>comercios pagan por aparecer</small></div>
+    </div>
+  </div>
+</section>
+
+<div class="strip"><div class="inner wrap">
+  <span><i style="background:#4ade80"></i>Comé tranquilo</span>
+  <span><i style="background:#facc15"></i>Consultá antes</span>
+  <span><i style="background:#f87171"></i>Requiere validación</span>
+</div></div>
+
+<section id="exclusivos">
+  <div class="wrap">
+    <div class="sec-head" data-aos="fade-up">
+      <h2>100% <em>sin gluten</em></h2>
+      <p>Locales con cocina exclusiva. Cero contaminación cruzada por diseño.</p>
+    </div>
+  </div>
+  <div class="wrap"><div class="rail" id="rail"></div><p class="rail-hint">Deslizá para ver más →</p></div>
+</section>
+
+<section id="directorio">
+  <div class="wrap">
+    <div class="sec-head" data-aos="fade-up">
+      <h2>El <em>directorio</em></h2>
+      <p>Buscá por nombre, barrio o tipo de local.</p>
+    </div>
+    <div class="toolbar">
+      <input class="search" id="q" type="search" placeholder="¿Dónde querés comer hoy? Probá “Pocitos” o “pizza”…" aria-label="Buscar">
+      <div class="chips" id="chips"></div>
+    </div>
+    <p class="count" id="count"></p>
+    <div class="grid" id="list"></div>
+    <div class="note"><strong>En validación:</strong> directorio inicial compilado de fuentes públicas de la comunidad celíaca uruguaya. Llamá antes de ir, sobre todo a los de cocina mixta. Pronto vas a poder registrar tu visita y construir el GlutenGo Score.</div>
+  </div>
+</section>
+
+<section id="como">
+  <div class="wrap">
+    <div class="sec-head" data-aos="fade-up"><h2>Cómo va a <em>funcionar</em></h2></div>
+    <div class="steps">
+      <div class="step" data-aos="fade-up" data-aos-delay="0"><span class="n">1</span><h3>Buscás</h3><p>Restaurantes, panaderías, heladerías y más, por barrio o por antojo.</p></div>
+      <div class="step" data-aos="fade-up" data-aos-delay="100"><span class="n">2</span><h3>Mirás el Score</h3><p>Un índice de 0 a 100 construido solo con visitas reales de personas celíacas.</p></div>
+      <div class="step" data-aos="fade-up" data-aos-delay="200"><span class="n">3</span><h3>Aportás</h3><p>Registrás tu visita en menos de un minuto y le ahorrás la duda al resto.</p></div>
+    </div>
+
+    <div class="cta-panel" id="lista" data-aos="zoom-in-up">
+      <div class="blob"></div>
+      <span class="sello-beta">BETA</span>
+      <h2>Sé de la primera tanda</h2>
+      <p>Estamos armando la beta con la comunidad celíaca de Montevideo, Canelones y Maldonado. Dejá tu email y entrás antes que nadie.</p>
+      <form name="lista-espera" method="POST" action="/gracias.html" data-netlify="true">
+        <input type="hidden" name="form-name" value="lista-espera">
+        <input type="email" name="email" required placeholder="tu@email.com" aria-label="Tu email">
+        <label class="check"><input type="checkbox" name="es_celiaco" value="si"> Soy celíaco/a o sensible al gluten</label>
+        <button type="submit">Quiero entrar a la beta</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>GlutenGo muestra información aportada por la comunidad y fuentes públicas. No constituye garantía sanitaria ni consejo médico: ante dudas, consultá siempre en el establecimiento.</p>
+    <p>© 2026 GlutenGo · Hecho en Uruguay 🇺🇾</p>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+(function(){
+  var EMOJI = { restaurante:"🍽️", cafeteria:"☕", panaderia:"🥖", heladeria:"🍦", rotiseria:"🥘" };
+  var q = document.getElementById('q'), list = document.getElementById('list'),
+      chipsEl = document.getElementById('chips'), countEl = document.getElementById('count'),
+      rail = document.getElementById('rail');
+  document.getElementById('st-total').textContent = PLACES.length;
+  document.getElementById('st-ex').textContent = PLACES.filter(function(p){return p.tipo==='exclusivo';}).length;
+
+  rail.innerHTML = PLACES.filter(function(p){ return p.tipo==='exclusivo'; }).map(function(p,i){
+    return '<a class="rcard" href="lugar.html?l='+p.slug+'" data-aos="fade-left" data-aos-delay="'+(i*60)+'">'
+      + '<span class="sello">100% GF</span>'
+      + '<div class="emoji">'+(EMOJI[p.category]||'🍽️')+'</div>'
+      + '<h3>'+p.name+'</h3><p>'+CATEGORY_LABEL[p.category]+' · '+p.neighborhood+'</p></a>';
+  }).join('');
+
+  var filters = [
+    {key:'todos', label:'Todos'},
+    {key:'exclusivo', label:'✓ 100% sin gluten'},
+    {key:'restaurante', label:'🍽️ Restaurantes'},
+    {key:'cafeteria', label:'☕ Cafeterías'},
+    {key:'panaderia', label:'🥖 Panaderías'},
+    {key:'rotiseria', label:'🥘 Rotiserías'},
+    {key:'heladeria', label:'🍦 Heladerías'}
+  ];
+  var active = 'todos';
+  function norm(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+
+  function render(){
+    var term = norm(q.value);
+    var rows = PLACES.filter(function(p){
+      var okFilter = active==='todos' || p.tipo===active || p.category===active;
+      var hay = norm(p.name+' '+p.neighborhood+' '+p.address+' '+CATEGORY_LABEL[p.category]+' '+p.desc);
+      return okFilter && (!term || hay.indexOf(term)>-1);
+    });
+    countEl.textContent = rows.length + ' lugar' + (rows.length===1?'':'es') + (active!=='todos'||term ? ' encontrados' : ' en Montevideo');
+    list.innerHTML = rows.map(function(p){
+      return '<a class="pcard '+(p.tipo==='exclusivo'?'ex':'mx')+'" href="lugar.html?l='+p.slug+'">'
+        + '<div class="avatar">'+(EMOJI[p.category]||'🍽️')+'</div>'
+        + '<div><h3>'+p.name+'</h3>'
+        + '<div class="meta">'+CATEGORY_LABEL[p.category]+' · '+p.neighborhood+'</div>'
+        + '<span class="tag '+(p.tipo==='exclusivo'?'ex':'mx')+'">'+(p.tipo==='exclusivo'?'100% SIN GLUTEN':'COCINA MIXTA')+'</span>'
+        + '</div></a>';
+    }).join('') || '<p class="empty">Nada por acá con esa búsqueda. Probá con otro barrio u otra categoría 🤔</p>';
+  }
+
+  chipsEl.innerHTML = filters.map(function(f){
+    return '<button type="button" class="chip'+(f.key===active?' on':'')+'" data-k="'+f.key+'">'+f.label+'</button>';
+  }).join('');
+  chipsEl.addEventListener('click', function(e){
+    var b = e.target.closest('.chip'); if(!b) return;
+    active = b.dataset.k;
+    chipsEl.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c.dataset.k===active); });
+    render();
+  });
+  q.addEventListener('input', render);
+  render();
+  if (window.AOS) AOS.init({ duration:650, once:true, offset:60 });
+})();
+</script>
+</body>
+</html>

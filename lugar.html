@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlutenGo — Ficha del lugar</title>
+<meta name="description" content="Ficha de establecimiento en el directorio sin gluten de GlutenGo Uruguay.">
+<meta name="theme-color" content="#166534">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23166534'/><text x='50' y='66' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>G</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF5EC; --paper:#FFFDF8; --ink:#22201B; --muted:#7A7468;
+    --green:#166534; --green-deep:#0E3D22; --green-soft:#DCEFE0;
+    --terra:#C4654A; --amber:#E8A93C; --amber-soft:#FBEED3;
+    --display:'Fraunces',serif; --body:'DM Sans',sans-serif; --r:22px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--body);background:var(--cream);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px 60px}
+  header{position:sticky;top:0;z-index:50;background:rgba(250,245,236,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,32,27,.07)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;max-width:640px;margin:0 auto;padding-left:20px;padding-right:20px}
+  .logo{font-family:var(--display);font-weight:900;font-size:26px;color:var(--green-deep);text-decoration:none;letter-spacing:-.5px}
+  .logo span{color:var(--terra)}
+  .back{font-size:14px;color:var(--green);text-decoration:none;font-weight:700}
+  .hero-card{position:relative;background:var(--paper);border:1.5px solid rgba(34,32,27,.12);border-radius:28px;padding:30px 26px;margin-top:26px;overflow:hidden;animation:pop .5s ease both}
+  @keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .blob{position:absolute;border-radius:52% 48% 61% 39%/55% 46% 54% 45%;z-index:0}
+  .blob.g{width:220px;height:220px;background:var(--green-soft);top:-80px;right:-70px}
+  .hero-card>*{position:relative;z-index:1}
+  .avatar{width:72px;height:72px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:38px;background:var(--green-soft);transform:rotate(-3deg)}
+  .mx .avatar{background:var(--amber-soft)}
+  h1{font-family:var(--display);font-weight:900;font-size:clamp(32px,7vw,44px);line-height:1.02;letter-spacing:-.02em;margin-top:16px}
+  .meta{color:var(--muted);font-size:15px;margin-top:8px}
+  .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.07em;padding:6px 13px;border-radius:7px;margin-top:14px;transform:rotate(-1.5deg)}
+  .tag.ex{background:var(--green);color:#fff}
+  .tag.mx{background:var(--amber);color:var(--ink)}
+  .desc{margin-top:16px;font-size:16px;color:#46423b}
+  .row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+  .btn{flex:1;min-width:140px;text-align:center;text-decoration:none;font-weight:700;font-size:15px;padding:15px 12px;border-radius:14px;transition:transform .2s}
+  .btn:hover{transform:translateY(-3px)}
+  .btn.primary{background:var(--green);color:#fff;box-shadow:0 8px 22px rgba(22,101,52,.25)}
+  .btn.ghost{border:2px solid var(--ink);color:var(--ink)}
+  .score{margin-top:22px;background:var(--cream);border:1.5px dashed rgba(34,32,27,.25);border-radius:18px;padding:20px;text-align:center}
+  .score .pin{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--muted);font-family:var(--display);font-size:18px}
+  .score .pin i{width:13px;height:13px;border-radius:50%;background:#d6d3d1;display:inline-block}
+  .score p{font-size:13.5px;color:var(--muted);margin-top:8px}
+  .warn{background:var(--amber-soft);border:1.5px dashed var(--amber);border-radius:16px;padding:15px 17px;font-size:14px;color:#6b4a12;margin-top:16px}
+  .cta{position:relative;background:var(--green-deep);color:#fff;border-radius:24px;padding:28px 24px;margin-top:22px;text-align:center;overflow:hidden}
+  .cta .blob{width:180px;height:180px;background:rgba(232,169,60,.18);bottom:-70px;left:-60px}
+  .cta p{position:relative;font-size:15px;color:#BBD8C2}
+  .cta strong{color:#fff;font-family:var(--display);font-size:18px}
+  .cta a{position:relative;display:inline-block;margin-top:14px;background:var(--amber);color:var(--ink);font-weight:800;text-decoration:none;padding:13px 26px;border-radius:13px;transition:transform .2s}
+  .cta a:hover{transform:translateY(-3px)}
+  footer{border-top:1.5px solid rgba(34,32,27,.1);padding:24px 0;text-align:center;font-size:12px;color:var(--muted);max-width:640px;margin:40px auto 0}
+</style>
+</head>
+<body>
+<header><div class="nav">
+  <a class="logo" href="/">Gluten<span>Go</span></a>
+  <a class="back" href="/#directorio">← Directorio</a>
+</div></header>
+<div class="wrap"><div id="ficha"></div></div>
+<footer><p>Información de fuentes públicas, sin validación comunitaria todavía. No constituye garantía sanitaria.</p></footer>
+<script src="data.js"></script>
+<script>
+(function(){
+  var EMOJI = { restaurante:"🍽️", cafeteria:"☕", panaderia:"🥖", heladeria:"🍦", rotiseria:"🥘" };
+  var slug = new URLSearchParams(location.search).get('l');
+  var p = PLACES.find(function(x){ return x.slug===slug; });
+  var el = document.getElementById('ficha');
+  if(!p){
+    el.innerHTML = '<div class="hero-card"><h1>No encontramos ese lugar</h1><p class="meta">Volvé al directorio para ver todos los lugares.</p><div class="row"><a class="btn primary" href="/#directorio">Ir al directorio</a></div></div>';
+    return;
+  }
+  document.title = 'GlutenGo — ' + p.name;
+  var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p.name + ' ' + p.address + ' Montevideo Uruguay');
+  var telBtn = p.phone ? '<a class="btn ghost" href="tel:+598'+p.phone.replace(/[^0-9]/g,'')+'">📞 Llamar</a>' : '';
+  el.innerHTML =
+    '<div class="hero-card '+(p.tipo==='exclusivo'?'ex':'mx')+'">'
+    + '<div class="blob g"></div>'
+    + '<div class="avatar">'+(EMOJI[p.category]||'🍽️')+'</div>'
+    + '<h1>'+p.name+'</h1>'
+    + '<div class="meta">'+CATEGORY_LABEL[p.category]+' · '+p.neighborhood+'<br>'+p.address+(p.phone ? ' · Tel: '+p.phone : '')+'</div>'
+    + '<span class="tag '+(p.tipo==='exclusivo'?'ex':'mx')+'">'+(p.tipo==='exclusivo'?'LOCAL 100% SIN GLUTEN':'COCINA MIXTA — CONSULTAR PROTOCOLOS')+'</span>'
+    + '<p class="desc">'+p.desc+'</p>'
+    + '<div class="row"><a class="btn primary" href="'+mapsUrl+'" target="_blank" rel="noopener">📍 Cómo llegar</a>'+telBtn+'</div>'
+    + '<div class="score"><span class="pin"><i></i>Score: requiere validación</span>'
+    + '<p>Ningún usuario registró todavía una visita acá. El GlutenGo Score se construye solo con experiencias reales de celíacos.</p></div>'
+    + (p.tipo==='mixto' ? '<div class="warn"><strong>Cocina mixta:</strong> llamá antes de ir y avisá que sos celíaco/a. Preguntá por separación de utensilios y superficies.</div>' : '')
+    + '</div>'
+    + '<div class="cta"><div class="blob"></div><p><strong>¿Estuviste en '+p.name+'?</strong><br>Muy pronto vas a poder registrar tu visita y ayudar a toda la comunidad.</p>'
+    + '<a href="/#lista">Avisame cuando se pueda</a></div>';
+})();
+</script>
+</body>
+</html>

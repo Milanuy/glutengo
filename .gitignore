@@ -1,0 +1,17 @@
+# Node (para cuando migremos a Next.js en Fase 3)
+node_modules/
+.next/
+.env
+.env.local
+.env*.local
+
+# Supabase local
+.supabase/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
