@@ -472,7 +472,7 @@
       <h2 class="section-title">Locales 100% Sin Gluten</h2>
       <p class="section-sub">En estos lugares todo el menú es libre de gluten. Sin contaminación cruzada.</p>
     </div>
-    <div class="rail" id="rail-exclusivos" data-aos="fade-up" data-aos-delay="100"></div>
+    <div class="rail" id="rail-exclusivos"></div>
   </section>
 
   <!-- ── DIRECTORIO ───────────────────────────────────────────── -->
@@ -494,7 +494,7 @@
       <button class="chip" data-filter="Carrasco" onclick="setDirFilter(this,'Carrasco')">Carrasco</button>
     </div>
 
-    <div class="dir-grid" id="dir-grid" data-aos="fade-up" data-aos-delay="100"></div>
+    <div class="dir-grid" id="dir-grid"></div>
   </section>
 
   <!-- ── CÓMO FUNCIONA ─────────────────────────────────────────── -->
@@ -782,4 +782,5 @@
   function handleWaitlist(e){
     e.preventDefault();
     var form   = e.target;
-    var email  = form
+    var email  = form.querySelector('input[name="email"]').value.trim();
+    var btn    = form.queryS
