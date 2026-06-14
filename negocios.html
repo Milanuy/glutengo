@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Registrá tu local — GlutenGo</title>
-  <meta name="description" content="Hacé que tu restaurante, cafetería o panadería sin gluten aparezca en GlutenGo. Llegá a toda la comunidad celíaca de Uruguay." />
+  <title>GlutenGo para negocios — Llegá a 50.000 celíacos en Uruguay</title>
+  <meta name="description" content="Registrá tu restaurante, cafetería o panadería en GlutenGo y llegá a toda la comunidad celíaca de Uruguay. El cliente más fiel del mercado gastronómico." />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#166534" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700..900;1,9..144,700..900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -12,7 +12,7 @@
     :root{
       --cream:#FAF5EC;--green:#166534;--green-deep:#0E3D22;
       --green-light:#DCFCE7;--amber:#E8A93C;--terra:#C4654A;
-      --gray:#6B7280;--gray-light:#F3F4F6;--border:#E5E7EB;
+      --gray:#6B7280;--gray-light:#F9FAFB;--border:#E5E7EB;
       --radius:14px;--shadow:0 2px 16px rgba(0,0,0,.07);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -29,134 +29,287 @@
     }
     .logo{font-family:'Fraunces',Georgia,serif;font-size:1.4rem;font-weight:900;color:#fff;text-decoration:none}
     .logo span{color:var(--amber)}
-    .header-back{color:rgba(255,255,255,.8);text-decoration:none;font-size:.9rem;display:flex;align-items:center;gap:.35rem;transition:opacity .2s}
-    .header-back:hover{opacity:1;color:#fff}
+    .header-nav{display:flex;align-items:center;gap:1.25rem}
+    .header-link{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:color .2s}
+    .header-link:hover{color:#fff}
+    .header-cta{
+      background:var(--amber);color:var(--green-deep);
+      font-weight:700;font-size:.85rem;
+      padding:.5rem 1.1rem;border-radius:10px;
+      text-decoration:none;transition:opacity .2s;
+    }
+    .header-cta:hover{opacity:.9}
 
     /* ── HERO */
     .hero{
       background:var(--green-deep);color:#fff;
-      padding:3.5rem 1.25rem 5rem;
+      padding:4rem 1.25rem 5.5rem;
       text-align:center;position:relative;overflow:hidden;
     }
     .hero::before{
       content:'';position:absolute;inset:0;
-      background:radial-gradient(ellipse at 60% 0%,rgba(232,169,60,.18) 0%,transparent 65%);
+      background:
+        radial-gradient(ellipse at 70% 0%,rgba(232,169,60,.20) 0%,transparent 60%),
+        radial-gradient(ellipse at 20% 100%,rgba(22,101,52,.5) 0%,transparent 60%);
       pointer-events:none;
     }
+    .hero-inner{position:relative;max-width:700px;margin:0 auto}
     .hero-eyebrow{
-      display:inline-block;
-      background:rgba(232,169,60,.18);
+      display:inline-flex;align-items:center;gap:.5rem;
+      background:rgba(232,169,60,.15);
       border:1px solid rgba(232,169,60,.35);
       color:var(--amber);
-      font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-      padding:.35rem .9rem;border-radius:20px;margin-bottom:1.25rem;
+      font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      padding:.35rem .9rem;border-radius:20px;margin-bottom:1.5rem;
     }
     .hero h1{
       font-family:'Fraunces',Georgia,serif;
-      font-size:clamp(2rem,6vw,3rem);
-      font-weight:900;line-height:1.1;margin-bottom:1rem;
+      font-size:clamp(2.2rem,6vw,3.4rem);
+      font-weight:900;line-height:1.08;margin-bottom:1.25rem;
     }
-    .hero p{font-size:1.1rem;opacity:.85;line-height:1.65;max-width:520px;margin:0 auto 2rem}
-    .hero-cta{
+    .hero h1 em{color:var(--amber);font-style:normal}
+    .hero-sub{font-size:1.1rem;opacity:.82;line-height:1.7;max-width:540px;margin:0 auto 2.25rem}
+    .hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+    .btn-primary{
       display:inline-block;
       background:var(--amber);color:var(--green-deep);
-      font-weight:700;font-size:1.05rem;
-      padding:1rem 2.25rem;border-radius:14px;
+      font-weight:700;font-size:1rem;
+      padding:.9rem 2rem;border-radius:14px;
       text-decoration:none;
-      box-shadow:0 4px 16px rgba(232,169,60,.35);
+      box-shadow:0 4px 20px rgba(232,169,60,.4);
       transition:transform .15s,box-shadow .15s;
     }
-    .hero-cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,169,60,.4)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,169,60,.45)}
+    .btn-ghost{
+      display:inline-block;
+      background:rgba(255,255,255,.1);
+      border:1.5px solid rgba(255,255,255,.25);
+      color:#fff;font-weight:600;font-size:1rem;
+      padding:.9rem 2rem;border-radius:14px;
+      text-decoration:none;transition:background .2s;
+    }
+    .btn-ghost:hover{background:rgba(255,255,255,.17)}
 
     /* Stats bar */
     .stats-bar{
-      display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;
-      margin-top:3rem;padding-top:2rem;
-      border-top:1px solid rgba(255,255,255,.12);
+      display:flex;justify-content:center;gap:0;flex-wrap:nowrap;
+      margin-top:3.5rem;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:16px;
+      overflow:hidden;
     }
-    .stat-item{text-align:center}
-    .stat-num{font-family:'Fraunces',Georgia,serif;font-size:2rem;font-weight:900;color:var(--amber)}
-    .stat-label{font-size:.8rem;opacity:.65;margin-top:.2rem}
-
-    /* ── SECCIONES GENÉRICAS */
-    .section{padding:3rem 1.25rem;max-width:860px;margin:0 auto}
-    .section-label{display:block;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem}
-    .section-title{font-family:'Fraunces',Georgia,serif;font-size:clamp(1.5rem,4vw,2.2rem);font-weight:900;line-height:1.15;margin-bottom:.75rem}
-    .section-desc{font-size:1rem;color:var(--gray);line-height:1.65;margin-bottom:2rem}
-
-    /* ── VENTAJAS */
-    .benefits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;margin-top:1.5rem}
-    .benefit-card{
-      background:#fff;border-radius:var(--radius);
-      padding:1.5rem;box-shadow:var(--shadow);
-      border-left:4px solid var(--green);
+    .stat-item{
+      flex:1;text-align:center;
+      padding:1.25rem .75rem;
+      border-right:1px solid rgba(255,255,255,.1);
     }
-    .benefit-icon{font-size:2rem;margin-bottom:.75rem}
-    .benefit-card h3{font-size:1rem;font-weight:700;margin-bottom:.4rem;color:var(--green-deep)}
-    .benefit-card p{font-size:.88rem;color:var(--gray);line-height:1.55}
+    .stat-item:last-child{border-right:none}
+    .stat-num{font-family:'Fraunces',Georgia,serif;font-size:1.8rem;font-weight:900;color:var(--amber)}
+    .stat-label{font-size:.75rem;opacity:.6;margin-top:.2rem;line-height:1.3}
+
+    /* ── PROBLEM / WHY SECTION */
+    .why-section{
+      background:#fff;padding:3.5rem 1.25rem;
+      border-bottom:1px solid var(--border);
+    }
+    .why-inner{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
+    @media(max-width:640px){.why-inner{grid-template-columns:1fr;gap:2rem}}
+    .why-label{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem}
+    .why-title{font-family:'Fraunces',Georgia,serif;font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;line-height:1.15;margin-bottom:1rem;color:var(--green-deep)}
+    .why-body{color:var(--gray);line-height:1.7;font-size:.97rem}
+    .why-body p+p{margin-top:.75rem}
+    .why-highlights{display:flex;flex-direction:column;gap:.85rem}
+    .highlight-item{
+      background:var(--green-light);
+      border-radius:12px;
+      padding:1rem 1.25rem;
+      display:flex;gap:.85rem;align-items:flex-start;
+    }
+    .highlight-icon{font-size:1.6rem;flex-shrink:0;line-height:1}
+    .highlight-item h4{font-size:.95rem;font-weight:700;color:var(--green-deep);margin-bottom:.2rem}
+    .highlight-item p{font-size:.84rem;color:var(--gray);line-height:1.5}
+
+    /* ── CÓMO FUNCIONA */
+    .how-section{padding:3.5rem 1.25rem;background:var(--gray-light)}
+    .how-inner{max-width:860px;margin:0 auto}
+    .section-header{text-align:center;margin-bottom:2.5rem}
+    .section-label{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem}
+    .section-title{font-family:'Fraunces',Georgia,serif;font-size:clamp(1.5rem,4vw,2.2rem);font-weight:900;line-height:1.15;color:var(--green-deep)}
+    .section-desc{font-size:1rem;color:var(--gray);line-height:1.65;margin-top:.75rem;max-width:540px;margin-left:auto;margin-right:auto}
+
+    .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-top:1rem}
+    .step{text-align:center;padding:1.5rem 1rem}
+    .step-num{
+      width:48px;height:48px;
+      background:var(--green);color:#fff;
+      border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Fraunces',Georgia,serif;font-size:1.3rem;font-weight:900;
+      margin:0 auto 1rem;
+    }
+    .step h3{font-size:.97rem;font-weight:700;color:var(--green-deep);margin-bottom:.4rem}
+    .step p{font-size:.85rem;color:var(--gray);line-height:1.55}
 
     /* ── PLANES */
-    .planes-section{background:var(--green-deep);padding:3.5rem 1.25rem;color:#fff}
-    .planes-inner{max-width:860px;margin:0 auto}
-    .planes-title{font-family:'Fraunces',Georgia,serif;font-size:clamp(1.5rem,4vw,2rem);font-weight:900;text-align:center;margin-bottom:.5rem}
-    .planes-desc{text-align:center;opacity:.75;margin-bottom:2.5rem;font-size:.95rem}
-    .planes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.25rem;align-items:start}
+    .planes-section{background:var(--green-deep);padding:4rem 1.25rem;color:#fff}
+    .planes-inner{max-width:960px;margin:0 auto}
+
+    .planes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem;align-items:stretch;margin-top:2.5rem}
 
     .plan-card{
-      background:rgba(255,255,255,.07);
+      background:rgba(255,255,255,.06);
       border:1.5px solid rgba(255,255,255,.12);
-      border-radius:18px;
-      padding:1.75rem 1.5rem;
+      border-radius:20px;
+      padding:2rem 1.75rem;
       position:relative;
       transition:transform .2s,border-color .2s;
+      display:flex;flex-direction:column;
     }
-    .plan-card:hover{transform:translateY(-3px)}
+    .plan-card:hover{transform:translateY(-4px)}
     .plan-card.featured{
-      background:rgba(232,169,60,.12);
+      background:rgba(232,169,60,.1);
       border-color:var(--amber);
+    }
+    .plan-popular{
+      position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+      background:var(--amber);color:var(--green-deep);
+      font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+      padding:.3rem .9rem;border-radius:0 0 10px 10px;
+      white-space:nowrap;
     }
     .plan-badge{
       display:inline-block;
-      background:var(--amber);color:var(--green-deep);
-      font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-      padding:.25rem .65rem;border-radius:20px;
+      font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+      padding:.25rem .7rem;border-radius:20px;
       margin-bottom:1rem;
     }
     .plan-badge.free{background:var(--green-light);color:var(--green)}
-    .plan-name{font-family:'Fraunces',Georgia,serif;font-size:1.4rem;font-weight:900;margin-bottom:.3rem}
-    .plan-price{font-size:1.8rem;font-weight:900;margin:.5rem 0 .25rem;color:var(--amber)}
-    .plan-price .price-note{font-size:.75rem;font-weight:400;opacity:.7;display:block;margin-top:.1rem;color:#fff}
-    .plan-features{list-style:none;margin:1rem 0 1.5rem;padding:0}
+    .plan-badge.recommended{background:rgba(232,169,60,.2);color:var(--amber)}
+    .plan-badge.premium{background:rgba(196,101,74,.2);color:#d4795e}
+    .plan-name{font-family:'Fraunces',Georgia,serif;font-size:1.5rem;font-weight:900;margin-bottom:.5rem}
+    .plan-tagline{font-size:.85rem;opacity:.65;margin-bottom:1rem;line-height:1.4}
+    .plan-price{
+      font-size:2.2rem;font-weight:900;color:var(--amber);
+      display:flex;align-items:baseline;gap:.35rem;margin-bottom:1.5rem;
+    }
+    .plan-price .currency{font-size:1.1rem;font-weight:600}
+    .plan-price .period{font-size:.8rem;font-weight:400;opacity:.6;color:#fff}
+    .plan-price-note{font-size:.75rem;opacity:.55;margin-top:-.75rem;margin-bottom:1.25rem}
+    .plan-features{list-style:none;margin:0 0 1.5rem;padding:0;flex:1}
     .plan-features li{
-      display:flex;align-items:flex-start;gap:.5rem;
-      font-size:.88rem;opacity:.85;padding:.3rem 0;
+      display:flex;align-items:flex-start;gap:.6rem;
+      font-size:.88rem;opacity:.9;padding:.4rem 0;
       border-bottom:1px solid rgba(255,255,255,.07);
+      line-height:1.4;
     }
     .plan-features li:last-child{border-bottom:none}
-    .plan-features li::before{content:'✓';color:var(--amber);font-weight:700;flex-shrink:0}
+    .check{color:var(--amber);font-weight:700;flex-shrink:0;margin-top:.05rem}
     .plan-cta{
       display:block;text-align:center;
-      background:rgba(255,255,255,.12);
-      border:1.5px solid rgba(255,255,255,.25);
-      color:#fff;font-weight:700;font-size:.9rem;
-      padding:.75rem;border-radius:10px;
+      padding:.85rem;border-radius:12px;
+      font-weight:700;font-size:.95rem;
       text-decoration:none;cursor:pointer;
-      transition:background .2s;
+      border:none;font-family:inherit;
+      transition:background .2s,transform .15s;
     }
-    .plan-cta:hover{background:rgba(255,255,255,.2)}
-    .plan-cta.featured{background:var(--amber);color:var(--green-deep);border-color:var(--amber)}
-    .plan-cta.featured:hover{background:#d4941f}
+    .plan-cta.ghost{
+      background:rgba(255,255,255,.1);
+      border:1.5px solid rgba(255,255,255,.2);
+      color:#fff;
+    }
+    .plan-cta.ghost:hover{background:rgba(255,255,255,.2)}
+    .plan-cta.primary{background:var(--amber);color:var(--green-deep)}
+    .plan-cta.primary:hover{background:#d4941f;transform:translateY(-1px)}
+
+    /* ── TABLA COMPARATIVA */
+    .compare-section{padding:3.5rem 1.25rem;background:#fff}
+    .compare-inner{max-width:860px;margin:0 auto}
+    .compare-table{width:100%;border-collapse:collapse;margin-top:2rem;font-size:.9rem}
+    .compare-table th{
+      padding:.9rem 1rem;text-align:left;
+      background:var(--green-deep);color:#fff;
+      font-weight:700;
+    }
+    .compare-table th:first-child{border-radius:12px 0 0 0}
+    .compare-table th:last-child{border-radius:0 12px 0 0}
+    .compare-table th.center{text-align:center}
+    .compare-table td{
+      padding:.85rem 1rem;
+      border-bottom:1px solid var(--border);
+      color:#374151;
+    }
+    .compare-table td.center{text-align:center}
+    .compare-table tr:last-child td{border-bottom:none}
+    .compare-table tr:nth-child(even) td{background:var(--gray-light)}
+    .compare-table td .yes{color:var(--green);font-size:1.2rem}
+    .compare-table td .no{color:#D1D5DB;font-size:1.2rem}
+    .compare-table td .partial{color:var(--amber)}
+    .compare-table .feature-name{font-weight:500}
+    @media(max-width:600px){
+      .compare-table{display:block;overflow-x:auto}
+    }
+
+    /* ── ROI SECTION */
+    .roi-section{
+      padding:3.5rem 1.25rem;
+      background:linear-gradient(135deg,var(--green-deep) 0%,#1a4d2e 100%);
+      color:#fff;
+    }
+    .roi-inner{max-width:860px;margin:0 auto}
+    .roi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;margin-top:2.25rem}
+    .roi-card{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;
+      padding:1.5rem;
+      text-align:center;
+    }
+    .roi-number{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:2.5rem;font-weight:900;
+      color:var(--amber);line-height:1;margin-bottom:.4rem;
+    }
+    .roi-label{font-size:.88rem;opacity:.75;line-height:1.45}
+    .roi-source{font-size:.72rem;opacity:.45;margin-top:.35rem;font-style:italic}
+
+    /* ── TESTIMONIAL / SOCIAL PROOF */
+    .proof-section{padding:3.5rem 1.25rem;background:var(--cream)}
+    .proof-inner{max-width:680px;margin:0 auto;text-align:center}
+    .proof-quote{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:clamp(1.2rem,3vw,1.7rem);
+      font-weight:900;font-style:italic;
+      color:var(--green-deep);
+      line-height:1.4;margin:1.5rem 0;
+    }
+    .proof-quote::before{content:'"';color:var(--amber)}
+    .proof-quote::after{content:'"';color:var(--amber)}
+    .proof-author{font-size:.88rem;color:var(--gray)}
+    .proof-author strong{color:var(--green-deep)}
+    .proof-logos{
+      display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;
+      margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border);
+    }
+    .proof-logo-chip{
+      background:#fff;border:1px solid var(--border);
+      border-radius:30px;padding:.5rem 1.1rem;
+      font-size:.82rem;font-weight:600;color:var(--gray);
+      display:flex;align-items:center;gap:.4rem;
+    }
 
     /* ── FORMULARIO */
+    .form-section-wrap{padding:3.5rem 1.25rem;background:var(--gray-light)}
     .form-section{
       background:#fff;
       border-radius:20px;
       padding:2.5rem;
-      box-shadow:0 4px 24px rgba(0,0,0,.09);
-      max-width:680px;margin:0 auto;
+      box-shadow:0 4px 32px rgba(0,0,0,.09);
+      max-width:700px;margin:0 auto;
     }
-    .form-title{font-family:'Fraunces',Georgia,serif;font-size:1.6rem;font-weight:900;color:var(--green-deep);margin-bottom:.5rem}
-    .form-subtitle{color:var(--gray);margin-bottom:2rem;font-size:.95rem}
+    .form-header{margin-bottom:2rem}
+    .form-title{font-family:'Fraunces',Georgia,serif;font-size:1.8rem;font-weight:900;color:var(--green-deep);margin-bottom:.4rem}
+    .form-subtitle{color:var(--gray);font-size:.95rem;line-height:1.55}
 
     .form-row{display:grid;gap:1rem;margin-bottom:1rem}
     .form-row.cols-2{grid-template-columns:1fr 1fr}
@@ -170,177 +323,228 @@
       width:100%;
       border:1.5px solid var(--border);
       border-radius:10px;
-      padding:.7rem .9rem;
-      font-size:.95rem;
-      font-family:inherit;
-      color:#1a1a1a;
-      background:#fff;
+      padding:.75rem .95rem;
+      font-size:.95rem;font-family:inherit;
+      color:#1a1a1a;background:#fff;
       transition:border-color .2s,box-shadow .2s;
       -webkit-appearance:none;appearance:none;
     }
-    .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%236B7280' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.5rem}
+    .field select{
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%236B7280' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.5rem;
+    }
     .field input:focus,.field select:focus,.field textarea:focus{
       outline:none;border-color:var(--green);
       box-shadow:0 0 0 3px rgba(22,101,52,.12);
     }
-    .field textarea{resize:vertical;min-height:80px}
+    .field textarea{resize:vertical;min-height:90px}
 
-    /* Plan selector */
-    .plan-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:.5rem}
+    /* Plan selector en el form */
+    .plan-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
     @media(max-width:480px){.plan-selector{grid-template-columns:1fr}}
-    .plan-option{
-      position:relative;cursor:pointer;
-    }
+    .plan-option{position:relative;cursor:pointer}
     .plan-option input[type="radio"]{position:absolute;opacity:0;width:0;height:0}
     .plan-option-label{
-      display:block;
-      border:2px solid var(--border);
-      border-radius:12px;
-      padding:.9rem .75rem;
-      text-align:center;
-      cursor:pointer;
-      transition:border-color .2s,background .2s;
+      display:block;border:2px solid var(--border);border-radius:12px;
+      padding:1rem .75rem;text-align:center;cursor:pointer;
+      transition:border-color .2s,background .2s,transform .15s;
     }
+    .plan-option-label:hover{border-color:var(--green);transform:translateY(-1px)}
     .plan-option input:checked + .plan-option-label{
-      border-color:var(--green);
-      background:var(--green-light);
+      border-color:var(--green);background:var(--green-light);
     }
     .plan-option-name{display:block;font-weight:700;font-size:.9rem;color:var(--green-deep);margin-bottom:.2rem}
     .plan-option-price{display:block;font-size:.78rem;color:var(--gray)}
 
-    /* Submit */
     .btn-submit{
-      width:100%;
-      background:var(--green);color:#fff;
+      width:100%;background:var(--green);color:#fff;
       font-weight:700;font-size:1.05rem;
-      padding:1rem;
-      border:none;border-radius:14px;
-      cursor:pointer;
-      transition:background .2s,transform .15s;
-      margin-top:.5rem;
+      padding:1.05rem;border:none;border-radius:14px;
+      cursor:pointer;transition:background .2s,transform .15s;
+      margin-top:.5rem;font-family:inherit;
     }
     .btn-submit:hover{background:var(--green-deep);transform:translateY(-1px)}
     .btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
     .form-note{font-size:.78rem;color:var(--gray);text-align:center;margin-top:.75rem}
-
-    /* Success overlay */
-    .form-success{
-      display:none;text-align:center;padding:1.5rem;
+    .form-trust{
+      display:flex;justify-content:center;gap:1.5rem;flex-wrap:wrap;
+      margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border);
     }
+    .trust-item{font-size:.78rem;color:var(--gray);display:flex;align-items:center;gap:.3rem}
+
+    /* Success */
+    .form-success{display:none;text-align:center;padding:2rem}
     .form-success.show{display:block}
     .form-body.hidden{display:none}
 
     /* ── FAQ */
-    .faq-section{padding:3rem 1.25rem;max-width:680px;margin:0 auto}
-    .faq-item{
-      border-bottom:1px solid var(--border);padding:1.25rem 0;cursor:pointer;
-    }
+    .faq-section{padding:3.5rem 1.25rem;max-width:720px;margin:0 auto}
+    .faq-item{border-bottom:1px solid var(--border);padding:1.25rem 0;cursor:pointer}
     .faq-question{
-      font-weight:700;font-size:.95rem;color:var(--green-deep);
-      display:flex;justify-content:space-between;align-items:center;
-      gap:1rem;
+      font-weight:700;font-size:.97rem;color:var(--green-deep);
+      display:flex;justify-content:space-between;align-items:center;gap:1rem;
     }
     .faq-question::after{
-      content:'﹢';font-size:1.25rem;color:var(--green);flex-shrink:0;
-      transition:transform .2s;
+      content:'﹢';font-size:1.3rem;color:var(--green);flex-shrink:0;
+      transition:transform .25s;
     }
     .faq-item.open .faq-question::after{transform:rotate(45deg)}
     .faq-answer{
-      font-size:.9rem;color:var(--gray);line-height:1.65;
-      max-height:0;overflow:hidden;transition:max-height .3s ease, padding .3s;
+      font-size:.9rem;color:var(--gray);line-height:1.7;
+      max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s;
     }
-    .faq-item.open .faq-answer{max-height:300px;padding-top:.75rem}
+    .faq-item.open .faq-answer{max-height:400px;padding-top:.85rem}
+
+    /* ── FINAL CTA */
+    .final-cta{
+      background:var(--amber);padding:3.5rem 1.25rem;text-align:center;
+    }
+    .final-cta h2{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:clamp(1.7rem,4vw,2.5rem);font-weight:900;
+      color:var(--green-deep);line-height:1.15;margin-bottom:.75rem;
+    }
+    .final-cta p{color:rgba(14,61,34,.75);font-size:1rem;margin-bottom:1.75rem;max-width:480px;margin-left:auto;margin-right:auto}
+    .final-cta .btn{
+      display:inline-block;
+      background:var(--green-deep);color:#fff;
+      font-weight:700;font-size:1rem;
+      padding:.95rem 2.25rem;border-radius:14px;
+      text-decoration:none;transition:opacity .2s;
+    }
+    .final-cta .btn:hover{opacity:.88}
 
     /* ── FOOTER */
     footer{
       background:var(--green-deep);color:#fff;
-      padding:2rem 1.25rem;text-align:center;
-      font-size:.85rem;opacity:.85;
+      padding:2rem 1.25rem;text-align:center;font-size:.85rem;
     }
     footer a{color:var(--amber);text-decoration:none}
-    footer .footer-logo{
-      font-family:'Fraunces',Georgia,serif;
-      font-size:1.25rem;font-weight:900;margin-bottom:.5rem;
-    }
-    footer .footer-logo span{color:var(--amber)}
+    .footer-logo{font-family:'Fraunces',Georgia,serif;font-size:1.3rem;font-weight:900;margin-bottom:.5rem}
+    .footer-logo span{color:var(--amber)}
   </style>
 </head>
 <body>
 
   <!-- HEADER -->
   <header class="site-header">
-    <a href="/" class="header-back">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
-      GlutenGo
-    </a>
     <a href="/" class="logo">Gluten<span>Go</span></a>
-    <a href="#form-registro" class="header-back" style="opacity:1;color:var(--amber);font-weight:700">Registrarme →</a>
+    <nav class="header-nav">
+      <a href="#como-funciona" class="header-link">Cómo funciona</a>
+      <a href="#planes" class="header-link">Planes</a>
+      <a href="#form-registro" class="header-cta">Registrar mi local →</a>
+    </nav>
   </header>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-eyebrow">Para negocios de gastronomía</div>
-    <h1>Tu local, visible para<br>toda la comunidad celíaca</h1>
-    <p>
-      GlutenGo es la guía que el celíaco uruguayo consulta antes de salir a comer.
-      Aparecer acá es llegar a clientes con alta fidelidad y disposición real a pagar.
-    </p>
-    <a href="#form-registro" class="hero-cta">Registrá tu local gratis →</a>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">🍽️ Para negocios gastronómicos</div>
+      <h1>Convertí a los celíacos<br>en tus clientes <em>más fieles</em></h1>
+      <p class="hero-sub">
+        GlutenGo conecta tu restaurante, cafetería o panadería con los ~50.000 celíacos de Uruguay.
+        Un segmento que busca activamente dónde comer seguro — y que vuelve siempre al lugar que los cuida.
+      </p>
+      <div class="hero-actions">
+        <a href="#form-registro" class="btn-primary">Registrá tu local — es gratis →</a>
+        <a href="#planes" class="btn-ghost">Ver planes</a>
+      </div>
 
-    <div class="stats-bar">
-      <div class="stat-item">
-        <div class="stat-num">23</div>
-        <div class="stat-label">locales en el directorio</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">~50k</div>
-        <div class="stat-label">celíacos en Uruguay</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-num">100%</div>
-        <div class="stat-label">sin publicidad pagada</div>
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-num">~50k</div>
+          <div class="stat-label">celíacos en Uruguay</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3–5×</div>
+          <div class="stat-label">más leales que el cliente promedio</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">2–4</div>
+          <div class="stat-label">personas que trae a cada visita</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">0%</div>
+          <div class="stat-label">comisión por pedido</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- VENTAJAS -->
-  <section class="section">
-    <span class="section-label">Por qué vale la pena</span>
-    <h2 class="section-title">El celíaco es el cliente más fiel que existe</h2>
-    <p class="section-desc">
-      Cuando alguien celíaco encuentra un lugar donde come seguro, vuelve.
-      Siempre. Y trae familia y amigos. GlutenGo es el puente entre tu local y esa comunidad.
-    </p>
-    <div class="benefits-grid">
-      <div class="benefit-card">
-        <div class="benefit-icon">🔄</div>
-        <h3>Alta repetición</h3>
-        <p>El celíaco que se siente seguro en tu local vuelve cada semana. La restricción dietaria los convierte en clientes ultra-leales.</p>
+  <!-- POR QUÉ -->
+  <section class="why-section">
+    <div class="why-inner">
+      <div>
+        <p class="why-label">El negocio detrás de la celiaquía</p>
+        <h2 class="why-title">Este cliente no elige tu local por precio. Lo elige porque confía en vos.</h2>
+        <div class="why-body">
+          <p>El celíaco tiene una restricción que no negocia. Cuando encuentra un lugar donde puede comer tranquilo, sin ansiedad y sin riesgo de contaminación cruzada, lo convierte en su lugar.</p>
+          <p>Vuelve semanas seguidas. Lleva a la familia. Lo recomienda a la comunidad. En un mercado donde fidelizar un cliente cuesta 5× más que retenerlo, el celíaco es el segmento más valioso que podés captar.</p>
+          <p>GlutenGo es la herramienta que usa esa comunidad para decidir dónde comer. Aparecer acá no es publicidad — es ser la respuesta cuando alguien busca dónde ir a comer hoy.</p>
+        </div>
       </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">👨‍👩‍👧</div>
-        <h3>Trae a toda la mesa</h3>
-        <p>Ningún celíaco sale a comer solo. Cuando eligen tu local, traen a los que no son celíacos. Ticket promedio más alto.</p>
+      <div class="why-highlights">
+        <div class="highlight-item">
+          <div class="highlight-icon">🔄</div>
+          <div>
+            <h4>Alta frecuencia de visita</h4>
+            <p>El celíaco repite en los lugares seguros porque encontrar uno nuevo es un proceso de investigación, no una decisión casual.</p>
+          </div>
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-icon">👨‍👩‍👧</div>
+          <div>
+            <h4>Nunca viene solo</h4>
+            <p>El grupo toma la decisión en base al que tiene restricción. Si tu local tiene opción celíaca, ganás toda la mesa.</p>
+          </div>
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-icon">📣</div>
+          <div>
+            <h4>Comunidad que se recomienda</h4>
+            <p>Los grupos de WhatsApp y foros celíacos de Uruguay son muy activos. Un cliente satisfecho genera referidos reales.</p>
+          </div>
+        </div>
+        <div class="highlight-item">
+          <div class="highlight-icon">🚫</div>
+          <div>
+            <h4>Sin comisiones ni intermediarios</h4>
+            <p>GlutenGo no cobra comisión por cada pedido o visita. El cliente llega directamente a vos — por WhatsApp, Instagram o en persona.</p>
+          </div>
+        </div>
       </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">⭐</div>
-        <h3>Reputación real</h3>
-        <p>El GlutenGo Score es calculado por visitas reales de la comunidad. No es publicidad — es confianza ganada.</p>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="how-section" id="como-funciona">
+    <div class="how-inner">
+      <div class="section-header">
+        <span class="section-label">El proceso</span>
+        <h2 class="section-title">Estar en GlutenGo tarda menos de 5 minutos</h2>
+        <p class="section-desc">Completás el formulario, nosotros verificamos y tu local aparece en el directorio que consultan los celíacos de Uruguay antes de salir a comer.</p>
       </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">📍</div>
-        <h3>Primero en el mapa</h3>
-        <p>Usuarios con geolocalización activa ven tu local antes que otros. La cercanía es el factor #1 en la decisión de ir a comer.</p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">📊</div>
-        <h3>Sin intermediarios</h3>
-        <p>No es una plataforma de delivery con comisiones. Cada click va directo a vos — WhatsApp, Instagram o tu sitio.</p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">🇺🇾</div>
-        <h3>Mercado en crecimiento</h3>
-        <p>Los diagnósticos de celiaquía en Uruguay crecen año a año. Entrar ahora te posiciona antes que la competencia.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Registrá tu local</h3>
+          <p>Completá el formulario con nombre, dirección, categoría y tipo de oferta (100% sin gluten o con opciones). Tarda 3 minutos.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Revisamos tu solicitud</h3>
+          <p>En 48–72 horas verificamos la información y activamos tu ficha. Para planes de pago, te contactamos para coordinar los detalles.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Tu local aparece en el mapa</h3>
+          <p>Clientes celíacos encontrán tu local en el directorio, en el mapa y en búsquedas. Podés ver las valoraciones en tiempo real.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h3>El cliente llega a vos</h3>
+          <p>Sin intermediarios. Desde la ficha pueden llamarte, abrir WhatsApp, ir a tu Instagram o llegar directo con Google Maps.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -348,304 +552,71 @@
   <!-- PLANES -->
   <section class="planes-section" id="planes">
     <div class="planes-inner">
-      <h2 class="planes-title">Planes para cada etapa</h2>
-      <p class="planes-desc">Empezá gratis. Escalá cuando quieras.</p>
+      <div class="section-header">
+        <span class="section-label" style="color:var(--amber)">Planes y precios</span>
+        <h2 class="section-title" style="color:#fff">Empezá gratis. Escalá cuando quieras.</h2>
+        <p class="section-desc" style="color:rgba(255,255,255,.65)">Sin contratos ni compromisos. Podés cambiar o cancelar en cualquier momento.</p>
+      </div>
 
       <div class="planes-grid">
 
         <!-- Básico -->
         <div class="plan-card">
-          <div class="plan-badge free">Gratis</div>
+          <div class="plan-badge free">Gratuito</div>
           <div class="plan-name">Básico</div>
+          <div class="plan-tagline">Para empezar a aparecer en el radar celíaco de Montevideo.</div>
           <div class="plan-price">
-            $0
-            <span class="price-note">Para siempre</span>
+            <span class="currency">$</span>0
+            <span class="period">/ para siempre</span>
           </div>
           <ul class="plan-features">
-            <li>Ficha con nombre, dirección y descripción</li>
-            <li>Pin en el mapa interactivo</li>
-            <li>Link a WhatsApp e Instagram</li>
-            <li>Horarios de atención</li>
-            <li>GlutenGo Score de la comunidad</li>
+            <li><span class="check">✓</span>Ficha con nombre, categoría y descripción</li>
+            <li><span class="check">✓</span>Pin en el mapa interactivo</li>
+            <li><span class="check">✓</span>Links a WhatsApp, Instagram y sitio web</li>
+            <li><span class="check">✓</span>Horarios de atención editables</li>
+            <li><span class="check">✓</span>GlutenGo Score de la comunidad</li>
+            <li><span class="check">✓</span>Aparece en búsquedas por barrio y categoría</li>
           </ul>
-          <a href="#form-registro" class="plan-cta" onclick="selectPlan('basico')">Empezar gratis</a>
+          <button class="plan-cta ghost" onclick="selectPlan('basico')">Registrarme gratis →</button>
         </div>
 
         <!-- Verificado -->
         <div class="plan-card featured">
-          <div class="plan-badge">⭐ Recomendado</div>
+          <div class="plan-popular">⭐ Más elegido</div>
+          <div class="plan-badge recommended">Verificado</div>
           <div class="plan-name">Verificado</div>
+          <div class="plan-tagline">Para locales que quieren diferenciarse y captar más clientes del segmento.</div>
           <div class="plan-price">
-            $990<small style="font-size:1rem;font-weight:500"> UYU</small>
-            <span class="price-note">por mes · ~$25 USD</span>
+            <span class="currency">$</span>990
+            <span class="period">UYU / mes</span>
           </div>
+          <p class="plan-price-note">≈ $25 USD · equivale a 1–2 cubiertos más por semana</p>
           <ul class="plan-features">
-            <li>Todo lo de Básico</li>
-            <li>Badge "Verificado por GlutenGo"</li>
-            <li>Posición prioritaria en el directorio</li>
-            <li>Destacado en el carrusel principal</li>
-            <li>Mención en el newsletter mensual</li>
-            <li>Respuesta a valoraciones de usuarios</li>
+            <li><span class="check">✓</span>Todo lo del plan Básico</li>
+            <li><span class="check">✓</span>Badge "Verificado por GlutenGo" en la ficha</li>
+            <li><span class="check">✓</span>Posición prioritaria en el directorio y búsquedas</li>
+            <li><span class="check">✓</span>Destacado en el carrusel principal de la home</li>
+            <li><span class="check">✓</span>Mención mensual en el newsletter a usuarios</li>
+            <li><span class="check">✓</span>Capacidad de responder valoraciones públicamente</li>
+            <li><span class="check">✓</span>Soporte prioritario por WhatsApp</li>
           </ul>
-          <a href="#form-registro" class="plan-cta featured" onclick="selectPlan('verificado')">Quiero ser Verificado</a>
+          <button class="plan-cta primary" onclick="selectPlan('verificado')">Quiero ser Verificado →</button>
         </div>
 
         <!-- Certificado -->
         <div class="plan-card">
-          <div class="plan-badge" style="background:rgba(196,101,74,.25);color:#C4654A;border:1px solid rgba(196,101,74,.3)">🏅 Premium</div>
+          <div class="plan-badge premium">🏅 Premium</div>
           <div class="plan-name">Certificado</div>
+          <div class="plan-tagline">Para locales que quieren convertir la celiaquía en su principal diferenciador.</div>
           <div class="plan-price">
-            $4.500<small style="font-size:1rem;font-weight:500"> UYU</small>
-            <span class="price-note">pago único · ~$115 USD</span>
+            <span class="currency">$</span>4.500
+            <span class="period">UYU único</span>
           </div>
+          <p class="plan-price-note">≈ $115 USD · incluye 3 meses de Verificado</p>
           <ul class="plan-features">
-            <li>Todo lo de Verificado (3 meses incluidos)</li>
-            <li>Auditoría presencial del protocolo SG</li>
-            <li>Badge dorado "GlutenGo Certified"</li>
-            <li>Informe de protocolo para mostrar clientes</li>
-            <li>Primer lugar en búsquedas relevantes</li>
-            <li>Feature en redes sociales de GlutenGo</li>
-          </ul>
-          <a href="#form-registro" class="plan-cta" onclick="selectPlan('certificado')">Quiero ser Certificado</a>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- FORMULARIO -->
-  <section class="section" id="form-registro">
-    <div class="form-section">
-      <div class="form-body">
-        <h2 class="form-title">Registrá tu local</h2>
-        <p class="form-subtitle">
-          Completá el formulario y te contactamos en 48–72 horas para confirmar los detalles.
-        </p>
-
-        <form id="negocio-form" onsubmit="handleNegocio(event)" novalidate>
-
-          <div class="form-row">
-            <div class="field">
-              <label for="nombre">Nombre del local *</label>
-              <input type="text" id="nombre" name="nombre" placeholder="Ej: La Panadería Natural" required maxlength="120" />
-            </div>
-          </div>
-
-          <div class="form-row cols-2">
-            <div class="field">
-              <label for="tipo">Tipo de oferta *</label>
-              <select id="tipo" name="tipo" required>
-                <option value="">Elegir…</option>
-                <option value="exclusivo">🌟 100% sin gluten</option>
-                <option value="mixto">⚡ Con opciones sin gluten</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="categoria">Categoría</label>
-              <select id="categoria" name="categoria">
-                <option value="restaurante">🍽️ Restaurante</option>
-                <option value="cafeteria">☕ Cafetería</option>
-                <option value="panaderia">🥐 Panadería</option>
-                <option value="heladeria">🍦 Heladería</option>
-                <option value="almacen">🛒 Almacén / Dietética</option>
-                <option value="otro">📍 Otro</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row cols-2">
-            <div class="field">
-              <label for="direccion">Dirección</label>
-              <input type="text" id="direccion" name="direccion" placeholder="Ej: Av. Italia 3456" maxlength="200" />
-            </div>
-            <div class="field">
-              <label for="barrio">Barrio / Ciudad</label>
-              <input type="text" id="barrio" name="barrio" placeholder="Ej: Pocitos" maxlength="100" />
-            </div>
-          </div>
-
-          <div class="form-row cols-2">
-            <div class="field">
-              <label for="email">Email de contacto *</label>
-              <input type="email" id="email" name="email" placeholder="tu@local.com" required maxlength="200" />
-            </div>
-            <div class="field">
-              <label for="telefono">Teléfono / WhatsApp</label>
-              <input type="tel" id="telefono" name="telefono" placeholder="098 XXX XXX" maxlength="50" />
-            </div>
-          </div>
-
-          <!-- Plan selector -->
-          <div class="field" style="margin-bottom:1rem">
-            <label>Plan de interés</label>
-            <div class="plan-selector">
-              <label class="plan-option">
-                <input type="radio" name="plan" value="basico" checked />
-                <span class="plan-option-label">
-                  <span class="plan-option-name">Básico</span>
-                  <span class="plan-option-price">Gratuito</span>
-                </span>
-              </label>
-              <label class="plan-option">
-                <input type="radio" name="plan" value="verificado" />
-                <span class="plan-option-label">
-                  <span class="plan-option-name">Verificado</span>
-                  <span class="plan-option-price">$990/mes</span>
-                </span>
-              </label>
-              <label class="plan-option">
-                <input type="radio" name="plan" value="certificado" />
-                <span class="plan-option-label">
-                  <span class="plan-option-name">Certificado</span>
-                  <span class="plan-option-price">$4.500 único</span>
-                </span>
-              </label>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="field">
-              <label for="mensaje">¿Algo que quieras contarnos? (opcional)</label>
-              <textarea id="mensaje" name="mensaje" placeholder="Contanos sobre tu local, tu protocolo sin gluten, o cualquier duda…" maxlength="800"></textarea>
-            </div>
-          </div>
-
-          <button type="submit" class="btn-submit" id="btn-submit">
-            Enviar solicitud →
-          </button>
-          <p class="form-note">Sin compromisos. Te respondemos en 48–72 horas.</p>
-
-        </form>
-      </div>
-
-      <!-- Success state -->
-      <div class="form-success" id="form-success">
-        <div style="font-size:3.5rem;margin-bottom:1rem">🎉</div>
-        <h2 style="font-family:'Fraunces',Georgia,serif;font-size:1.6rem;color:var(--green-deep);margin-bottom:.75rem">¡Solicitud enviada!</h2>
-        <p style="color:var(--gray);line-height:1.65;margin-bottom:1.5rem">
-          Recibimos la información de tu local. Te contactamos en las próximas
-          <strong>48–72 horas</strong> para confirmar los detalles.
-        </p>
-        <p style="color:var(--gray);font-size:.88rem;margin-bottom:1.5rem">
-          ¿Tenés urgencia? Escribinos directamente a
-          <a href="mailto:anmaurano@gmail.com" style="color:var(--green)">anmaurano@gmail.com</a>
-        </p>
-        <a href="/" style="display:inline-block;background:var(--green);color:#fff;text-decoration:none;padding:.75rem 1.75rem;border-radius:12px;font-weight:700;font-size:.95rem">Ver el directorio →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="faq-section">
-    <span class="section-label" style="text-align:center;display:block;margin-bottom:.5rem">Preguntas frecuentes</span>
-    <h2 class="section-title" style="text-align:center;margin-bottom:2rem">Todo lo que necesitás saber</h2>
-
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-question">¿Es gratis estar en el directorio?</div>
-      <div class="faq-answer">Sí. El plan Básico no tiene costo y nunca lo tendrá. Creemos que la información tiene que estar disponible para toda la comunidad. Los planes de pago ofrecen posicionamiento y funciones adicionales, pero el listing básico es permanentemente gratuito.</div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-question">¿Cuánto tiempo tarda en aparecer mi local?</div>
-      <div class="faq-answer">Revisamos todas las solicitudes manualmente. Para el plan Básico el tiempo estimado es de 3 a 5 días hábiles. Para Verificado y Certificado, te contactamos primero para confirmar los detalles del protocolo sin gluten.</div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-question">¿Puedo actualizar la información de mi local?</div>
-      <div class="faq-answer">Sí. En cualquier momento podés escribirnos para cambiar horarios, descripción, contacto o cualquier otro dato. Para los planes de pago, la actualización es prioritaria y se refleja en menos de 24 horas.</div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-question">¿Qué pasa si mi local recibe valoraciones negativas?</div>
-      <div class="faq-answer">Las valoraciones son de la comunidad y no podemos eliminarlas sin justificación, porque eso rompería la confianza que nos hace útiles. Lo que sí podemos hacer: si creés que una valoración es injusta, nos contactás y la revisamos. Los planes Verificado y Certificado incluyen la posibilidad de responder públicamente a las valoraciones.</div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-question">¿Qué es la Auditoría del plan Certificado?</div>
-      <div class="faq-answer">Una persona de nuestro equipo (con experiencia celíaca) visita tu local, revisa el protocolo de preparación, evalúa el riesgo de contaminación cruzada y entrega un informe detallado. El badge Certificado se otorga solo si el protocolo cumple los estándares. También te damos recomendaciones para mejorar.</div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFaq(this)">
-      <div class="faq-question">¿Pueden aparecer locales de fuera de Montevideo?</div>
-      <div class="faq-answer">Hoy el foco es Montevideo, pero aceptamos solicitudes de todo Uruguay. La expansión a otras ciudades es parte de nuestro plan y los locales ya registrados van a ser los primeros en beneficiarse.</div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-logo">Gluten<span>Go</span></div>
-    <p>Hecho con 💚 en Montevideo</p>
-    <p style="margin-top:.5rem">
-      <a href="mailto:anmaurano@gmail.com">Contacto</a>
-      &nbsp;·&nbsp;
-      <a href="/">Ver el directorio</a>
-    </p>
-  </footer>
-
-  <script>
-  function selectPlan(plan) {
-    var radio = document.querySelector('input[name="plan"][value="' + plan + '"]');
-    if (radio) radio.checked = true;
-    var formEl = document.getElementById('form-registro');
-    if (formEl) formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function toggleFaq(item) {
-    item.classList.toggle('open');
-  }
-
-  function handleNegocio(e) {
-    e.preventDefault();
-    var form = e.target;
-    var btn  = document.getElementById('btn-submit');
-
-    // Recoger datos
-    var data = {
-      nombre:    form.nombre.value.trim(),
-      tipo:      form.tipo.value,
-      categoria: form.categoria.value,
-      direccion: form.direccion.value.trim(),
-      barrio:    form.barrio.value.trim(),
-      email:     form.email.value.trim(),
-      telefono:  form.telefono.value.trim(),
-      plan:      (form.querySelector('input[name="plan"]:checked') || {}).value || 'basico',
-      mensaje:   form.mensaje.value.trim(),
-    };
-
-    if (!data.nombre || !data.email || !data.tipo) {
-      alert('Por favor completá los campos obligatorios (nombre, tipo y email).');
-      return;
-    }
-
-    btn.disabled    = true;
-    btn.textContent = 'Enviando…';
-
-    fetch('/api/negocio', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(json) {
-      if (json.ok || json.saved) {
-        document.querySelector('.form-body').classList.add('hidden');
-        document.getElementById('form-success').classList.add('show');
-      } else {
-        throw new Error('server error');
-      }
-    })
-    .catch(function() {
-      // Fallback: mostrar éxito igual (mejor UX que mostrar error)
-      document.querySelector('.form-body').classList.add('hidden');
-      document.getElementById('form-success').classList.add('show');
-    });
-  }
-
-  // Service Worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(function(){});
-  }
-  </script>
-
-</body>
-</html>
+            <li><span class="check">✓</span>Todo lo del plan Verificado (3 meses incluidos)</li>
+            <li><span class="check">✓</span>Auditoría presencial de protocolo sin gluten</li>
+            <li><span class="check">✓</span>Badge dorado "GlutenGo Certified"</li>
+            <li><span class="check">✓</span>Informe de protocolo para mostrar a tus clientes</li>
+            <li><span class="check">✓</span>Primer lugar garantizado en búsquedas de tu zona</li>
+            <li><span class="check">✓</span>Feature en redes sociale
