@@ -421,7 +421,7 @@
       <!-- CUERPO -->
       <div class="lugar-body">
 
-        <!-- VALORACIÓN (se renderiza según si hay token o no) -->
+        <!-- VALORACIÓN (se renderiza según si hay sesión o no) -->
         <div id="rating-section"></div>
 
         <!-- DESCRIPCIÓN -->
@@ -504,7 +504,6 @@
         .bindPopup('<strong>'+lugar.name+'</strong><br>'+lugar.address);
     }
 
-    // Esperar a que el DOM esté listo para el mapa
     setTimeout(initMiniMap, 50);
 
     // ── Share
@@ -565,10 +564,11 @@
         bandEl.textContent = info.bandLabel;
       }
       if (descEl) {
-        if (count === 0 || scorePct === null) {
+        var c = count || 0;
+        if (c === 0 || scorePct === null) {
           descEl.textContent = '¡Sé el primero en valorar este lugar!';
         } else {
-          descEl.textContent = 'Basado en ' + count + ' valoraci' + (count === 1 ? 'ón' : 'ones') + ' de la comunidad.';
+          descEl.textContent = 'Basado en ' + c + ' valoraci' + (c === 1 ? 'ón' : 'ones') + ' de la comunidad.';
         }
       }
     }
@@ -619,7 +619,6 @@
       var btn = document.getElementById('btn-send-rating');
       if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
 
-      // Obtener el JWT de Supabase (Google OAuth)
       window.GlutenAuth.getSession().then(function(session) {
         var token = session ? session.access_token : null;
         if (!token) {
@@ -654,18 +653,18 @@
       });
     };
 
-    // ── Render de la sección de valoración (async — usa Google OAuth)
+    // ── Render de la sección de valoración
+    // Usa getSession() (localStorage, sin red) en lugar de getCurrentUser() (petición a servidor)
     function renderRatingSection() {
       var section = document.getElementById('rating-section');
       if (!section) return;
 
-      // Estado de carga mientras verificamos auth
       section.innerHTML = '<div style="height:60px"></div>';
 
-      window.GlutenAuth.getCurrentUser().then(function(user) {
-        if (!section) return; // por si fue reemplazado
+      window.GlutenAuth.getSession().then(function(session) {
+        var user = session ? session.user : null;
+        if (!section) return;
         if (user) {
-          // Usuario logueado: mostrar formulario de valoración
           section.innerHTML =
             '<div class="rating-panel">' +
               '<h2>' +
@@ -679,7 +678,6 @@
             '</div>';
           renderStars();
         } else {
-          // Sin sesión: CTA de Google sign-in
           section.innerHTML =
             '<div class="rating-auth">' +
               '<p>Iniciá sesión con Google para valorar este lugar y ayudar a otros celíacos a comer seguros 🌾</p>' +
@@ -687,14 +685,13 @@
             '</div>';
         }
       }).catch(function() {
-        // Error de auth — no mostrar nada
         if (section) section.innerHTML = '';
       });
     }
 
     renderRatingSection();
 
-    // Cuando el usuario inicia sesión (ej: redirect de Google), re-renderizar la sección
+    // auth.js llama a este callback cuando detecta sesión activa (existente o nueva)
     window.onGlutenAuthSignIn = renderRatingSection;
 
   })();
@@ -706,3 +703,4 @@
   </script>
 </body>
 </html>
+                                                                                                                                                                                                              
