@@ -13,6 +13,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- Supabase JS (para auth) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
   <style>
     :root {
       --cream: #FAF5EC;
@@ -287,6 +290,7 @@
   </div>
 
   <script src="/data.js"></script>
+  <script src="/auth.js"></script>
   <script>
   (function(){
     // ── Leer slug de la URL
@@ -485,10 +489,4 @@
     function initMiniMap(){
       var map = L.map('mini-map', { zoomControl: false, attributionControl: false })
         .setView([lugar.lat, lugar.lng], 16);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19
-      }).addTo(map);
-
-      var icon = L.divIcon({
-        className:'',
-        html:'<div style="background:' + (lugar.tipo==='exclus
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/
