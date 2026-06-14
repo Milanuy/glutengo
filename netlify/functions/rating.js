@@ -174,4 +174,19 @@ exports.handler = async function (event) {
       );
       const allRows = allRes.ok ? await allRes.json() : [];
       const count   = allRows.length;
-      const av
+      const avg     = count > 0 ? allRows.reduce((s, r) => s + r.score, 0) / count : 0;
+      const newScore = count > 0 ? Math.round((avg - 1) * 25) : null;
+
+      return {
+        statusCode: 200,
+        headers: corsHeaders,
+        body: JSON.stringify({ ok: true, count, avg: +avg.toFixed(2), score: newScore }),
+      };
+    } catch (err) {
+      console.error('Rating save error:', err.message);
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error interno' }) };
+    }
+  }
+
+  return { statusCode: 405, headers: corsHeaders, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+};
