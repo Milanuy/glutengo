@@ -48,10 +48,12 @@
   // AUTH FUNCTIONS — expuestas como window.GlutenAuth
   // ────────────────────────────────────────────────────
 
-  /** Inicia Google OAuth. Redirige a Google y vuelve al origen. */
+  /** Inicia Google OAuth. Guarda la URL actual en sessionStorage para redirigir de vuelta. */
   async function signInWithGoogle() {
     const sb = await getSB();
     if (!sb) { alert('Error de configuración. Contactá al equipo.'); return; }
+    // Guardar URL actual para redirigir de vuelta después del login
+    try { sessionStorage.setItem('glutengo_return_to', window.location.href); } catch(_) {}
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -136,12 +138,5 @@
     sb.auth.onAuthStateChange(function (event, session) {
       _user = session?.user || null;
       updateAllAuthUI(_user);
-      // Si volvió de Google OAuth o hay refresh de token, ejecuta callback de la página
-      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && typeof window.onGlutenAuthSignIn === 'function') {
-        window.onGlutenAuthSignIn(_user);
-      }
-    });
-  }
-
-  // Exponer API global
-  w
+      // Si volvió de Google OAuth, redirigir de vuelta al lugar que estaba visitando
+      if (event === 'SIG
