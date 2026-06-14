@@ -1,21 +1,17 @@
 // GlutenGo — auth.js
-// Google OAuth via Supabase. Cargado en todas las páginas que necesiten auth.
-// Requiere: @supabase/supabase-js cargado antes de este script.
+// Google OAuth via Supabase.
 
 (function () {
   'use strict';
 
-  var _sb = null;       // Supabase client (lazy init)
-  var _user = null;     // Usuario actual
+  var _sb = null;
+  var _user = null;
   var _configCache = null;
 
-  // ────────────────────────────────────────────────────
-  // CONFIG — obtiene URL + anon key del servidor
-  // ────────────────────────────────────────────────────
   async function getConfig() {
     if (_configCache) return _configCache;
     try {
-      const res = await fetch('/api/config');
+      var res = await fetch('/api/config');
       _configCache = await res.json();
     } catch (e) {
       console.error('GlutenGo auth: error cargando config', e);
@@ -24,90 +20,70 @@
     return _configCache;
   }
 
-  // ────────────────────────────────────────────────────
-  // SUPABASE CLIENT — singleton lazy
-  // ────────────────────────────────────────────────────
   async function getSB() {
     if (_sb) return _sb;
-    const { supabaseUrl, supabaseAnonKey } = await getConfig();
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.warn('GlutenGo auth: Supabase no configurado (faltan env vars)');
+    var cfg = await getConfig();
+    if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) {
+      console.warn('GlutenGo auth: Supabase no configurado');
       return null;
     }
-    // supabase-js expone `supabase.createClient` o `window.supabase.createClient`
-    const factory = window.supabase || window.Supabase;
+    var factory = window.supabase || window.Supabase;
     if (!factory) {
       console.error('GlutenGo auth: supabase-js no cargado');
       return null;
     }
-    _sb = factory.createClient(supabaseUrl, supabaseAnonKey);
+    _sb = factory.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
     return _sb;
   }
 
-  // ────────────────────────────────────────────────────
-  // AUTH FUNCTIONS — expuestas como window.GlutenAuth
-  // ────────────────────────────────────────────────────
-
-  /** Inicia Google OAuth. Guarda la URL actual en sessionStorage para redirigir de vuelta. */
   async function signInWithGoogle() {
-    const sb = await getSB();
-    if (!sb) { alert('Error de configuración. Contactá al equipo.'); return; }
-    // Guardar URL actual para redirigir de vuelta después del login
-    try { sessionStorage.setItem('glutengo_return_to', window.location.href); } catch(_) {}
-    const { error } = await sb.auth.signInWithOAuth({
+    var sb = await getSB();
+    if (!sb) { alert('Error de configuracion. Contacta al equipo.'); return; }
+    try { sessionStorage.setItem('glutengo_return_to', window.location.href); } catch (e) {}
+    var result = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: window.location.origin,
         queryParams: { access_type: 'offline', prompt: 'select_account' },
       },
     });
-    if (error) console.error('signInWithGoogle error:', error.message);
+    if (result.error) console.error('signInWithGoogle error:', result.error.message);
   }
 
-  /** Cierra sesión */
   async function signOut() {
-    const sb = await getSB();
+    var sb = await getSB();
     if (sb) await sb.auth.signOut();
     _user = null;
     updateAllAuthUI(null);
   }
 
-  /** Devuelve usuario actual (null si no autenticado) */
   async function getCurrentUser() {
     if (_user) return _user;
-    const sb = await getSB();
+    var sb = await getSB();
     if (!sb) return null;
-    const { data: { user } } = await sb.auth.getUser();
-    _user = user;
-    return user;
+    var result = await sb.auth.getUser();
+    _user = result.data.user;
+    return _user;
   }
 
-  /** Devuelve la sesión completa (incluye access_token para llamadas a la API).
-   *  Más rápido que getCurrentUser(): lee de localStorage sin llamada de red. */
   async function getSession() {
-    const sb = await getSB();
+    var sb = await getSB();
     if (!sb) return null;
-    const { data: { session } } = await sb.auth.getSession();
-    return session;
+    var result = await sb.auth.getSession();
+    return result.data.session;
   }
-
-  // ────────────────────────────────────────────────────
-  // UI HELPERS — actualiza todos los elementos auth de la página
-  // ────────────────────────────────────────────────────
 
   function updateAllAuthUI(user) {
-    // Elementos que se muestran solo si está logueado
     document.querySelectorAll('[data-auth="logged-in"]').forEach(function (el) {
       el.style.display = user ? '' : 'none';
     });
-    // Elementos que se muestran solo si NO está logueado
     document.querySelectorAll('[data-auth="logged-out"]').forEach(function (el) {
       el.style.display = user ? 'none' : '';
     });
-    // Nombre del usuario
     if (user) {
-      var name = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || '';
-      var picture = user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
+      var meta = user.user_metadata || {};
+      var name = meta.full_name || meta.name || (user.email ? user.email.split('@')[0] : '');
+      var picture = meta.avatar_url || meta.picture || '';
       document.querySelectorAll('[data-auth-name]').forEach(function (el) {
         el.textContent = name;
       });
@@ -117,26 +93,51 @@
     }
   }
 
-  // ────────────────────────────────────────────────────
-  // INIT — corre en DOMContentLoaded
-  // ────────────────────────────────────────────────────
   async function init() {
-    const sb = await getSB();
+    var sb = await getSB();
     if (!sb) return;
 
-    // Sesión actual
-    const { data: { session } } = await sb.auth.getSession();
-    _user = session?.user || null;
+    var sessionResult = await sb.auth.getSession();
+    var session = sessionResult.data.session;
+    _user = session ? session.user : null;
     updateAllAuthUI(_user);
 
-    // Si ya hay sesión activa al cargar la página, avisar a callbacks registrados
     if (_user && typeof window.onGlutenAuthSignIn === 'function') {
       window.onGlutenAuthSignIn(_user);
     }
 
-    // Escucha cambios de auth (callback post-OAuth redirect)
     sb.auth.onAuthStateChange(function (event, session) {
-      _user = session?.user || null;
+      _user = session ? session.user : null;
       updateAllAuthUI(_user);
-      // Si volvió de Google OAuth, redirigir de vuelta al lugar que estaba visitando
-      if (event === 'SIG
+
+      if (event === 'SIGNED_IN') {
+        try {
+          var returnTo = sessionStorage.getItem('glutengo_return_to');
+          if (returnTo && returnTo !== window.location.href) {
+            sessionStorage.removeItem('glutengo_return_to');
+            window.location.href = returnTo;
+            return;
+          }
+        } catch (e) {}
+      }
+
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && typeof window.onGlutenAuthSignIn === 'function') {
+        window.onGlutenAuthSignIn(_user);
+      }
+    });
+  }
+
+  window.GlutenAuth = {
+    signInWithGoogle: signInWithGoogle,
+    signOut: signOut,
+    getCurrentUser: getCurrentUser,
+    getSession: getSession,
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
