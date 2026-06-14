@@ -91,30 +91,48 @@ exports.handler = async function (event) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'score debe ser 1–5' }) };
     }
 
-    // ── Verificar que el token existe y obtener el email
+    // ── Verificar identidad: primero JWT de Supabase (Google OAuth), luego waitlist token
     let userEmail;
     try {
-      const userRes = await fetch(
-        SUPABASE_URL + '/rest/v1/waitlist?token=eq.' + encodeURIComponent(token) + '&select=email',
-        {
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: 'Bearer ' + SUPABASE_KEY,
-          },
+      // Intento 1: verificar como JWT de Supabase (usuarios con Google OAuth)
+      const authRes = await fetch(SUPABASE_URL + '/auth/v1/user', {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: 'Bearer ' + token,
+        },
+      });
+
+      if (authRes.ok) {
+        const userData = await authRes.json();
+        if (userData && userData.email) {
+          userEmail = userData.email;
         }
-      );
-
-      if (!userRes.ok) throw new Error('Supabase user lookup failed');
-      const users = await userRes.json();
-
-      if (!users || users.length === 0) {
-        return {
-          statusCode: 401,
-          headers: corsHeaders,
-          body: JSON.stringify({ error: 'Token inválido. Registrate primero.' }),
-        };
       }
-      userEmail = users[0].email;
+
+      // Intento 2 (fallback): buscar en tabla waitlist como token mágico
+      if (!userEmail) {
+        const userRes = await fetch(
+          SUPABASE_URL + '/rest/v1/waitlist?token=eq.' + encodeURIComponent(token) + '&select=email',
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: 'Bearer ' + SUPABASE_KEY,
+            },
+          }
+        );
+
+        if (!userRes.ok) throw new Error('Supabase user lookup failed');
+        const users = await userRes.json();
+
+        if (!users || users.length === 0) {
+          return {
+            statusCode: 401,
+            headers: corsHeaders,
+            body: JSON.stringify({ error: 'Token inválido. Iniciá sesión primero.' }),
+          };
+        }
+        userEmail = users[0].email;
+      }
     } catch (err) {
       console.error('Token lookup error:', err.message);
       return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error al verificar token' }) };
@@ -156,19 +174,4 @@ exports.handler = async function (event) {
       );
       const allRows = allRes.ok ? await allRes.json() : [];
       const count   = allRows.length;
-      const avg     = count > 0 ? allRows.reduce((s, r) => s + r.score, 0) / count : 0;
-      const newScore = count > 0 ? Math.round((avg - 1) * 25) : null;
-
-      return {
-        statusCode: 200,
-        headers: corsHeaders,
-        body: JSON.stringify({ ok: true, count, avg: +avg.toFixed(2), score: newScore }),
-      };
-    } catch (err) {
-      console.error('Rating save error:', err.message);
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error interno' }) };
-    }
-  }
-
-  return { statusCode: 405, headers: corsHeaders, body: JSON.stringify({ error: 'Method Not Allowed' }) };
-};
+      const av
