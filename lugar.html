@@ -489,4 +489,220 @@
     function initMiniMap(){
       var map = L.map('mini-map', { zoomControl: false, attributionControl: false })
         .setView([lugar.lat, lugar.lng], 16);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+      }).addTo(map);
+
+      var icon = L.divIcon({
+        className:'',
+        html:'<div style="background:' + (lugar.tipo==='exclusivo'?'#166534':'#E8A93C') + ';width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>',
+        iconSize:[28,28],iconAnchor:[14,28]
+      });
+
+      L.marker([lugar.lat, lugar.lng], {icon:icon})
+        .addTo(map)
+        .bindPopup('<strong>'+lugar.name+'</strong><br>'+lugar.address);
+    }
+
+    // Esperar a que el DOM esté listo para el mapa
+    setTimeout(initMiniMap, 50);
+
+    // ── Share
+    window.shareNative = function(){
+      var shareData = {
+        title: lugar.name + ' — GlutenGo',
+        text: lugar.tipo==='exclusivo'
+          ? lugar.name+' es 100% libre de gluten. Encontré este lugar en GlutenGo.'
+          : lugar.name+' tiene buenas opciones sin gluten. Encontré esto en GlutenGo.',
+        url: location.href
+      };
+      if(navigator.share){
+        navigator.share(shareData).catch(function(){});
+      } else {
+        copyLink();
+      }
+    };
+
+    window.copyLink = function(){
+      navigator.clipboard.writeText(location.href).then(function(){
+        var btn = document.querySelectorAll('.share-btn')[1];
+        var prev = btn.innerHTML;
+        btn.innerHTML = '✅ ¡Copiado!';
+        setTimeout(function(){btn.innerHTML=prev;},2000);
+      });
+    };
+
+    // ── Toast helper
+    function showToast(msg, isError) {
+      var t = document.getElementById('rating-toast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'rating-toast';
+        t.className = 'rating-toast';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.background = isError ? '#991B1B' : 'var(--green-deep)';
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(function(){ t.classList.remove('show'); }, 3500);
+    }
+
+    // ── Actualizar score UI
+    function updateScoreUI(scorePct, count) {
+      var info = scoreInfo(scorePct);
+      var arcEl = document.getElementById('score-arc');
+      var numEl = document.getElementById('score-num');
+      var bandEl = document.getElementById('score-band');
+      var descEl = document.getElementById('score-desc');
+      if (arcEl) {
+        arcEl.setAttribute('stroke', info.ringColor);
+        arcEl.setAttribute('stroke-dashoffset', info.dash);
+      }
+      if (numEl) numEl.textContent = info.scoreNum;
+      if (bandEl) {
+        bandEl.className = 'score-band-pill ' + info.bandClass;
+        bandEl.textContent = info.bandLabel;
+      }
+      if (descEl) {
+        if (count === 0 || scorePct === null) {
+          descEl.textContent = '¡Sé el primero en valorar este lugar!';
+        } else {
+          descEl.textContent = 'Basado en ' + count + ' valoraci' + (count === 1 ? 'ón' : 'ones') + ' de la comunidad.';
+        }
+      }
+    }
+
+    // ── Cargar score desde API
+    fetch('/api/rating?slug=' + encodeURIComponent(slug))
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        updateScoreUI(data.score, data.count);
+      })
+      .catch(function(){ updateScoreUI(null, 0); });
+
+    // ── Star rating state
+    var selectedStars = 0;
+    var STAR_LABELS = ['','😬 Peligroso — contaminación cruzada','😕 Mala experiencia','😐 Regular — pedir con cuidado','😊 Buena experiencia','🤩 ¡Excelente! Come tranquilo'];
+
+    function renderStars() {
+      var html = '';
+      for (var i = 1; i <= 5; i++) {
+        html += '<button type="button" class="star-btn' +
+          (i <= selectedStars ? ' selected' : '') +
+          '" data-val="' + i + '" onclick="selectStar(' + i + ')"' +
+          ' onmouseenter="hoverStar(' + i + ')" onmouseleave="unhoverStar()">⭐</button>';
+      }
+      document.getElementById('stars-row').innerHTML = html;
+      document.getElementById('star-label').textContent = selectedStars ? STAR_LABELS[selectedStars] : 'Tocá una estrella para calificar';
+    }
+
+    window.selectStar = function(n) {
+      selectedStars = n;
+      renderStars();
+    };
+    window.hoverStar = function(n) {
+      document.querySelectorAll('.star-btn').forEach(function(b, i){
+        b.classList.toggle('hovered', i < n);
+      });
+      document.getElementById('star-label').textContent = STAR_LABELS[n];
+    };
+    window.unhoverStar = function() {
+      document.querySelectorAll('.star-btn').forEach(function(b){
+        b.classList.remove('hovered');
+      });
+      document.getElementById('star-label').textContent = selectedStars ? STAR_LABELS[selectedStars] : 'Tocá una estrella para calificar';
+    };
+
+    window.submitRating = function() {
+      if (!selectedStars) { showToast('Elegí una estrella primero', true); return; }
+      var btn = document.getElementById('btn-send-rating');
+      if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
+
+      // Obtener el JWT de Supabase (Google OAuth)
+      window.GlutenAuth.getSession().then(function(session) {
+        var token = session ? session.access_token : null;
+        if (!token) {
+          showToast('Iniciá sesión primero', true);
+          if (btn) { btn.disabled = false; btn.textContent = 'Enviar valoración'; }
+          return;
+        }
+        var comentario = (document.getElementById('rating-comment')||{}).value || '';
+
+        fetch('/api/rating', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token, slug: slug, score: selectedStars, comentario: comentario }),
+        })
+        .then(function(res){ return res.json(); })
+        .then(function(data){
+          if (data.ok) {
+            showToast('¡Gracias! Tu valoración fue guardada 🌾');
+            updateScoreUI(data.score, data.count);
+            var ratingSection = document.getElementById('rating-section');
+            if (ratingSection) {
+              ratingSection.innerHTML = '<div style="background:var(--green-light);border-radius:var(--radius);padding:1rem 1.25rem;text-align:center;margin-bottom:1rem;font-weight:700;color:var(--green-deep)">✅ ¡Gracias por valorar este lugar! Tu voto ya está contado.</div>';
+            }
+          } else {
+            throw new Error(data.error || 'error');
+          }
+        })
+        .catch(function(err){
+          if (btn) { btn.disabled = false; btn.textContent = 'Enviar valoración'; }
+          showToast('Error al guardar. Intentá de nuevo.', true);
+        });
+      });
+    };
+
+    // ── Render de la sección de valoración (async — usa Google OAuth)
+    function renderRatingSection() {
+      var section = document.getElementById('rating-section');
+      if (!section) return;
+
+      // Estado de carga mientras verificamos auth
+      section.innerHTML = '<div style="height:60px"></div>';
+
+      window.GlutenAuth.getCurrentUser().then(function(user) {
+        if (!section) return; // por si fue reemplazado
+        if (user) {
+          // Usuario logueado: mostrar formulario de valoración
+          section.innerHTML =
+            '<div class="rating-panel">' +
+              '<h2>' +
+                '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>' +
+                'Valorar este lugar' +
+              '</h2>' +
+              '<div class="star-group" id="stars-row"></div>' +
+              '<div class="star-label" id="star-label">Tocá una estrella para calificar</div>' +
+              '<textarea class="rating-comment" id="rating-comment" placeholder="¿Cómo fue tu experiencia? (opcional)" maxlength="400"></textarea>' +
+              '<button class="btn-rate" id="btn-send-rating" onclick="submitRating()">Enviar valoración</button>' +
+            '</div>';
+          renderStars();
+        } else {
+          // Sin sesión: CTA de Google sign-in
+          section.innerHTML =
+            '<div class="rating-auth">' +
+              '<p>Iniciá sesión con Google para valorar este lugar y ayudar a otros celíacos a comer seguros 🌾</p>' +
+              '<button class="btn-auth" onclick="GlutenAuth.signInWithGoogle()" style="border:none;cursor:pointer">Continuar con Google →</button>' +
+            '</div>';
+        }
+      }).catch(function() {
+        // Error de auth — no mostrar nada
+        if (section) section.innerHTML = '';
+      });
+    }
+
+    renderRatingSection();
+
+    // Cuando el usuario inicia sesión (ej: redirect de Google), re-renderizar la sección
+    window.onGlutenAuthSignIn = renderRatingSection;
+
+  })();
+
+  // ── Service Worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  }
+  </script>
+</body>
+</html>
