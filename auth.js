@@ -80,6 +80,14 @@
     return user;
   }
 
+  /** Devuelve la sesión completa (incluye access_token para llamadas a la API) */
+  async function getSession() {
+    const sb = await getSB();
+    if (!sb) return null;
+    const { data: { session } } = await sb.auth.getSession();
+    return session;
+  }
+
   // ────────────────────────────────────────────────────
   // UI HELPERS — actualiza todos los elementos auth de la página
   // ────────────────────────────────────────────────────
@@ -131,16 +139,4 @@
 
   // Exponer API global
   window.GlutenAuth = {
-    signInWithGoogle: signInWithGoogle,
-    signOut: signOut,
-    getCurrentUser: getCurrentUser,
-  };
-
-  // Auto-init cuando el DOM esté listo
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-})();
+    signInWithGoogle
