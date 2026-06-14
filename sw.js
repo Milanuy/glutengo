@@ -1,7 +1,7 @@
-// GlutenGo Service Worker v0.6
+// GlutenGo Service Worker v0.7
 // Cache-first para assets estáticos, network-first para data
 
-const CACHE = 'glutengo-v0.6';
+const CACHE = 'glutengo-v0.7';
 const STATIC = [
   '/',
   '/index.html',
@@ -10,6 +10,7 @@ const STATIC = [
   '/negocios.html',
   '/bienvenido.html',
   '/data.js',
+  '/app.js',
   '/manifest.json',
 ];
 
@@ -47,5 +48,4 @@ self.addEventListener('fetch', (e) => {
         if (res.ok && e.request.method === 'GET') {
           const clone = res.clone();
           caches.open(CACHE).then((c) => c.put(e.request, clone));
-        }
-    
+ 
