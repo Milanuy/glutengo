@@ -139,4 +139,17 @@
 
   // Exponer API global
   window.GlutenAuth = {
-    signInWithGoogle
+    signInWithGoogle: signInWithGoogle,
+    signOut: signOut,
+    getCurrentUser: getCurrentUser,
+    getSession: getSession,
+  };
+
+  // Auto-init cuando el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
