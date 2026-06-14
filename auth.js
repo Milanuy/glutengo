@@ -80,7 +80,8 @@
     return user;
   }
 
-  /** Devuelve la sesión completa (incluye access_token para llamadas a la API) */
+  /** Devuelve la sesión completa (incluye access_token para llamadas a la API).
+   *  Más rápido que getCurrentUser(): lee de localStorage sin llamada de red. */
   async function getSession() {
     const sb = await getSB();
     if (!sb) return null;
@@ -126,30 +127,21 @@
     _user = session?.user || null;
     updateAllAuthUI(_user);
 
+    // Si ya hay sesión activa al cargar la página, avisar a callbacks registrados
+    if (_user && typeof window.onGlutenAuthSignIn === 'function') {
+      window.onGlutenAuthSignIn(_user);
+    }
+
     // Escucha cambios de auth (callback post-OAuth redirect)
     sb.auth.onAuthStateChange(function (event, session) {
       _user = session?.user || null;
       updateAllAuthUI(_user);
-      // Si volvió de Google OAuth, ejecuta callback de la página si existe
-      if (event === 'SIGNED_IN' && typeof window.onGlutenAuthSignIn === 'function') {
+      // Si volvió de Google OAuth o hay refresh de token, ejecuta callback de la página
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && typeof window.onGlutenAuthSignIn === 'function') {
         window.onGlutenAuthSignIn(_user);
       }
     });
   }
 
   // Exponer API global
-  window.GlutenAuth = {
-    signInWithGoogle: signInWithGoogle,
-    signOut: signOut,
-    getCurrentUser: getCurrentUser,
-    getSession: getSession,
-  };
-
-  // Auto-init cuando el DOM esté listo
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-})();
+  w
