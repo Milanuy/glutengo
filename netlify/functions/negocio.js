@@ -16,9 +16,9 @@ const ADMIN_EMAIL = 'anmaurano@gmail.com';
 const BASE_URL = 'https://glutengo.netlify.app';
 
 const PLANES = {
-  basico:     { label: 'Básico (Gratuito)',     precio: 'Sin costo' },
-  verificado: { label: 'Verificado ($990/mes)', precio: '$990 UYU/mes' },
-  certificado:{ label: 'Certificado ($4.500)',  precio: '$4.500 UYU pago único' },
+  basico:     { label: 'Básico (Gratuito)',       precio: 'Sin costo' },
+  verificado: { label: 'Verificado ($590/mes)',   precio: '$590 UYU/mes' },
+  certificado:{ label: 'Certificado ($1.590/mes)', precio: '$1.590 UYU/mes' },
 };
 
 function buildAdminEmail(data) {
@@ -226,3 +226,4 @@ exports.handler = async function (event) {
     body: JSON.stringify({ ok: true, ...results }),
   };
 };
+ 
