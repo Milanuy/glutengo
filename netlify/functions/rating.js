@@ -1,10 +1,8 @@
 /**
- * GlutenGo — Netlify Function: rating
+ * GlutenGo — Netlify Function: rating v2
  *
- * GET  /api/rating?slug=xxx         → devuelve score promedio y cantidad de valoraciones
- * POST /api/rating { token, slug, score, comentario }  → guarda la valoración
- *
- * Score: 1–5 estrellas → GlutenGo Score = (avg - 1) * 25  (rango 0–100)
+ * GET  /api/rating?slug=xxx         → score promedio, count, y ultimos 5 comentarios
+ * POST /api/rating { token, slug, score, comentario }  → guarda valoracion (upsert)
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -12,18 +10,32 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   'Content-Type': 'application/json',
 };
 
+function getInitials(email) {
+  if (!email) return '?';
+  var parts = email.split('@')[0].split(/[._\-]/);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return email.substring(0, 2).toUpperCase();
+}
+
+function formatDateShort(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  return d.toLocaleDateString('es-UY', { day:'numeric', month:'short', year:'numeric' });
+}
+
 exports.handler = async function (event) {
-  // CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: corsHeaders, body: '' };
   }
 
   // ─────────────────────────────────────────────────────────────
-  // GET — Score de un lugar
+  // GET — Score + comentarios recientes de un lugar
   // ─────────────────────────────────────────────────────────────
   if (event.httpMethod === 'GET') {
     const slug = (event.queryStringParameters || {}).slug;
@@ -33,7 +45,8 @@ exports.handler = async function (event) {
 
     try {
       const res = await fetch(
-        SUPABASE_URL + '/rest/v1/ratings?slug=eq.' + encodeURIComponent(slug) + '&select=score',
+        SUPABASE_URL + '/rest/v1/ratings?slug=eq.' + encodeURIComponent(slug) +
+        '&select=score,comentario,email,created_at&order=created_at.desc',
         {
           headers: {
             apikey: SUPABASE_KEY,
@@ -51,17 +64,27 @@ exports.handler = async function (event) {
         return {
           statusCode: 200,
           headers: corsHeaders,
-          body: JSON.stringify({ slug, count: 0, avg: null, score: null }),
+          body: JSON.stringify({ slug, count: 0, avg: null, score: null, recent: [] }),
         };
       }
 
       const avg = rows.reduce((s, r) => s + r.score, 0) / count;
-      const score = Math.round((avg - 1) * 25); // 1→0, 3→50, 5→100
+      const score = Math.round((avg - 1) * 25);
+
+      // Ultimos 5 comentarios (con o sin texto)
+      const recent = rows.slice(0, 8).map(function(r) {
+        return {
+          score: r.score,
+          comentario: r.comentario || null,
+          date: formatDateShort(r.created_at),
+          initials: getInitials(r.email),
+        };
+      });
 
       return {
         statusCode: 200,
         headers: corsHeaders,
-        body: JSON.stringify({ slug, count, avg: +avg.toFixed(2), score }),
+        body: JSON.stringify({ slug, count, avg: +avg.toFixed(2), score, recent }),
       };
     } catch (err) {
       console.error('rating GET error:', err.message);
@@ -70,31 +93,29 @@ exports.handler = async function (event) {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // POST — Guardar valoración
+  // POST — Guardar valoracion
   // ─────────────────────────────────────────────────────────────
   if (event.httpMethod === 'POST') {
     let payload;
     try {
       payload = JSON.parse(event.body || '{}');
     } catch (_) {
-      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON inválido' }) };
+      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON invalido' }) };
     }
 
     const { token, slug, score, comentario } = payload;
 
-    // Validaciones
     if (!token || !slug) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'token y slug son requeridos' }) };
     }
     const scoreNum = parseInt(score, 10);
     if (!scoreNum || scoreNum < 1 || scoreNum > 5) {
-      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'score debe ser 1–5' }) };
+      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'score debe ser 1-5' }) };
     }
 
-    // ── Verificar identidad: primero JWT de Supabase (Google OAuth), luego waitlist token
+    // Verificar JWT de Supabase (Google OAuth)
     let userEmail;
     try {
-      // Intento 1: verificar como JWT de Supabase (usuarios con Google OAuth)
       const authRes = await fetch(SUPABASE_URL + '/auth/v1/user', {
         headers: {
           apikey: SUPABASE_KEY,
@@ -109,7 +130,7 @@ exports.handler = async function (event) {
         }
       }
 
-      // Intento 2 (fallback): buscar en tabla waitlist como token mágico
+      // Fallback: buscar en waitlist como token magico
       if (!userEmail) {
         const userRes = await fetch(
           SUPABASE_URL + '/rest/v1/waitlist?token=eq.' + encodeURIComponent(token) + '&select=email',
@@ -128,7 +149,7 @@ exports.handler = async function (event) {
           return {
             statusCode: 401,
             headers: corsHeaders,
-            body: JSON.stringify({ error: 'Token inválido. Iniciá sesión primero.' }),
+            body: JSON.stringify({ error: 'Token invalido. Iniciá sesion primero.' }),
           };
         }
         userEmail = users[0].email;
@@ -138,7 +159,7 @@ exports.handler = async function (event) {
       return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error al verificar token' }) };
     }
 
-    // ── Insertar/actualizar valoración (UPSERT por email+slug)
+    // Insertar/actualizar (UPSERT por email+slug)
     try {
       const ratingRes = await fetch(SUPABASE_URL + '/rest/v1/ratings', {
         method: 'POST',
@@ -159,10 +180,10 @@ exports.handler = async function (event) {
       if (!ratingRes.ok && ratingRes.status !== 409) {
         const errText = await ratingRes.text();
         console.error('Rating insert error:', errText);
-        return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'No se pudo guardar la valoración' }) };
+        return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'No se pudo guardar la valoracion' }) };
       }
 
-      // Recalcular score del lugar
+      // Recalcular score
       const allRes = await fetch(
         SUPABASE_URL + '/rest/v1/ratings?slug=eq.' + encodeURIComponent(slug) + '&select=score',
         {
@@ -173,18 +194,18 @@ exports.handler = async function (event) {
         }
       );
       const allRows = allRes.ok ? await allRes.json() : [];
-      const count   = allRows.length;
-      const avg     = count > 0 ? allRows.reduce((s, r) => s + r.score, 0) / count : 0;
-      const newScore = count > 0 ? Math.round((avg - 1) * 25) : null;
+      const count = allRows.length;
+      const av = count > 0 ? allRows.reduce((s, r) => s + r.score, 0) / count : scoreNum;
+      const newScore = Math.round((av - 1) * 25);
 
       return {
         statusCode: 200,
         headers: corsHeaders,
-        body: JSON.stringify({ ok: true, count, avg: +avg.toFixed(2), score: newScore }),
+        body: JSON.stringify({ ok: true, score: newScore, count, avg: +av.toFixed(2) }),
       };
     } catch (err) {
-      console.error('Rating save error:', err.message);
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error interno' }) };
+      console.error('Rating POST error:', err.message);
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error al guardar' }) };
     }
   }
 
