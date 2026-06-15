@@ -13,57 +13,103 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <!-- Supabase JS -->
+  <!-- Supabase JS (para auth) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-
   <style>
-    :root{--cream:#FAF5EC;--green:#166534;--green-deep:#0E3D22;--green-light:#DCFCE7;--terra:#C4654A;--amber:#E8A93C;--gray:#6B7280;--gray-light:#F3F4F6;--border:#E5E7EB;--radius:14px;--shadow:0 2px 14px rgba(0,0,0,.08)}
+    :root {
+      --cream: #FAF5EC;
+      --green: #166534;
+      --green-deep: #0E3D22;
+      --green-light: #DCFCE7;
+      --terra: #C4654A;
+      --amber: #E8A93C;
+      --gray: #6B7280;
+      --gray-light: #F3F4F6;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0,0,0,.08);
+    }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{font-family:'DM Sans',system-ui,sans-serif;background:var(--cream);color:#1a1a1a;min-height:100vh}
 
     /* HEADER */
-    .site-header{position:sticky;top:0;z-index:200;background:var(--green-deep);padding:.75rem 1.25rem;display:flex;align-items:center;gap:1rem}
-    .back-btn{display:flex;align-items:center;gap:.4rem;color:#fff;text-decoration:none;font-size:.9rem;opacity:.85;transition:opacity .2s;white-space:nowrap}
+    .site-header{
+      position:sticky;top:0;z-index:200;
+      background:var(--green-deep);
+      padding:.9rem 1.25rem;
+      display:flex;align-items:center;gap:1rem;
+    }
+    .back-btn{
+      display:flex;align-items:center;gap:.4rem;
+      color:#fff;text-decoration:none;font-size:.9rem;
+      opacity:.85;transition:opacity .2s;
+    }
     .back-btn:hover{opacity:1}
-    .logo-sm{margin:0 auto;font-family:'Fraunces',Georgia,serif;font-size:1.1rem;color:#fff;font-weight:900;text-decoration:none}
+    .back-btn svg{width:18px;height:18px}
+    .logo-sm{
+      margin-left:auto;
+      font-family:'Fraunces',Georgia,serif;
+      font-size:1.15rem;color:#fff;font-weight:900;
+      text-decoration:none;letter-spacing:-.01em;
+    }
     .logo-sm span{color:var(--amber)}
 
-    /* User avatar in header */
-    .header-user{display:flex;align-items:center;gap:.6rem;cursor:pointer;position:relative}
-    .header-avatar{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.5);object-fit:cover;display:none}
-    .header-user-btn{background:none;border:none;color:#fff;font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.4rem;padding:.3rem .6rem;border-radius:8px;transition:background .2s}
-    .header-user-btn:hover{background:rgba(255,255,255,.15)}
-    .header-user-dropdown{display:none;position:absolute;right:0;top:calc(100% + .5rem);background:#fff;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.18);min-width:180px;overflow:hidden;z-index:300}
-    .header-user-dropdown.open{display:block}
-    .dropdown-name{padding:.75rem 1rem .4rem;font-size:.8rem;font-weight:700;color:var(--gray)}
-    .dropdown-email{padding:0 1rem .6rem;font-size:.75rem;color:var(--gray);border-bottom:1px solid var(--border)}
-    .dropdown-item{display:block;padding:.65rem 1rem;font-size:.88rem;color:#374151;cursor:pointer;background:none;border:none;width:100%;text-align:left;transition:background .15s;font-family:inherit}
-    .dropdown-item:hover{background:var(--gray-light)}
-    .dropdown-item.danger{color:#DC2626}
-
-    /* HERO */
-    .lugar-hero{background:var(--green-deep);color:#fff;padding:2rem 1.25rem 2.5rem}
-    .tipo-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.25rem .65rem;border-radius:20px;margin-bottom:.75rem}
+    /* HERO DEL LUGAR */
+    .lugar-hero{
+      background:var(--green-deep);
+      color:#fff;
+      padding:2rem 1.25rem 2.5rem;
+    }
+    .tipo-badge{
+      display:inline-flex;align-items:center;gap:.4rem;
+      font-size:.75rem;font-weight:700;letter-spacing:.06em;
+      text-transform:uppercase;
+      padding:.25rem .65rem;border-radius:20px;
+      margin-bottom:.75rem;
+    }
     .tipo-badge.exclusivo{background:var(--green);color:#fff}
     .tipo-badge.mixto{background:var(--amber);color:#1a1a1a}
-    h1.lugar-name{font-family:'Fraunces',Georgia,serif;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:900;line-height:1.1;margin-bottom:.5rem}
-    .lugar-meta{display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;margin-top:.75rem;opacity:.85;font-size:.9rem}
+    h1.lugar-name{
+      font-family:'Fraunces',Georgia,serif;
+      font-size:clamp(1.6rem,5vw,2.4rem);
+      font-weight:900;line-height:1.1;
+      margin-bottom:.5rem;
+    }
+    .lugar-meta{
+      display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;
+      margin-top:.75rem;opacity:.85;font-size:.9rem;
+    }
     .lugar-meta span{display:flex;align-items:center;gap:.3rem}
 
     /* SCORE */
-    .score-card{margin:1.5rem 1.25rem;background:#fff;border-radius:var(--radius);padding:1.25rem 1.5rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:1.25rem}
-    .score-ring{position:relative;width:72px;height:72px;flex-shrink:0}
+    .score-card{
+      margin:1.5rem 1.25rem;
+      background:#fff;border-radius:var(--radius);
+      padding:1.25rem 1.5rem;
+      box-shadow:var(--shadow);
+      display:flex;align-items:center;gap:1.25rem;
+    }
+    .score-ring{
+      position:relative;width:72px;height:72px;flex-shrink:0;
+    }
     .score-ring svg{transform:rotate(-90deg)}
     .score-ring circle{transition:stroke-dashoffset .8s ease}
-    .score-number{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;font-size:1.25rem;line-height:1}
+    .score-number{
+      position:absolute;inset:0;
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      font-weight:900;font-size:1.25rem;line-height:1;
+    }
     .score-number .score-label{font-size:.5rem;font-weight:600;text-transform:uppercase;opacity:.6;margin-top:.1rem}
     .score-info h3{font-size:1rem;font-weight:700;margin-bottom:.2rem}
     .score-info p{font-size:.82rem;color:var(--gray)}
-    .score-band-pill{display:inline-block;padding:.2rem .6rem;border-radius:20px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:.4rem}
+    .score-band-pill{
+      display:inline-block;
+      padding:.2rem .6rem;border-radius:20px;
+      font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+      margin-top:.4rem;
+    }
     .band-construcion{background:#f0f0f0;color:#888}
     .band-come-tranquilo{background:#DCFCE7;color:#166534}
     .band-muy-recomendado{background:#D1FAE5;color:#065F46}
@@ -73,521 +119,593 @@
     /* CUERPO */
     .lugar-body{padding:0 1.25rem 3rem}
 
-    /* CARD */
-    .card{background:#fff;border-radius:var(--radius);padding:1.25rem 1.5rem;box-shadow:var(--shadow);margin-bottom:1rem}
-    .card h2{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem}
+    /* CARD GENÉRICA */
+    .card{
+      background:#fff;border-radius:var(--radius);
+      padding:1.25rem 1.5rem;box-shadow:var(--shadow);
+      margin-bottom:1rem;
+    }
+    .card h2{
+      font-size:.75rem;font-weight:700;letter-spacing:.08em;
+      text-transform:uppercase;color:var(--green);
+      margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem;
+    }
 
-    /* HOURS */
+    /* DESCRIPCIÓN */
+    .desc-text{font-size:.95rem;line-height:1.65;color:#374151}
+
+    /* HORARIOS */
     .hours-grid{display:grid;gap:.35rem}
-    .hour-row{display:flex;justify-content:space-between;font-size:.88rem;padding:.3rem 0;border-bottom:1px solid var(--gray-light)}
+    .hour-row{
+      display:flex;justify-content:space-between;
+      font-size:.88rem;padding:.3rem 0;
+      border-bottom:1px solid var(--gray-light);
+    }
     .hour-row:last-child{border-bottom:none}
     .hour-row .day{font-weight:600}
     .hour-row .time{color:var(--gray)}
+    .hour-closed{color:#EF4444;font-style:italic}
 
     /* CONTACTO */
     .contact-links{display:flex;flex-direction:column;gap:.6rem}
-    .contact-link{display:flex;align-items:center;gap:.75rem;color:var(--green-deep);text-decoration:none;font-size:.9rem;font-weight:500;padding:.5rem .75rem;border-radius:8px;background:var(--gray-light);transition:background .15s}
+    .contact-link{
+      display:flex;align-items:center;gap:.75rem;
+      color:var(--green-deep);text-decoration:none;
+      font-size:.9rem;font-weight:500;
+      padding:.5rem .75rem;border-radius:8px;
+      background:var(--gray-light);
+      transition:background .15s;
+    }
     .contact-link:hover{background:var(--green-light)}
     .contact-link svg{width:18px;height:18px;color:var(--green)}
 
-    /* MINI MAP */
-    #mini-map{height:220px;border-radius:10px;overflow:hidden;margin-bottom:.75rem}
-    .how-to-get{font-size:.85rem;color:var(--gray);display:flex;align-items:center;gap:.4rem;text-decoration:none}
+    /* MAPA MINI */
+    #mini-map{
+      height:220px;border-radius:var(--radius);
+      overflow:hidden;margin-bottom:.75rem;
+    }
+    .how-to-get{
+      font-size:.85rem;color:var(--gray);
+      display:flex;align-items:center;gap:.4rem;
+      cursor:pointer;
+    }
     .how-to-get:hover{color:var(--green)}
 
+    /* CTA — REGISTRAR VISITA */
+    .cta-visit{
+      background:var(--green);color:#fff;
+      border:none;border-radius:var(--radius);
+      padding:1rem 1.5rem;width:100%;
+      font-size:1rem;font-weight:700;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:.5rem;
+      margin-bottom:.75rem;transition:background .2s;
+    }
+    .cta-visit:hover{background:var(--green-deep)}
+    .cta-visit-note{font-size:.75rem;color:var(--gray);text-align:center}
+
     /* SHARE */
-    .share-row{display:flex;gap:.75rem;margin-top:.75rem}
-    .share-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.65rem;border-radius:8px;border:1.5px solid #E5E7EB;background:#fff;cursor:pointer;font-size:.85rem;font-weight:600;color:#374151;transition:border-color .15s,color .15s;font-family:inherit}
+    .share-row{
+      display:flex;gap:.75rem;margin-top:.75rem;
+    }
+    .share-btn{
+      flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;
+      padding:.65rem;border-radius:8px;border:1.5px solid #E5E7EB;
+      background:#fff;cursor:pointer;font-size:.85rem;font-weight:600;
+      color:#374151;transition:border-color .15s;
+    }
     .share-btn:hover{border-color:var(--green);color:var(--green)}
 
-    /* ── RATING SECTION ────────────────────────────────────────── */
-    .rating-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:1rem;overflow:hidden}
+    /* RATING PANEL */
+    .rating-panel{
+      background:#fff;border-radius:var(--radius);
+      padding:1.5rem;box-shadow:var(--shadow);
+      margin-bottom:1rem;
+    }
+    .rating-panel h2{
+      font-size:.75rem;font-weight:700;letter-spacing:.08em;
+      text-transform:uppercase;color:var(--green);
+      margin-bottom:1rem;display:flex;align-items:center;gap:.4rem;
+    }
 
-    /* Not logged in */
-    .rating-cta{padding:1.5rem;text-align:center}
-    .rating-cta-icon{font-size:2rem;margin-bottom:.75rem}
-    .rating-cta h2{font-size:1rem;font-weight:700;margin-bottom:.4rem;color:var(--green-deep)}
-    .rating-cta p{font-size:.85rem;color:var(--gray);margin-bottom:1.25rem;line-height:1.55}
-    .btn-google{display:inline-flex;align-items:center;gap:.65rem;background:#fff;border:1.5px solid #E5E7EB;color:#374151;font-size:.9rem;font-weight:700;padding:.7rem 1.4rem;border-radius:12px;cursor:pointer;transition:box-shadow .2s,border-color .2s;font-family:inherit;width:100%;justify-content:center;max-width:320px}
-    .btn-google:hover{box-shadow:0 2px 12px rgba(0,0,0,.12);border-color:#D1D5DB}
-
-    /* User info strip */
-    .rating-user-strip{padding:.75rem 1.25rem;background:var(--green-light);display:flex;align-items:center;gap:.75rem;border-bottom:1px solid rgba(22,101,52,.1)}
-    .rstrip-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--green);display:none}
-    .rstrip-initials{width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0}
-    .rstrip-name{font-size:.88rem;font-weight:700;color:var(--green-deep)}
-    .rstrip-sub{font-size:.76rem;color:var(--green);opacity:.8}
-
-    /* Rating form */
-    .rating-form{padding:1.25rem 1.5rem}
-    .rating-form h2{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:1rem;display:flex;align-items:center;gap:.4rem}
-    .star-group{display:flex;gap:.4rem;margin-bottom:.5rem;justify-content:center}
-    .star-btn{font-size:2.25rem;background:none;border:none;cursor:pointer;filter:grayscale(1);opacity:.35;transition:filter .12s,opacity .12s,transform .1s;padding:.1rem;line-height:1}
-    .star-btn.active,.star-btn.hover{filter:none;opacity:1}
+    /* Stars */
+    .star-group{display:flex;gap:.5rem;margin-bottom:1rem;justify-content:center}
+    .star-btn{
+      font-size:2.25rem;background:none;border:none;cursor:pointer;
+      filter:grayscale(1);opacity:.4;transition:filter .15s,opacity .15s,transform .1s;
+      padding:.1rem;line-height:1;
+    }
+    .star-btn.selected,.star-btn.hovered{filter:none;opacity:1}
     .star-btn:hover{transform:scale(1.15)}
-    .star-label{text-align:center;font-size:.85rem;color:var(--gray);min-height:1.3em;margin-bottom:.85rem}
-    .rating-comment{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:.65rem .85rem;font-size:.9rem;font-family:inherit;resize:vertical;min-height:72px;transition:border-color .2s}
+    .star-label{text-align:center;font-size:.85rem;color:var(--gray);min-height:1.2em;margin-bottom:.75rem}
+
+    /* Textarea comentario */
+    .rating-comment{
+      width:100%;border:1.5px solid var(--border,#E5E7EB);border-radius:10px;
+      padding:.65rem .85rem;font-size:.9rem;font-family:inherit;
+      resize:vertical;min-height:70px;
+      transition:border-color .2s;
+    }
     .rating-comment:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(22,101,52,.1)}
-    .btn-rate{width:100%;background:var(--green);color:#fff;border:none;border-radius:10px;padding:.9rem;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:.75rem;transition:background .2s;font-family:inherit}
+
+    .btn-rate{
+      width:100%;background:var(--green);color:#fff;
+      border:none;border-radius:10px;padding:.9rem;
+      font-size:.95rem;font-weight:700;cursor:pointer;
+      margin-top:.75rem;transition:background .2s;
+    }
     .btn-rate:hover{background:var(--green-deep)}
     .btn-rate:disabled{opacity:.5;cursor:not-allowed}
 
-    /* Already rated */
-    .already-rated{padding:1.25rem 1.5rem;text-align:center}
-    .already-rated h2{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.4rem}
-    .prev-stars{font-size:1.6rem;margin-bottom:.4rem}
-    .prev-comment{font-size:.88rem;color:var(--gray);font-style:italic;margin:.4rem 0 .85rem;line-height:1.5}
-    .btn-update{background:none;border:1.5px solid var(--green);color:var(--green);border-radius:10px;padding:.55rem 1.2rem;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
-    .btn-update:hover{background:var(--green);color:#fff}
+    /* Auth CTA */
+    .rating-auth{
+      background:var(--green-light,#DCFCE7);
+      border-radius:var(--radius);padding:1.25rem;
+      text-align:center;margin-bottom:1rem;
+    }
+    .rating-auth p{font-size:.88rem;color:var(--green-deep);margin-bottom:.75rem;line-height:1.55}
+    .btn-auth{
+      display:inline-block;background:var(--green);color:#fff;
+      font-weight:700;font-size:.88rem;padding:.65rem 1.35rem;
+      border-radius:10px;text-decoration:none;
+    }
 
-    /* Community ratings */
-    .community-section{padding:0 1.5rem 1.5rem}
-    .community-section h3{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:.85rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:.4rem}
-    .community-rating{display:flex;gap:.75rem;margin-bottom:.9rem;align-items:flex-start}
-    .cr-initials{width:32px;height:32px;border-radius:50%;background:var(--green-light);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;margin-top:.1rem}
-    .cr-body{flex:1}
-    .cr-meta{display:flex;align-items:center;gap:.5rem;margin-bottom:.25rem}
-    .cr-stars{font-size:.9rem;letter-spacing:-.05em}
-    .cr-date{font-size:.72rem;color:var(--gray)}
-    .cr-comment{font-size:.85rem;color:#374151;line-height:1.5;font-style:italic}
-    .cr-nocomment{font-size:.8rem;color:var(--gray)}
-    .no-ratings{text-align:center;padding:.75rem 0;color:var(--gray);font-size:.88rem}
-
-    /* Toast */
-    .rating-toast{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);background:var(--green-deep);color:#fff;font-size:.9rem;font-weight:600;padding:.75rem 1.5rem;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .3s;z-index:9999;white-space:nowrap}
+    /* Rating result / toast */
+    .rating-toast{
+      position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);
+      background:var(--green-deep);color:#fff;
+      font-size:.9rem;font-weight:600;
+      padding:.75rem 1.5rem;border-radius:12px;
+      box-shadow:0 4px 20px rgba(0,0,0,.25);
+      opacity:0;pointer-events:none;
+      transition:opacity .3s;z-index:9999;
+      white-space:nowrap;
+    }
     .rating-toast.show{opacity:1}
 
-    /* DESC */
-    .desc-text{font-size:.95rem;line-height:1.65;color:#374151}
+    /* LOADING */
     .loading{text-align:center;padding:4rem 1rem;color:var(--gray)}
-    .not-found{text-align:center;padding:4rem 1.25rem}
+
+    /* CHIP TIPO */
+    .not-found{
+      text-align:center;padding:4rem 1.25rem;
+    }
     .not-found h2{font-size:1.5rem;margin-bottom:.5rem}
+
+    /* Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@400;500;700&display=swap');
   </style>
 </head>
 <body>
 
   <header class="site-header">
     <a href="/" class="back-btn">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
       Volver
     </a>
     <a href="/" class="logo-sm">Gluten<span>Go</span></a>
-
-    <!-- Usuario logueado en header -->
-    <div class="header-user" id="header-user-area" data-auth="logged-in" style="display:none">
-      <img class="header-avatar" id="header-avatar" src="" alt="Avatar">
-      <button class="header-user-btn" onclick="toggleUserDropdown()" id="header-user-btn">
-        <span id="header-user-name"></span>
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
-      </button>
-      <div class="header-user-dropdown" id="user-dropdown">
-        <div class="dropdown-name" id="dd-name"></div>
-        <div class="dropdown-email" id="dd-email"></div>
-        <button class="dropdown-item danger" onclick="handleSignOut()">Cerrar sesión</button>
-      </div>
-    </div>
-
-    <!-- No logueado -->
-    <div data-auth="logged-out" id="header-signin">
-      <button onclick="GlutenAuth.signInWithGoogle()" style="background:none;border:1.5px solid rgba(255,255,255,.4);color:#fff;padding:.35rem .85rem;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='none'">
-        Ingresar
-      </button>
-    </div>
   </header>
 
   <div id="app">
     <div class="loading">Cargando…</div>
   </div>
 
-  <div class="rating-toast" id="rating-toast"></div>
-
   <script src="/data.js"></script>
   <script src="/auth.js"></script>
   <script>
   (function(){
-    var params = new URLSearchParams(location.search);
-    var slug   = params.get('slug');
-    var lugar  = slug ? lugares.find(function(l){ return l.slug === slug; }) : null;
-    var app    = document.getElementById('app');
-    var _currentUser = null;
+    // ── Leer slug de la URL
+    const params = new URLSearchParams(location.search);
+    const slug   = params.get('slug');
+    const lugar  = slug ? lugares.find(l => l.slug === slug) : null;
 
-    // ── Dropdown usuario ──────────────────────────────────────────
-    function toggleUserDropdown(){
-      document.getElementById('user-dropdown').classList.toggle('open');
-    }
-    document.addEventListener('click', function(e){
-      var area = document.getElementById('header-user-area');
-      if(area && !area.contains(e.target)){
-        var dd = document.getElementById('user-dropdown');
-        if(dd) dd.classList.remove('open');
-      }
-    });
-    function handleSignOut(){
-      GlutenAuth.signOut();
-      document.getElementById('user-dropdown').classList.remove('open');
-      renderRatingSection();
-    }
+    const app = document.getElementById('app');
 
-    // Populate header user info
-    window.onGlutenAuthSignIn = function(user){
-      _currentUser = user;
-      var meta = user.user_metadata || {};
-      var name = meta.full_name || meta.name || user.email.split('@')[0];
-      var pic  = meta.avatar_url || meta.picture || '';
-      document.getElementById('header-user-name').textContent = name.split(' ')[0];
-      document.getElementById('dd-name').textContent = name;
-      document.getElementById('dd-email').textContent = user.email;
-      var av = document.getElementById('header-avatar');
-      if(pic){ av.src = pic; av.style.display = 'block'; }
-      renderRatingSection();
-    };
-    window.onGlutenAuthSignOut = function(){
-      _currentUser = null;
-      renderRatingSection();
-    };
-
-    if(!lugar){
-      app.innerHTML = '<div class="not-found"><div style="font-size:3rem;margin-bottom:1rem">🤷</div><h2>Lugar no encontrado</h2><p style="color:#6B7280;margin-bottom:1.5rem">El slug "<strong>'+(slug||'')+'</strong>" no existe en nuestro directorio.</p><a href="/" style="display:inline-block;background:var(--green);color:#fff;padding:.75rem 1.5rem;border-radius:12px;text-decoration:none;font-weight:700">Ver todos los lugares</a></div>';
+    if (!lugar) {
+      app.innerHTML = `
+        <div class="not-found">
+          <div style="font-size:3rem;margin-bottom:1rem">🤷‍♀️</div>
+          <h2>Lugar no encontrado</h2>
+          <p style="color:#6B7280;margin-bottom:1.5rem">El slug "<strong>${slug||''}</strong>" no existe en nuestro directorio.</p>
+          <a href="/" style="display:inline-block;background:var(--green);color:#fff;padding:.75rem 1.5rem;border-radius:12px;text-decoration:none;font-weight:700">Ver todos los lugares</a>
+        </div>`;
       return;
     }
 
+    // ── Actualizar meta
     document.getElementById('page-title').textContent = lugar.name + ' — GlutenGo';
-    document.getElementById('page-desc').content = lugar.desc.slice(0,155) + '…';
+    document.getElementById('page-desc').content =
+      lugar.desc.slice(0,155) + '…';
 
-    // ── Score ring ────────────────────────────────────────────────
-    var r = 30; var circ = 2*Math.PI*r;
-    function scoreInfo(s){
-      if(s===null) return {scoreNum:'—',ringColor:'#E5E7EB',dash:circ,bandClass:'band-construcion',bandLabel:'Sin datos'};
-      if(s>=80) return {scoreNum:s,ringColor:'#166534',dash:circ*(1-s/100),bandClass:'band-muy-recomendado',bandLabel:'Muy recomendado'};
-      if(s>=60) return {scoreNum:s,ringColor:'#22C55E',dash:circ*(1-s/100),bandClass:'band-come-tranquilo',bandLabel:'Come tranquilo'};
-      if(s>=40) return {scoreNum:s,ringColor:'#F59E0B',dash:circ*(1-s/100),bandClass:'band-consulta-antes',bandLabel:'Consultá antes'};
-      return {scoreNum:s,ringColor:'#EF4444',dash:circ*(1-s/100),bandClass:'band-requiere-validacion',bandLabel:'Requiere validación'};
+    // ── Score (se carga dinámicamente desde /api/rating)
+    const r = 30; const circ = 2*Math.PI*r;
+
+    function scoreInfo(scorePct) {
+      return {
+        scoreNum: scorePct !== null ? scorePct : '—',
+        bandClass: scorePct === null ? 'band-construcion'
+          : scorePct >= 95 ? 'band-come-tranquilo'
+          : scorePct >= 80 ? 'band-muy-recomendado'
+          : scorePct >= 60 ? 'band-consulta-antes'
+          : 'band-requiere-validacion',
+        bandLabel: scorePct === null ? 'Aún sin valoraciones'
+          : scorePct >= 95 ? '✅ Come tranquilo'
+          : scorePct >= 80 ? '👍 Muy recomendado'
+          : scorePct >= 60 ? '⚠️ Consultá antes'
+          : '🔴 Requiere validación',
+        dash: scorePct !== null ? circ * (1 - scorePct/100) : circ,
+        ringColor: scorePct === null ? '#d1d5db'
+          : scorePct >= 80 ? '#166534'
+          : scorePct >= 60 ? '#D97706'
+          : '#EF4444',
+      };
     }
+
+    // Iniciar con null mientras carga
+    var currentScore = null;
     var si = scoreInfo(null);
 
-    // ── Horarios ──────────────────────────────────────────────────
-    function renderHours(hours){
-      if(!hours) return '<p style="color:var(--gray);font-size:.88rem">No disponible</p>';
-      var days=['lun','mar','mié','jue','vie','sáb','dom'];
-      return days.map(function(d){
-        var t=hours[d]||hours[d.normalize('NFD').replace(/[̀-ͯ]/g,'')];
-        return '<div class="hour-row"><span class="day">'+d.charAt(0).toUpperCase()+d.slice(1)+'</span><span class="time">'+(t&&t!=='cerrado'?t:'<span class="hour-closed">Cerrado</span>')+'</span></div>';
-      }).join('');
+    // ── Horarios
+    function renderHours(h){
+      if(!h) return '<p style="color:#6B7280;font-size:.88rem">Horario no confirmado</p>';
+      return Object.entries(h).map(([k,v])=>`
+        <div class="hour-row">
+          <span class="day">${k.replace('_',' ')}</span>
+          <span class="time ${v==='Cerrado'?'hour-closed':''}">${v}</span>
+        </div>`).join('');
     }
 
-    // ── Contacto ──────────────────────────────────────────────────
-    function renderContact(l){
-      var h='';
-      if(l.phone) h+='<a href="tel:'+l.phone+'" class="contact-link"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>'+l.phone+'</a>';
-      if(l.instagram) h+='<a href="https://instagram.com/'+l.instagram.replace('@','')+'" target="_blank" class="contact-link"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>'+l.instagram+'</a>';
-      if(l.web) h+='<a href="'+l.web+'" target="_blank" class="contact-link"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>Sitio web</a>';
-      return h||'<p style="color:var(--gray);font-size:.88rem">Sin información de contacto</p>';
+    // ── Contacto
+    const phone = lugar.phone || null;
+    const instagram = lugar.instagram || null;
+    let contactHtml = '';
+    if(phone){
+      const wp = 'https://wa.me/'+phone.replace(/\D/g,'');
+      contactHtml += `
+        <a href="${wp}" target="_blank" class="contact-link">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>`;
+    }
+    if(instagram){
+      const handle = instagram.replace('@','');
+      contactHtml += `
+        <a href="https://instagram.com/${handle}" target="_blank" class="contact-link">
+          <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          ${instagram}
+        </a>`;
+    }
+    if(!contactHtml){
+      contactHtml = '<p style="color:#6B7280;font-size:.88rem">Sin datos de contacto aún.</p>';
     }
 
-    // ── Render main ───────────────────────────────────────────────
-    app.innerHTML =
-      '<div class="lugar-hero">' +
-        '<div class="tipo-badge '+ lugar.tipo +'">'+(lugar.tipo==='exclusivo'?'🌟 100% Sin Gluten':'⚡ Con Opciones SG')+'</div>'+
-        '<h1 class="lugar-name">'+lugar.name+'</h1>'+
-        '<div class="lugar-meta">'+
-          '<span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>'+lugar.address+' · '+lugar.neighborhood+'</span>'+
-          '<span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>'+lugar.category+'</span>'+
-        '</div>'+
-      '</div>'+
+    // ── Render completo
+    app.innerHTML = `
+      <div class="lugar-hero">
+        <span class="tipo-badge ${lugar.tipo}">${lugar.tipo === 'exclusivo' ? '🌟 100% Sin Gluten' : '⚡ Con Opciones SG'}</span>
+        <h1 class="lugar-name">${lugar.name}</h1>
+        <div class="lugar-meta">
+          <span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            ${lugar.address}, ${lugar.neighborhood}
+          </span>
+          <span>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+            ${lugar.category}
+          </span>
+        </div>
+      </div>
 
-      '<div class="score-card" id="score-card">'+
-        '<div class="score-ring">'+
-          '<svg width="72" height="72" viewBox="0 0 72 72"><circle cx="36" cy="36" r="'+r+'" fill="none" stroke="#e5e7eb" stroke-width="7"/><circle id="score-arc" cx="36" cy="36" r="'+r+'" fill="none" stroke="'+si.ringColor+'" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+circ+'" stroke-dashoffset="'+si.dash+'"/></svg>'+
-          '<div class="score-number"><span id="score-num">'+si.scoreNum+'</span><span class="score-label">score</span></div>'+
-        '</div>'+
-        '<div class="score-info">'+
-          '<h3>GlutenGo Score</h3>'+
-          '<span class="score-band-pill '+si.bandClass+'" id="score-band">'+si.bandLabel+'</span>'+
-          '<p id="score-desc" style="margin-top:.4rem;font-size:.82rem;color:var(--gray)">Calculando con valoraciones reales…</p>'+
-        '</div>'+
-      '</div>'+
+      <!-- SCORE -->
+      <div class="score-card" id="score-card">
+        <div class="score-ring" title="GlutenGo Score">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="7"/>
+            <circle id="score-arc" cx="36" cy="36" r="${r}" fill="none"
+              stroke="${si.ringColor}" stroke-width="7"
+              stroke-linecap="round"
+              stroke-dasharray="${circ}"
+              stroke-dashoffset="${si.dash}"/>
+          </svg>
+          <div class="score-number">
+            <span id="score-num">${si.scoreNum}</span>
+            <span class="score-label">score</span>
+          </div>
+        </div>
+        <div class="score-info">
+          <h3>GlutenGo Score</h3>
+          <span class="score-band-pill ${si.bandClass}" id="score-band">${si.bandLabel}</span>
+          <p id="score-desc" style="margin-top:.4rem">Calculando con visitas reales…</p>
+        </div>
+      </div>
 
-      '<div class="lugar-body">'+
-        '<div id="rating-section"></div>'+
+      <!-- CUERPO -->
+      <div class="lugar-body">
 
-        '<div class="card" style="margin-top:.5rem">'+
-          '<h2><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Sobre este lugar</h2>'+
-          '<p class="desc-text">'+lugar.desc+'</p>'+
-        '</div>'+
+        <!-- VALORACIÓN (se renderiza según si hay token o no) -->
+        <div id="rating-section"></div>
 
-        '<div class="card">'+
-          '<h2><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Horarios</h2>'+
-          '<div class="hours-grid">'+renderHours(lugar.hours)+'</div>'+
-        '</div>'+
+        <!-- DESCRIPCIÓN -->
+        <div class="card" style="margin-top:1rem">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Sobre este lugar
+          </h2>
+          <p class="desc-text">${lugar.desc}</p>
+        </div>
 
-        '<div class="card">'+
-          '<h2><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-10l6-3m6 3l-6 3m6-3v10.382a1 1 0 01-.553.894L15 20m0 0l-6-3m6 3V7"/></svg> Cómo llegar</h2>'+
-          '<div id="mini-map"></div>'+
-          '<a href="https://www.google.com/maps/search/?api=1&query='+lugar.lat+','+lugar.lng+'" target="_blank" class="how-to-get"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg> Abrir en Google Maps</a>'+
-        '</div>'+
+        <!-- HORARIOS -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            Horarios
+          </h2>
+          <div class="hours-grid">${renderHours(lugar.hours)}</div>
+        </div>
 
-        '<div class="card">'+
-          '<h2><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg> Contacto</h2>'+
-          '<div class="contact-links">'+renderContact(lugar)+'</div>'+
-        '</div>'+
+        <!-- MAPA -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-10l6-3m6 3l-6 3m6-3v10.382a1 1 0 01-.553.894L15 20m0 0l-6-3m6 3V7"/></svg>
+            Cómo llegar
+          </h2>
+          <div id="mini-map"></div>
+          <a href="https://www.google.com/maps/search/?api=1&query=${lugar.lat},${lugar.lng}" target="_blank" class="how-to-get">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            Abrir en Google Maps
+          </a>
+        </div>
 
-        '<div class="card">'+
-          '<h2><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg> Compartir</h2>'+
-          '<div class="share-row">'+
-            '<button class="share-btn" onclick="shareNative()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg> Compartir</button>'+
-            '<button class="share-btn" onclick="copyLink()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copiar link</button>'+
-          '</div>'+
-        '</div>'+
-      '</div>';
+        <!-- CONTACTO -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            Contacto
+          </h2>
+          <div class="contact-links">${contactHtml}</div>
+        </div>
 
-    // ── Mini mapa ─────────────────────────────────────────────────
+        <!-- COMPARTIR -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+            Compartir
+          </h2>
+          <div class="share-row">
+            <button class="share-btn" onclick="shareNative()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+              Compartir
+            </button>
+            <button class="share-btn" onclick="copyLink()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar link
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /lugar-body -->
+    `;
+
+    // ── Mini mapa con Leaflet
     function initMiniMap(){
-      var m = L.map('mini-map',{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false});
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,subdomains:'abcd'}).addTo(m);
-      m.setView([lugar.lat, lugar.lng], 16);
-      var pin = L.divIcon({
+      var mm = L.map('mini-map', { zoomControl: false, attributionControl: false })
+        .setView([lugar.lat, lugar.lng], 16);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19
+      }).addTo(mm);
+      var icon = L.divIcon({
         className:'',
-        html:'<svg width="28" height="36" viewBox="0 0 32 40" fill="none"><path d="M16 0C9.373 0 4 5.373 4 12c0 8.5 12 28 12 28S28 20.5 28 12c0-6.627-5.373-12-12-12z" fill="#166534" stroke="white" stroke-width="2.5"/><circle cx="16" cy="12" r="5" fill="white" fill-opacity="0.9"/></svg>',
-        iconSize:[28,36],iconAnchor:[14,36]
+        html:'<div style="background:' + (lugar.tipo==='exclusivo'?'#166534':'#E8A93C') + ';width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>',
+        iconSize:[28,28],iconAnchor:[14,28]
       });
-      L.marker([lugar.lat, lugar.lng],{icon:pin}).addTo(m);
+      L.marker([lugar.lat, lugar.lng], {icon:icon})
+        .addTo(mm)
+        .bindPopup('<strong>'+lugar.name+'</strong><br>'+lugar.address);
     }
-    try{ initMiniMap(); }catch(e){}
+    setTimeout(initMiniMap, 50);
 
-    // ── Score dinámico ────────────────────────────────────────────
-    fetch('/api/rating?slug='+encodeURIComponent(slug))
-      .then(function(r){return r.json();})
-      .then(function(data){
-        if(data.score !== null){
-          var inf = scoreInfo(data.score);
-          var arc = document.getElementById('score-arc');
-          var num = document.getElementById('score-num');
-          var band = document.getElementById('score-band');
-          var desc = document.getElementById('score-desc');
-          if(arc){ arc.style.stroke = inf.ringColor; arc.style.strokeDashoffset = inf.dash; }
-          if(num) num.textContent = inf.scoreNum;
-          if(band){ band.className = 'score-band-pill '+inf.bandClass; band.textContent = inf.bandLabel; }
-          if(desc) desc.textContent = data.count+' valoración'+(data.count!==1?'es':'')+' de la comunidad';
-        } else {
-          var desc2 = document.getElementById('score-desc');
-          if(desc2) desc2.textContent = 'Sé el primero en valorar este lugar';
-        }
-        // Render rating section AFTER we have community data
-        _ratingData = data;
-        renderRatingSection();
-      })
-      .catch(function(){
-        renderRatingSection();
-      });
-
-    // ── Rating section ────────────────────────────────────────────
-    var _ratingData = null;
-    var _selectedStars = 0;
-    var starLabels = ['','¡Muy malo!','No lo recomiendo','Regular','¡Bueno!','¡Excelente!'];
-
-    function starsHTML(score, size){
-      size = size || 1;
-      var s = '';
-      for(var i=1;i<=5;i++){
-        s += '<span style="font-size:'+(size*1.1)+'rem;opacity:'+(i<=score?'1':'.2')+'">'+(i<=score?'⭐':'☆')+'</span>';
-      }
-      return s;
-    }
-
-    function buildCommunityHTML(data){
-      if(!data || !data.recent || data.recent.length === 0) return '';
-      var html = '<div class="community-section"><h3>💬 Lo que dice la comunidad ('+(data.count)+')</h3>';
-      data.recent.forEach(function(rv){
-        html += '<div class="community-rating">' +
-          '<div class="cr-initials">'+rv.initials+'</div>' +
-          '<div class="cr-body">' +
-            '<div class="cr-meta"><span class="cr-stars">'+starsHTML(rv.score)+'</span><span class="cr-date">'+rv.date+'</span></div>' +
-            (rv.comentario ? '<p class="cr-comment">"'+escapeHtml(rv.comentario)+'"</p>' : '<p class="cr-nocomment">Sin comentario</p>') +
-          '</div>' +
-        '</div>';
-      });
-      html += '</div>';
-      return html;
-    }
-
-    function escapeHtml(s){
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    function renderRatingSection(){
-      var section = document.getElementById('rating-section');
-      if(!section) return;
-
-      window.GlutenAuth.getSession().then(function(session){
-        var user = session ? session.user : null;
-        if(!section) return;
-
-        var html = '<div class="rating-card">';
-
-        if(!user){
-          html += '<div class="rating-cta">' +
-            '<div class="rating-cta-icon">⭐</div>' +
-            '<h2>¿Ya visitaste este lugar?</h2>' +
-            '<p>Ingresá con Google y compartí tu experiencia. Tu valoración ayuda a toda la comunidad celíaca.</p>' +
-            '<button class="btn-google" onclick="GlutenAuth.signInWithGoogle()">' +
-            '<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>' +
-            'Continuar con Google</button>' +
-          '</div>';
-        } else {
-          var meta = user.user_metadata || {};
-          var name = meta.full_name || meta.name || user.email.split('@')[0];
-          var pic  = meta.avatar_url || meta.picture || '';
-          var initials = name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
-
-          // User strip
-          html += '<div class="rating-user-strip">' +
-            (pic ? '<img class="rstrip-avatar" id="rstrip-av" src="'+pic+'" style="display:block">' : '<div class="rstrip-initials">'+initials+'</div>') +
-            '<div><div class="rstrip-name">'+escapeHtml(name.split(' ')[0])+'</div>' +
-            '<div class="rstrip-sub">Logueado con Google</div></div></div>';
-
-          // Check localStorage for previous rating
-          var prevRating = null;
-          try{ var stored = localStorage.getItem('glutengo_rated_'+slug); if(stored) prevRating=JSON.parse(stored); }catch(e){}
-
-          if(prevRating && !prevRating._editing){
-            html += '<div class="already-rated">' +
-              '<h2>✅ Tu valoración</h2>' +
-              '<div class="prev-stars">'+starsHTML(prevRating.score)+'</div>' +
-              (prevRating.comentario ? '<p class="prev-comment">"'+escapeHtml(prevRating.comentario)+'"</p>' : '') +
-              '<button class="btn-update" onclick="editRating()">Actualizar valoración</button>' +
-            '</div>';
-          } else {
-            html += '<div class="rating-form">' +
-              '<h2>⭐ Valorar este lugar</h2>' +
-              '<div class="star-group" id="star-group">' +
-              [1,2,3,4,5].map(function(i){
-                return '<button class="star-btn" data-star="'+i+'" onclick="selectStar('+i+')" onmouseover="hoverStar('+i+')" onmouseout="unhoverStar()">⭐</button>';
-              }).join('') +
-              '</div>' +
-              '<p class="star-label" id="star-label">Tocá una estrella para valorar</p>' +
-              '<textarea class="rating-comment" id="rating-comment" placeholder="Contanos tu experiencia (opcional)…" maxlength="500" rows="3"></textarea>' +
-              '<button class="btn-rate" id="btn-rate" onclick="submitRating()" disabled>Enviar valoración</button>' +
-            '</div>';
-          }
-        }
-
-        html += '</div>';
-
-        // Community ratings
-        if(_ratingData){
-          html += buildCommunityHTML(_ratingData);
-        }
-
-        section.innerHTML = html;
-        _selectedStars = 0;
-      }).catch(function(){
-        var section2 = document.getElementById('rating-section');
-        if(section2) section2.innerHTML = '';
-      });
-    }
-
-    // Star interactions
-    window.selectStar = function(n){
-      _selectedStars = n;
-      updateStars();
-      var lbl = document.getElementById('star-label');
-      if(lbl) lbl.textContent = starLabels[n];
-      var btn = document.getElementById('btn-rate');
-      if(btn) btn.disabled = false;
+    // ── Share
+    window.shareNative = function(){
+      var shareData = {
+        title: lugar.name + ' — GlutenGo',
+        text: lugar.tipo==='exclusivo'
+          ? lugar.name+' es 100% libre de gluten. Encontré este lugar en GlutenGo.'
+          : lugar.name+' tiene buenas opciones sin gluten. Encontré esto en GlutenGo.',
+        url: location.href
+      };
+      if(navigator.share){ navigator.share(shareData).catch(function(){}); }
+      else { copyLink(); }
     };
-    window.hoverStar = function(n){
-      document.querySelectorAll('.star-btn').forEach(function(b,i){
-        b.classList.toggle('hover', i<n);
+
+    window.copyLink = function(){
+      navigator.clipboard.writeText(location.href).then(function(){
+        var btn = document.querySelectorAll('.share-btn')[1];
+        var prev = btn.innerHTML;
+        btn.innerHTML = '✅ ¡Copiado!';
+        setTimeout(function(){btn.innerHTML=prev;},2000);
       });
-      var lbl = document.getElementById('star-label');
-      if(lbl) lbl.textContent = starLabels[n];
+    };
+
+    // ── Toast
+    function showToast(msg, isError) {
+      var t = document.getElementById('rating-toast');
+      if (!t) {
+        t = document.createElement('div');
+        t.id = 'rating-toast';
+        t.className = 'rating-toast';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.background = isError ? '#991B1B' : 'var(--green-deep)';
+      t.classList.add('show');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(function(){ t.classList.remove('show'); }, 3500);
+    }
+
+    // ── Score ring UI
+    function updateScoreUI(scorePct, count) {
+      var info = scoreInfo(scorePct);
+      var arcEl  = document.getElementById('score-arc');
+      var numEl  = document.getElementById('score-num');
+      var bandEl = document.getElementById('score-band');
+      var descEl = document.getElementById('score-desc');
+      if (arcEl) {
+        arcEl.setAttribute('stroke', info.ringColor);
+        arcEl.setAttribute('stroke-dashoffset', info.dash);
+      }
+      if (numEl)  numEl.textContent = info.scoreNum;
+      if (bandEl) { bandEl.className = 'score-band-pill ' + info.bandClass; bandEl.textContent = info.bandLabel; }
+      if (descEl) {
+        descEl.textContent = (!count || scorePct === null)
+          ? '¡Sé el primero en valorar este lugar!'
+          : 'Basado en ' + count + ' valoraci' + (count === 1 ? 'ón' : 'ones') + ' de la comunidad.';
+      }
+    }
+
+    // ── Reseñas de la comunidad
+    function renderComunidad(recent) {
+      var sec = document.getElementById('comunidad-section');
+      if (!sec || !recent || !recent.length) return;
+      var STARS = ['','★','★★','★★★','★★★★','★★★★★'];
+      var items = recent.map(function(r) {
+        var stars = '<span style="color:#F59E0B;font-size:.95rem;letter-spacing:1px">' + (STARS[r.score] || '') + '</span>';
+        var autor = r.autor || 'Miembro GlutenGo';
+        var fecha = r.fecha || '';
+        var coment = r.comentario
+          ? '<p style="margin:.4rem 0 0;font-size:.88rem;color:#374151;line-height:1.5">"' + r.comentario.replace(/</g,'&lt;') + '"</p>'
+          : '';
+        return '<div style="background:#fff;border-radius:12px;padding:.85rem 1rem;box-shadow:0 1px 6px rgba(0,0,0,.07);border:1px solid #E5E7EB">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">' +
+            '<span style="font-size:.82rem;font-weight:600;color:#166534">' + autor + '</span>' +
+            '<span style="font-size:.78rem;color:#9CA3AF">' + fecha + '</span>' +
+          '</div>' +
+          '<div style="margin:.3rem 0">' + stars + '</div>' +
+          coment +
+        '</div>';
+      }).join('');
+      sec.innerHTML =
+        '<div class="card" style="margin-top:1rem">' +
+          '<h2 style="display:flex;align-items:center;gap:.4rem">' +
+            '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/></svg>' +
+            'Lo que dice la comunidad <span style="font-weight:400;color:#6B7280;font-size:.85rem;margin-left:.3rem">(' + recent.length + ')</span>' +
+          '</h2>' +
+          '<div style="display:flex;flex-direction:column;gap:.65rem">' + items + '</div>' +
+        '</div>';
+    }
+
+    // ── Fetch score + reseñas
+    fetch('/api/rating?slug=' + encodeURIComponent(slug))
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        updateScoreUI(data.score, data.count);
+        renderComunidad(data.recent);
+      })
+      .catch(function(){ updateScoreUI(null, 0); });
+
+    // ── Star rating
+    var selectedStars = 0;
+    var STAR_LABELS = ['','😬 Peligroso — contaminación cruzada','😕 Mala experiencia','😐 Regular — pedir con cuidado','😊 Buena experiencia','🤩 ¡Excelente! Come tranquilo'];
+
+    function renderStars() {
+      var h = '';
+      for (var i = 1; i <= 5; i++) {
+        h += '<button type="button" class="star-btn' + (i <= selectedStars ? ' selected' : '') +
+          '" data-val="' + i + '" onclick="selectStar(' + i + ')" onmouseenter="hoverStar(' + i + ')" onmouseleave="unhoverStar()">⭐</button>';
+      }
+      document.getElementById('stars-row').innerHTML = h;
+      document.getElementById('star-label').textContent = selectedStars ? STAR_LABELS[selectedStars] : 'Tocá una estrella para calificar';
+    }
+    window.selectStar  = function(n){ selectedStars = n; renderStars(); };
+    window.hoverStar   = function(n){
+      document.querySelectorAll('.star-btn').forEach(function(b,i){ b.classList.toggle('hovered', i < n); });
+      document.getElementById('star-label').textContent = STAR_LABELS[n];
     };
     window.unhoverStar = function(){
-      document.querySelectorAll('.star-btn').forEach(function(b){ b.classList.remove('hover'); });
-      updateStars();
-      var lbl = document.getElementById('star-label');
-      if(lbl) lbl.textContent = _selectedStars ? starLabels[_selectedStars] : 'Tocá una estrella para valorar';
-    };
-    function updateStars(){
-      document.querySelectorAll('.star-btn').forEach(function(b,i){
-        b.classList.toggle('active', i<_selectedStars);
-      });
-    }
-
-    window.editRating = function(){
-      try{ var s=localStorage.getItem('glutengo_rated_'+slug); if(s){var p=JSON.parse(s);p._editing=true;localStorage.setItem('glutengo_rated_'+slug,JSON.stringify(p));} }catch(e){}
-      renderRatingSection();
+      document.querySelectorAll('.star-btn').forEach(function(b){ b.classList.remove('hovered'); });
+      document.getElementById('star-label').textContent = selectedStars ? STAR_LABELS[selectedStars] : 'Tocá una estrella para calificar';
     };
 
-    window.submitRating = function(){
-      if(!_selectedStars){ showToast('Seleccioná una valoración primero'); return; }
-      var btn = document.getElementById('btn-rate');
-      var comment = (document.getElementById('rating-comment')||{}).value || '';
-      if(btn){ btn.disabled=true; btn.textContent='Enviando…'; }
+    // ── Enviar valoración
+    window.submitRating = function() {
+      if (!selectedStars) { showToast('Elegí una estrella primero', true); return; }
+      var btn = document.getElementById('btn-send-rating');
+      if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
 
-      window.GlutenAuth.getSession().then(function(session){
-        if(!session){ showToast('Sesión expirada. Iniciá sesión de nuevo.'); return; }
-        return fetch('/api/rating',{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({token:session.access_token, slug:slug, score:_selectedStars, comentario:comment})
-        });
-      }).then(function(res){
-        if(!res) return;
-        return res.json();
-      }).then(function(data){
-        if(data && data.ok){
-          // Guardar en localStorage para UX
-          try{ localStorage.setItem('glutengo_rated_'+slug, JSON.stringify({score:_selectedStars,comentario:comment})); }catch(e){}
-          showToast('¡Gracias por tu valoración! 🌟');
-          // Actualizar score visual
-          if(data.score!==null){
-            var inf = scoreInfo(data.score);
-            var arc=document.getElementById('score-arc');
-            var num=document.getElementById('score-num');
-            var band=document.getElementById('score-band');
-            var desc=document.getElementById('score-desc');
-            if(arc){arc.style.stroke=inf.ringColor;arc.style.strokeDashoffset=inf.dash;}
-            if(num) num.textContent=inf.scoreNum;
-            if(band){band.className='score-band-pill '+inf.bandClass;band.textContent=inf.bandLabel;}
-            if(desc) desc.textContent=data.count+' valoración'+(data.count!==1?'es':'')+' de la comunidad';
-          }
-          // Reload community after short delay
-          setTimeout(function(){
-            fetch('/api/rating?slug='+encodeURIComponent(slug))
-              .then(function(r){return r.json();})
-              .then(function(d){_ratingData=d; renderRatingSection();})
-              .catch(function(){renderRatingSection();});
-          }, 800);
-        } else {
-          showToast((data&&data.error)||'Error al enviar. Intentá de nuevo.');
-          if(btn){ btn.disabled=false; btn.textContent='Enviar valoración'; }
+      window.GlutenAuth.getSession().then(function(session) {
+        var token = session ? session.access_token : null;
+        if (!token) {
+          showToast('Iniciá sesión primero', true);
+          if (btn) { btn.disabled = false; btn.textContent = 'Enviar valoración'; }
+          return;
         }
-      }).catch(function(){
-        showToast('Error de red. Intentá de nuevo.');
-        if(btn){ btn.disabled=false; btn.textContent='Enviar valoración'; }
+        var comentario = (document.getElementById('rating-comment')||{}).value || '';
+
+        fetch('/api/rating', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token, slug: slug, score: selectedStars, comentario: comentario }),
+        })
+        .then(function(res){ return res.json(); })
+        .then(function(data){
+          if (data.ok) {
+            showToast('¡Gracias! Tu valoración fue guardada 🌾');
+            updateScoreUI(data.score, data.count);
+            var sec = document.getElementById('rating-section');
+            if (sec) {
+              sec.innerHTML = '<div style="background:var(--green-light);border-radius:var(--radius);padding:1rem 1.25rem;text-align:center;margin-bottom:1rem;font-weight:700;color:var(--green-deep)">✅ ¡Gracias por valorar este lugar! Tu voto ya está contado.</div>';
+            }
+            // Refrescar reseñas
+            fetch('/api/rating?slug=' + encodeURIComponent(slug))
+              .then(function(r){ return r.json(); })
+              .then(function(d){ renderComunidad(d.recent); });
+          } else {
+            throw new Error(data.error || 'error');
+          }
+        })
+        .catch(function(){
+          if (btn) { btn.disabled = false; btn.textContent = 'Enviar valoración'; }
+          showToast('No se pudo guardar la valoración. Intentá de nuevo.', true);
+        });
       });
     };
 
-    function showToast(msg){
-      var t=document.getElementById('rating-toast');
-      if(!t) return;
-      t.textContent=msg;
-      t.classList.add('show');
-      setTimeout(function(){t.classList.remove('show');},3200);
+    // ── Render sección de valoración (según si hay sesión)
+    function renderRatingSection() {
+      var section = document.getElementById('rating-section');
+      if (!section) return;
+      section.innerHTML = '<div style="height:60px"></div>';
+
+      window.GlutenAuth.getSession().then(function(session) {
+        var user = session ? session.user : null;
+        if (!section) return;
+        if (user) {
+          section.innerHTML =
+            '<div class="rating-panel">' +
+              '<h2><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>Valorar este lugar</h2>' +
+              '<div class="star-group" id="stars-row"></div>' +
+              '<div class="star-label" id="star-label">Tocá una estrella para calificar</div>' +
+              '<textarea class="rating-comment" id="rating-comment" placeholder="¿Cómo fue tu experiencia? (opcional)" maxlength="400"></textarea>' +
+              '<button class="btn-rate" id="btn-send-rating" onclick="submitRating()">Enviar valoración</button>' +
+            '</div>';
+          renderStars();
+        } else {
+          section.innerHTML =
+            '<div class="rating-auth">' +
+              '<p>Iniciá sesión con Google para valorar este lugar y ayudar a otros celíacos a comer seguros 🌾</p>' +
+              '<button class="btn-auth" onclick="GlutenAuth.signInWithGoogle()" style="border:none;cursor:pointer">Continuar con Google →</button>' +
+            '</div>';
+        }
+      }).catch(function(){ if (section) section.innerHTML = ''; });
     }
 
-    // Share
-    window.shareNative = function(){
-      if(navigator.share){
-        navigator.share({title:lugar.name,text:'¡Encontré este lugar sin gluten en GlutenGo!',url:location.href}).catch(function(){});
-      } else { copyLink(); }
-    };
-    window.copyLink = function(){
-      navigator.clipboard.writeText(location.href).then(function(){showToast('Link copiado 📋');}).catch(function(){});
-    };
+    renderRatingSection();
+    window.onGlutenAuthSignIn = renderRatingSection;
 
   })();
+
+  // ── Service Worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  }
   </script>
 </body>
 </html>
