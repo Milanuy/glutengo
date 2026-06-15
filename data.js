@@ -1,4 +1,4 @@
-// GlutenGo — datos de establecimientos v0.4
+// GlutenGo — datos de establecimientos v0.5
 // Coordenadas para Leaflet (OpenStreetMap)
 const lugares = [
   // ─── 100% SIN GLUTEN ───────────────────────────────────────────────────
@@ -326,4 +326,5 @@ const lugares = [
     lng: -56.1522,
     instagram: "@artesaniapastelera",
   },
-];
+
+  
