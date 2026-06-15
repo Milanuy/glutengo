@@ -15,6 +15,12 @@ const FROM_EMAIL = 'GlutenGo <onboarding@resend.dev>';
 const ADMIN_EMAIL = 'anmaurano@gmail.com';
 const BASE_URL = 'https://glutengo.netlify.app';
 
+// Links de pago de MercadoPago (configurar en Netlify env vars)
+const MP_LINKS = {
+  verificado:  process.env.MP_LINK_VERIFICADO  || 'https://mpago.la/VERIFICADO',
+  certificado: process.env.MP_LINK_CERTIFICADO || 'https://mpago.la/CERTIFICADO',
+};
+
 const PLANES = {
   basico:     { label: 'Básico (Gratuito)',       precio: 'Sin costo' },
   verificado: { label: 'Verificado ($590/mes)',   precio: '$590 UYU/mes' },
@@ -151,7 +157,7 @@ exports.handler = async function (event) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON inválido' }) };
   }
 
-  const { nombre, tipo, direccion, barrio, email, telefono, plan, mensaje } = data;
+  const { nombre, tipo, categoria, direccion, barrio, email, telefono, plan, mensaje } = data;
 
   if (!nombre || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'nombre y email son requeridos' }) };
@@ -170,15 +176,17 @@ exports.handler = async function (event) {
         Prefer: 'return=minimal',
       },
       body: JSON.stringify({
-        nombre: nombre.trim(),
-        tipo: tipo || 'mixto',
+        nombre:    nombre.trim(),
+        tipo:      tipo || 'mixto',
+        categoria: categoria || 'restaurante',
         direccion: (direccion || '').trim(),
-        barrio: (barrio || '').trim(),
-        email: email.toLowerCase().trim(),
-        telefono: (telefono || '').trim(),
-        plan: plan || 'basico',
-        mensaje: (mensaje || '').trim().slice(0, 1000),
-        status: 'pending',
+        barrio:    (barrio || '').trim(),
+        email:     email.toLowerCase().trim(),
+        telefono:  (telefono || '').trim(),
+        plan:      plan || 'basico',
+        mensaje:   (mensaje || '').trim().slice(0, 1000),
+        status:    plan === 'basico' ? 'pending' : 'pending_payment',
+        position:  999,
       }),
     });
     results.saved = sbRes.ok;
@@ -210,20 +218,4 @@ exports.handler = async function (event) {
           from: FROM_EMAIL,
           reply_to: ADMIN_EMAIL,
           to: [email.toLowerCase().trim()],
-          subject: '¡Recibimos tu solicitud para GlutenGo! 🌾',
-          html: buildAutoReply({ nombre, tipo, plan: plan || 'basico', mensaje }),
-        }),
-      });
-      results.replied = replyRes.ok;
-    } catch (err) {
-      console.error('Resend negocio error:', err.message);
-    }
-  }
-
-  return {
-    statusCode: 200,
-    headers: corsHeaders,
-    body: JSON.stringify({ ok: true, ...results }),
-  };
-};
- 
+          subject: 
