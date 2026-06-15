@@ -1,7 +1,7 @@
-// GlutenGo Service Worker v1.0
+// GlutenGo Service Worker v1.1
 // Cache-first para assets estáticos, network-first para data
 
-const CACHE = 'glutengo-v1.0';
+const CACHE = 'glutengo-v1.1';
 const STATIC = [
   '/',
   '/index.html',
@@ -36,7 +36,9 @@ self.addEventListener('fetch', (e) => {
   if (
     url.hostname.includes('cdn') ||
     url.hostname.includes('unpkg') ||
-    url.hostname.includes('tile.openstreetmap')
+    url.hostname.includes('tile.openstreetmap') ||
+    url.hostname.includes('basemaps.cartocdn') ||
+    url.hostname.includes('carto.com')
   ) {
     return;
   }
@@ -47,11 +49,3 @@ self.addEventListener('fetch', (e) => {
       if (cached) return cached;
       return fetch(e.request).then((res) => {
         if (res.ok && e.request.method === 'GET') {
-          const clone = res.clone();
-          caches.open(CACHE).then((c) => c.put(e.request, clone));
-        }
-        return res;
-      });
-    })
-  );
-});
