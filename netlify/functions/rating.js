@@ -5,19 +5,22 @@
  *      → { slug, count, avg, score, recent[] }
  *
  * POST /api/rating { token, slug, score, comentario }
- *      → verifica JWT Supabase o magic-token → upsert con service_role_key
+ *      → verifica JWT Supabase → upsert con ese mismo JWT (RLS permite auth users)
  *
  * score: 1–5 estrellas → GlutenGo Score = (avg - 1) × 25  (rango 0–100)
  *
  * Env vars requeridas en Netlify:
  *   NEXT_PUBLIC_SUPABASE_URL
- *   SUPABASE_ANON_KEY           ← GET (ya está)
- *   SUPABASE_SERVICE_ROLE_KEY   ← POST upsert (bypassa RLS; agregar en Netlify)
+ *   SUPABASE_ANON_KEY
+ *
+ * RLS policies en Supabase:
+ *   - ratings_select_public  → SELECT USING (true)
+ *   - ratings_insert_auth    → INSERT TO authenticated WITH CHECK (true)
+ *   - ratings_update_own     → UPDATE TO authenticated USING (true)
  */
 
-const SUPABASE_URL  = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const ANON_KEY      = process.env.SUPABASE_ANON_KEY;
-const SERVICE_KEY   = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const ANON_KEY     = process.env.SUPABASE_ANON_KEY;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin':  '*',
@@ -89,13 +92,6 @@ exports.handler = async function (event) {
   // POST — Guardar valoración
   // ─────────────────────────────────────────────────────────────
   if (event.httpMethod === 'POST') {
-    // Verificar que el service_role_key está configurado
-    if (!SERVICE_KEY) {
-      console.error('SUPABASE_SERVICE_ROLE_KEY no configurada en Netlify');
-      return { statusCode: 500, headers: corsHeaders,
-        body: JSON.stringify({ error: 'Servicio temporalmente no disponible. Contactá al admin.' }) };
-    }
-
     let payload;
     try {
       payload = JSON.parse(event.body || '{}');
@@ -106,17 +102,18 @@ exports.handler = async function (event) {
     const { token, slug, score, comentario } = payload;
 
     if (!token || !slug) {
-      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'token y slug son requeridos' }) };
+      return { statusCode: 400, headers: corsHeaders,
+        body: JSON.stringify({ error: 'token y slug son requeridos' }) };
     }
     const scoreNum = parseInt(score, 10);
     if (!scoreNum || scoreNum < 1 || scoreNum > 5) {
-      return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'score debe ser 1–5' }) };
+      return { statusCode: 400, headers: corsHeaders,
+        body: JSON.stringify({ error: 'score debe ser 1–5' }) };
     }
 
-    // ── Verificar identidad del usuario
+    // ── Verificar JWT de Supabase y obtener email
     let userEmail;
     try {
-      // Intento 1: JWT de Supabase (Google OAuth)
       const authRes = await fetch(SUPABASE_URL + '/auth/v1/user', {
         headers: {
           apikey:        ANON_KEY,
@@ -124,43 +121,47 @@ exports.handler = async function (event) {
         },
       });
 
-      if (authRes.ok) {
-        const userData = await authRes.json();
-        if (userData && userData.email) userEmail = userData.email;
+      if (!authRes.ok) {
+        return { statusCode: 401, headers: corsHeaders,
+          body: JSON.stringify({ error: 'Sesión inválida. Iniciá sesión con Google.' }) };
       }
 
-      // Intento 2 (fallback): magic token en tabla waitlist
-      if (!userEmail) {
-        const userRes = await fetch(
-          SUPABASE_URL + '/rest/v1/waitlist?token=eq.' + encodeURIComponent(token) + '&select=email',
-          {
-            headers: {
-              apikey:        SERVICE_KEY,  // service_role para leer waitlist
-              Authorization: 'Bearer ' + SERVICE_KEY,
-            },
-          }
-        );
-
-        if (userRes.ok) {
-          const users = await userRes.json();
-          if (users && users.length > 0) userEmail = users[0].email;
-        }
-
-        if (!userEmail) {
-          return { statusCode: 401, headers: corsHeaders,
-            body: JSON.stringify({ error: 'Token inválido. Iniciá sesión primero.' }) };
-        }
+      const userData = await authRes.json();
+      if (!userData || !userData.email) {
+        return { statusCode: 401, headers: corsHeaders,
+          body: JSON.stringify({ error: 'No se pudo identificar al usuario.' }) };
       }
+      userEmail = userData.email;
     } catch (err) {
-      console.error('Token lookup error:', err.message);
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error al verificar identidad' }) };
+      console.error('Auth check error:', err.message);
+      return { statusCode: 500, headers: corsHeaders,
+        body: JSON.stringify({ error: 'Error al verificar identidad' }) };
     }
 
-    // ── Upsert rating (service_role bypasa RLS — sin políticas SQL necesarias)
+    // ── Upsert rating usando el JWT del usuario (RLS: ratings_insert_auth + ratings_update_own)
+    // UNIQUE (email, slug) → merge-duplicates actúa como ON CONFLICT DO UPDATE
     try {
       const ratingRes = await fetch(SUPABASE_URL + '/rest/v1/ratings', {
         method: 'POST',
         headers: {
-          apikey:        SERVICE_KEY,
-          Authorization: 'Bearer ' + SERVICE_KEY,
-    
+          apikey:        ANON_KEY,
+          Authorization: 'Bearer ' + token,   // JWT del usuario autenticado
+          'Content-Type': 'application/json',
+          Prefer:        'resolution=merge-duplicates,return=minimal',
+        },
+        body: JSON.stringify({
+          email:      userEmail,
+          slug,
+          score:      scoreNum,
+          comentario: (comentario || '').trim().slice(0, 500) || null,
+        }),
+      });
+
+      if (!ratingRes.ok) {
+        const errText = await ratingRes.text();
+        console.error('Rating upsert error:', ratingRes.status, errText);
+        return { statusCode: 500, headers: corsHeaders,
+          body: JSON.stringify({ error: 'No se pudo guardar la valoración' }) };
+      }
+
+ 
