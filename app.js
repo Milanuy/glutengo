@@ -1,26 +1,74 @@
-// GlutenGo — app.js v0.7
+// GlutenGo — app.js v0.8
 // Script principal de la home. Separado del HTML para evitar bloqueo de extensiones.
 
 // ────────────────────────────────────────────────────
-// UTILIDADES
+// ÍCONOS SVG POR CATEGORÍA (sin emojis)
 // ────────────────────────────────────────────────────
-var catIcon = {
-  restaurante:'🍽️', cafeteria:'☕', panaderia:'🥐',
-  heladeria:'🍦', rotiseria:'🥡', hotel:'🏨', almacen:'🛒', otro:'📍'
+var catSVG = {
+  restaurante:
+    '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+      '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/>' +
+      '<path d="M7 2v20M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>' +
+    '</svg>',
+  cafeteria:
+    '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+      '<path d="M18 8h1a4 4 0 010 8h-1"/>' +
+      '<path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/>' +
+      '<line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>' +
+    '</svg>',
+  panaderia:
+    '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+      '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>' +
+      '<path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>' +
+    '</svg>',
+  heladeria:
+    '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+      '<line x1="12" y1="2" x2="12" y2="22"/>' +
+      '<path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>' +
+    '</svg>',
+  rotiseria:
+    '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+      '<path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/>' +
+    '</svg>',
+  hotel:
+    '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+      '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>' +
+      '<polyline points="9 22 9 12 15 12 15 22"/>' +
+    '</svg>',
+  almacen:
+    '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+      '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>' +
+      '<line x1="3" y1="6" x2="21" y2="6"/>' +
+      '<path d="M16 10a4 4 0 01-8 0"/>' +
+    '</svg>',
+  otro:
+    '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+      '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>' +
+      '<circle cx="12" cy="10" r="3"/>' +
+    '</svg>',
 };
+
+function getCatSVG(category, color) {
+  var svg = catSVG[category] || catSVG.otro;
+  // Inyectar color de stroke para uso en cards (no markers)
+  return color ? svg.replace('stroke="currentColor"', 'stroke="' + color + '"') : svg;
+}
 
 var dirFilter  = 'todos';
 var searchTerm = '';
 
 // ────────────────────────────────────────────────────
-// MAPA LEAFLET — v0.7 mapa premium
+// MAPA LEAFLET — v0.8 markers SVG
 // ────────────────────────────────────────────────────
 var map, markers = [], mapFilter = 'todos';
 
-function makeMarkerHtml(color, emoji, isExcl) {
-  var pulse = isExcl
-    ? '<span class="gg-pulse-ring"></span>'
-    : '';
+function makeMarkerHtml(color, catKey, isExcl) {
+  var pulse = isExcl ? '<span class="gg-pulse-ring"></span>' : '';
+  // SVG icon blanco sobre fondo de color
+  var svg = (catSVG[catKey] || catSVG.otro)
+    .replace('stroke="currentColor"', 'stroke="#fff"')
+    .replace(/width="16" height="16"/, 'width="18" height="18"');
+
   return (
     '<div style="position:relative;width:38px;height:50px">' +
       pulse +
@@ -30,10 +78,9 @@ function makeMarkerHtml(color, emoji, isExcl) {
         'border:2.5px solid #fff;' +
         'box-shadow:0 3px 14px rgba(0,0,0,.38);' +
         'display:flex;align-items:center;justify-content:center;' +
-        'font-size:18px;cursor:pointer;' +
-        'transition:transform .15s;' +
+        'cursor:pointer;transition:transform .15s;' +
       '">' +
-        emoji +
+        svg +
       '</div>' +
       '<div style="' +
         'width:0;height:0;' +
@@ -55,23 +102,20 @@ function initMap(){
     attributionControl: true
   });
 
-  // CartoDB Voyager — tiles modernos, coloridos, gratuitos
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OSM</a>'
   }).addTo(map);
 
-  // Zoom en esquina inferior derecha para no chocar con el header
   L.control.zoom({ position: 'bottomright' }).addTo(map);
 
   lugares.forEach(function(l){
     var isExcl = l.tipo === 'exclusivo';
     var color  = isExcl ? '#166534' : '#D97706';
-    var emoji  = catIcon[l.category] || '📍';
 
     var icon = L.divIcon({
       className: '',
-      html: makeMarkerHtml(color, emoji, isExcl),
+      html: makeMarkerHtml(color, l.category, isExcl),
       iconSize:    [38, 51],
       iconAnchor:  [19, 51],
       popupAnchor: [0, -56]
@@ -79,7 +123,7 @@ function initMap(){
 
     var badgeBg    = isExcl ? '#DCFCE7' : '#FEF3C7';
     var badgeColor = isExcl ? '#166534' : '#92400E';
-    var badgeLabel = isExcl ? '🌟 100% Sin Gluten' : '⚡ Con Opciones SG';
+    var badgeLabel = isExcl ? '100% Sin Gluten' : 'Con Opciones SG';
 
     var popupHtml =
       '<div style="font-family:DM Sans,sans-serif;min-width:210px;padding:.6rem .5rem .4rem">' +
@@ -88,7 +132,8 @@ function initMap(){
           l.address + ' &middot; <em>' + l.neighborhood + '</em>' +
         '</div>' +
         '<span style="' +
-          'display:inline-block;font-size:.7rem;font-weight:700;' +
+          'display:inline-flex;align-items:center;gap:.3rem;' +
+          'font-size:.7rem;font-weight:700;' +
           'padding:.15rem .55rem;border-radius:20px;' +
           'background:' + badgeBg + ';color:' + badgeColor + ';' +
           'margin-bottom:.4rem' +
@@ -99,8 +144,7 @@ function initMap(){
         '<a href="/lugar.html?slug=' + l.slug + '" ' +
           'style="display:block;text-align:center;padding:.42rem .75rem;' +
           'background:#166534;color:#fff;border-radius:9px;' +
-          'font-size:.82rem;font-weight:700;text-decoration:none;' +
-          'transition:background .15s">' +
+          'font-size:.82rem;font-weight:700;text-decoration:none">' +
           'Ver ficha completa →' +
         '</a>' +
       '</div>';
@@ -116,7 +160,6 @@ function initMap(){
     marker._slug      = l.slug;
     markers.push(marker);
 
-    // Cargar score cuando se abre el popup (lazy)
     marker.on('popupopen', function(){
       var el = document.getElementById('pop-score-' + l.slug);
       if(!el || el.dataset.loaded) return;
@@ -126,15 +169,13 @@ function initMap(){
         .then(function(d){
           if(!el) return;
           if(!d || d.count === 0){
-            el.innerHTML = '<span style="color:#9CA3AF;font-style:italic">Sin valoraciones aun. ¡Sé el primero!</span>';
+            el.innerHTML = '<span style="color:#9CA3AF;font-style:italic">Sin valoraciones aún</span>';
           } else {
             var rounded = Math.round(d.avg);
             var stars = '';
-            for(var i=1;i<=5;i++){
-              stars += i <= rounded ? '⭐' : '☆';
-            }
+            for(var i=1;i<=5;i++) stars += i <= rounded ? '★' : '☆';
             el.innerHTML = (
-              stars + ' <strong>' + d.avg.toFixed(1) + '</strong>' +
+              '<span style="color:#F59E0B">' + stars + '</span> <strong>' + d.avg.toFixed(1) + '</strong>' +
               '<span style="color:#9CA3AF"> (' + d.count + ' valoraci' +
               (d.count > 1 ? 'ones' : 'ón') + ')</span>'
             );
@@ -162,7 +203,7 @@ function geolocateMe(){
   if(!navigator.geolocation){ alert('Tu navegador no soporta geolocalización.'); return; }
   var btn = document.querySelector('.map-chip-geo');
   var prev = btn.innerHTML;
-  btn.innerHTML = '📍 Buscando…';
+  btn.textContent = 'Buscando…';
   btn.disabled = true;
   navigator.geolocation.getCurrentPosition(
     function(pos){
@@ -176,11 +217,11 @@ function geolocateMe(){
           html:'<div style="background:#3B82F6;width:16px;height:16px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3)"></div>',
           iconSize:[16,16],iconAnchor:[8,8]
         })
-      }).addTo(map).bindPopup('📍 Estás acá').openPopup();
+      }).addTo(map).bindPopup('Estás acá').openPopup();
       btn.innerHTML = prev; btn.disabled = false;
     },
     function(){
-      btn.innerHTML = '⚠️ Sin permiso'; btn.disabled = false;
+      btn.textContent = 'Sin permiso'; btn.disabled = false;
       setTimeout(function(){btn.innerHTML=prev;},2500);
     }
   );
@@ -193,8 +234,9 @@ function buildRail(){
   var rail = document.getElementById('rail-exclusivos');
   var excl = lugares.filter(function(l){ return l.tipo === 'exclusivo'; });
   rail.innerHTML = excl.map(function(l){
+    var iconSvg = getCatSVG(l.category, '#166534');
     return '<a href="/lugar.html?slug='+l.slug+'" class="rail-card">' +
-      '<div class="icon">'+(catIcon[l.category]||'📍')+'</div>' +
+      '<div class="icon" style="display:flex;align-items:center;justify-content:center">' + iconSvg + '</div>' +
       '<div class="rc-name">'+l.name+'</div>' +
       '<div class="rc-hood">'+l.neighborhood+'</div>' +
       '<span class="rc-tag">100% libre de gluten</span>' +
@@ -225,9 +267,13 @@ function buildDir(filter, q){
   }
 
   grid.innerHTML = filtered.map(function(l){
+    var iconColor = l.tipo === 'exclusivo' ? '#166534' : '#D97706';
+    var iconSvg   = getCatSVG(l.category, iconColor);
     return '<a href="/lugar.html?slug='+l.slug+'" class="dir-card '+l.tipo+'">' +
       '<div class="dc-header">' +
-        '<span class="dc-name">'+(catIcon[l.category]||'📍')+' '+l.name+'</span>' +
+        '<span class="dc-name" style="display:flex;align-items:center;gap:.4rem">' +
+          '<span style="flex-shrink:0">' + iconSvg + '</span>' + l.name +
+        '</span>' +
         '<span class="dc-badge '+l.tipo+'">'+(l.tipo==='exclusivo'?'100% GF':'Mixto')+'</span>' +
       '</div>' +
       '<div class="dc-meta"><span>'+l.neighborhood+'</span><span class="dc-sep">·</span><span>'+l.category+'</span></div>' +
@@ -275,10 +321,9 @@ function handleWaitlist(e){
 }
 
 // ────────────────────────────────────────────────────
-// INIT — AOS primero, luego datos
+// INIT
 // ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function(){
-  // AOS siempre primero: sin esto los data-aos quedan opacity:0
   try { AOS.init({duration:600, once:true, offset:60}); } catch(e){}
 
   if(typeof lugares !== 'undefined' && lugares.length){
@@ -292,7 +337,6 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 });
 
-// Service Worker
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js').catch(function(){});
 }
