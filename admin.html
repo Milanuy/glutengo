@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlutenGo Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --green:#166534;--green-deep:#0E3D22;--green-light:#DCFCE7;
+      --amber:#E8A93C;--red:#DC2626;--red-light:#FEE2E2;
+      --gray:#6B7280;--border:#E5E7EB;--bg:#F9FAFB;--white:#fff;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:#111;min-height:100vh}
+
+    /* ── LOGIN ── */
+    #login-screen{
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;padding:1.5rem;
+    }
+    .login-card{
+      background:#fff;border-radius:20px;padding:2.5rem;
+      box-shadow:0 4px 32px rgba(0,0,0,.1);
+      width:100%;max-width:380px;text-align:center;
+    }
+    .login-logo{font-family:Georgia,serif;font-size:1.8rem;font-weight:900;color:var(--green-deep);margin-bottom:.25rem}
+    .login-logo span{color:var(--amber)}
+    .login-sub{font-size:.85rem;color:var(--gray);margin-bottom:2rem}
+    .login-input{
+      width:100%;border:1.5px solid var(--border);border-radius:10px;
+      padding:.75rem 1rem;font-size:1rem;font-family:inherit;
+      margin-bottom:1rem;transition:border-color .2s;
+    }
+    .login-input:focus{outline:none;border-color:var(--green)}
+    .login-btn{
+      width:100%;background:var(--green-deep);color:#fff;
+      font-weight:700;font-size:1rem;padding:.85rem;
+      border:none;border-radius:12px;cursor:pointer;
+      font-family:inherit;transition:background .2s;
+    }
+    .login-btn:hover{background:var(--green)}
+    .login-err{color:var(--red);font-size:.85rem;margin-top:.6rem;display:none}
+
+    /* ── LAYOUT ── */
+    #admin-app{display:none}
+    .top-bar{
+      background:var(--green-deep);color:#fff;
+      padding:.85rem 1.5rem;
+      display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:100;
+    }
+    .top-logo{font-family:Georgia,serif;font-size:1.3rem;font-weight:900}
+    .top-logo span{color:var(--amber)}
+    .top-right{display:flex;align-items:center;gap:1rem}
+    .top-badge{background:rgba(255,255,255,.15);padding:.3rem .75rem;border-radius:20px;font-size:.78rem}
+    .top-logout{
+      background:rgba(220,38,38,.2);color:#FCA5A5;
+      border:1px solid rgba(220,38,38,.3);padding:.3rem .75rem;
+      border-radius:8px;font-size:.78rem;cursor:pointer;font-family:inherit;
+    }
+    .main{max-width:1200px;margin:0 auto;padding:1.5rem}
+
+    /* ── STATS ── */
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.75rem}
+    .stat-card{
+      background:#fff;border-radius:14px;padding:1.25rem 1.5rem;
+      border:1px solid var(--border);
+    }
+    .stat-val{font-size:2rem;font-weight:900;line-height:1;margin-bottom:.2rem}
+    .stat-lbl{font-size:.78rem;color:var(--gray)}
+
+    /* ── FILTERS ── */
+    .filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
+    .filter-btn{
+      padding:.45rem 1rem;border-radius:20px;font-size:.83rem;font-weight:700;
+      border:1.5px solid var(--border);background:#fff;cursor:pointer;
+      transition:all .15s;font-family:inherit;
+    }
+    .filter-btn.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
+    .search-input{
+      margin-left:auto;padding:.45rem .85rem;border:1.5px solid var(--border);
+      border-radius:20px;font-size:.83rem;font-family:inherit;
+      min-width:200px;
+    }
+    .search-input:focus{outline:none;border-color:var(--green)}
+
+    /* ── TABLE ── */
+    .table-wrap{background:#fff;border-radius:16px;border:1px solid var(--border);overflow:hidden}
+    table{width:100%;border-collapse:collapse;font-size:.88rem}
+    th{
+      padding:.85rem 1rem;text-align:left;font-size:.75rem;font-weight:700;
+      letter-spacing:.06em;text-transform:uppercase;color:var(--gray);
+      background:var(--bg);border-bottom:1px solid var(--border);
+    }
+    td{padding:.9rem 1rem;border-bottom:1px solid var(--border);vertical-align:middle}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#FAFAFA}
+
+    /* ── BADGES ── */
+    .badge{
+      display:inline-flex;align-items:center;gap:.3rem;
+      padding:.25rem .6rem;border-radius:20px;font-size:.73rem;font-weight:700;
+    }
+    .badge.pending{background:#FEF3C7;color:#92400E}
+    .badge.pending_payment{background:#FEF3C7;color:#92400E}
+    .badge.active{background:var(--green-light);color:var(--green)}
+    .badge.rejected{background:var(--red-light);color:var(--red)}
+    .badge.expired{background:#F3F4F6;color:#6B7280}
+
+    .plan-pill{
+      display:inline-block;padding:.2rem .55rem;
+      border-radius:8px;font-size:.72rem;font-weight:700;
+    }
+    .plan-basico{background:#F3F4F6;color:#374151}
+    .plan-verificado{background:#DBEAFE;color:#1D4ED8}
+    .plan-certificado{background:rgba(232,169,60,.18);color:#92400E}
+
+    /* ── ACTIONS ── */
+    .actions{display:flex;align-items:center;gap:.5rem;flex-wrap:nowrap}
+    .btn-sm{
+      padding:.35rem .75rem;border-radius:8px;
+      font-size:.78rem;font-weight:700;cursor:pointer;
+      border:none;font-family:inherit;transition:background .15s;
+    }
+    .btn-approve{background:var(--green-light);color:var(--green)}
+    .btn-approve:hover{background:#BBF7D0}
+    .btn-reject{background:var(--red-light);color:var(--red)}
+    .btn-reject:hover{background:#FECACA}
+    .btn-expire{background:#F3F4F6;color:#374151}
+    .btn-expire:hover{background:#E5E7EB}
+
+    /* Position editor */
+    .pos-wrap{display:flex;align-items:center;gap:.4rem}
+    .pos-input{
+      width:54px;padding:.3rem .5rem;border:1.5px solid var(--border);
+      border-radius:8px;font-size:.83rem;font-family:inherit;text-align:center;
+    }
+    .pos-input:focus{outline:none;border-color:var(--green)}
+    .btn-save-pos{
+      padding:.3rem .6rem;background:var(--green);color:#fff;
+      border:none;border-radius:8px;font-size:.75rem;font-weight:700;
+      cursor:pointer;font-family:inherit;
+    }
+    .btn-save-pos:hover{background:var(--green-deep)}
+
+    /* ── EMPTY ── */
+    .empty{text-align:center;padding:3rem 1rem;color:var(--gray)}
+
+    /* ── TOAST ── */
+    #toast{
+      position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;
+      background:#111;color:#fff;padding:.7rem 1.2rem;
+      border-radius:12px;font-size:.88rem;font-weight:600;
+      opacity:0;transition:opacity .25s;pointer-events:none;
+    }
+    #toast.show{opacity:1}
+
+    /* ── MODAL ── */
+    .modal-overlay{
+      display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+      z-index:500;align-items:center;justify-content:center;padding:1rem;
+    }
+    .modal-overlay.show{display:flex}
+    .modal{
+      background:#fff;border-radius:20px;padding:2rem;max-width:480px;width:100%;
+      max-height:90vh;overflow-y:auto;
+    }
+    .modal h3{font-size:1.1rem;font-weight:800;color:var(--green-deep);margin-bottom:.75rem}
+    .modal p{font-size:.9rem;color:var(--gray);line-height:1.6;margin-bottom:.5rem}
+    .modal-actions{display:flex;gap:.75rem;margin-top:1.25rem;justify-content:flex-end}
+    .modal-field{margin-bottom:.85rem}
+    .modal-field label{display:block;font-size:.82rem;font-weight:700;color:#374151;margin-bottom:.3rem}
+    .modal-field input,.modal-field textarea,.modal-field select{
+      width:100%;border:1.5px solid var(--border);border-radius:10px;
+      padding:.65rem .9rem;font-size:.9rem;font-family:inherit;
+    }
+    .modal-field input:focus,.modal-field textarea:focus,.modal-field select:focus{
+      outline:none;border-color:var(--green)
+    }
+    .modal-field textarea{min-height:70px;resize:vertical}
+
+    @media(max-width:768px){
+      .main{padding:1rem .75rem}
+      .stats{grid-template-columns:repeat(2,1fr)}
+      table,.table-wrap{font-size:.8rem}
+      th,td{padding:.65rem .6rem}
+      .actions{gap:.3rem}
+      .btn-sm{padding:.3rem .5rem;font-size:.72rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Gluten<span>Go</span></div>
+    <div class="login-sub">Panel de administración</div>
+    <input type="password" id="pass-input" class="login-input" placeholder="Contraseña de admin" />
+    <button class="login-btn" onclick="doLogin()">Entrar →</button>
+    <div class="login-err" id="login-err">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="admin-app">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="top-logo">Gluten<span>Go</span> <span style="font-size:.8rem;font-weight:400;opacity:.55;font-family:'DM Sans',sans-serif">Admin</span></div>
+    <div class="top-right">
+      <span class="top-badge" id="last-refresh">—</span>
+      <button class="top-logout" onclick="logout()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- STATS -->
+    <div class="stats" id="stats-row">
+      <div class="stat-card"><div class="stat-val" id="s-total">—</div><div class="stat-lbl">Total solicitudes</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:#92400E" id="s-pending">—</div><div class="stat-lbl">Pendientes</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="s-active">—</div><div class="stat-lbl">Activos</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--amber)" id="s-revenue">—</div><div class="stat-lbl">Ingresos estimados / mes</div></div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
+      <button class="filter-btn" onclick="setFilter('pending',this)">Pendientes</button>
+      <button class="filter-btn" onclick="setFilter('pending_payment',this)">Aguardando pago</button>
+      <button class="filter-btn" onclick="setFilter('active',this)">Activos</button>
+      <button class="filter-btn" onclick="setFilter('rejected',this)">Rechazados</button>
+      <button class="filter-btn" onclick="setFilter('expired',this)">Vencidos</button>
+      <input type="search" class="search-input" placeholder="Buscar por nombre, barrio…" oninput="onSearch(this.value)" />
+      <button class="filter-btn" style="margin-left:.25rem" onclick="loadBusinesses()">↻ Refrescar</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Local</th>
+            <th>Plan</th>
+            <th>Estado</th>
+            <th>Posición</th>
+            <th>Barrio</th>
+            <th>Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="biz-tbody">
+          <tr><td colspan="7" class="empty">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /admin-app -->
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-content">
+    <!-- populated by JS -->
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+var API     = '/api/admin-businesses';
+var adminToken = '';
+var allBiz  = [];
+var curFilter = 'todos';
+var curSearch = '';
+
+// ── LOGIN ──────────────────────────────────────────────────────────────────
+function doLogin() {
+  var pass = document.getElementById('pass-input').value;
+  if (!pass) return;
+  // Verificar contra el endpoint (el endpoint valida vs env var ADMIN_PASSWORD)
+  fetch(API, { headers: { 'x-admin-token': pass } })
+    .then(function(r) {
+      if (r.status === 401) throw new Error('wrong');
+      return r.json();
+    })
+    .then(function(data) {
+      adminToken = pass;
+      sessionStorage.setItem('gg_admin', pass);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-app').style.display = 'block';
+      processData(data);
+    })
+    .catch(function(err) {
+      document.getElementById('login-err').style.display = 'block';
+    });
+}
+
+function logout() {
+  sessionStorage.removeItem('gg_admin');
+  location.reload();
+}
+
+document.getElementById('pass-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+// Auto-login si hay sesión guardada
+var savedPass = sessionStorage.getItem('gg_admin');
+if (savedPass) {
+  document.getElementById('pass-input').value = savedPass;
+  doLogin();
+}
+
+// ── LOAD DATA ──────────────────────────────────────────────────────────────
+function loadBusinesses() {
+  document.getElementById('biz-tbody').innerHTML =
+    '<tr><td colspan="7" class="empty">Cargando…</td></tr>';
+  fetch(API, { headers: { 'x-admin-token': adminToken } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) { processData(data); })
+    .catch(function(err) { showToast('Error al cargar: ' + err.message); });
+}
+
+function processData(data) {
+  allBiz = Array.isArray(data) ? data : [];
+  document.getElementById('last-refresh').textContent =
+    'Actualizado ' + new Date().toLocaleTimeString('es-UY');
+  updateStats();
+  renderTable();
+}
+
+function updateStats() {
+  var pending  = allBiz.filter(function(b){ return b.status === 'pending' || b.status === 'pending_payment'; }).length;
+  var active   = allBiz.filter(function(b){ return b.status === 'active'; }).length;
+  var revenue  = allBiz
+    .filter(function(b){ return b.status === 'active'; })
+    .reduce(function(sum, b) {
+      return sum + (b.plan === 'certificado' ? 1590 : b.plan === 'verificado' ? 590 : 0);
+    }, 0);
+  document.getElementById('s-total').textContent   = allBiz.length;
+  document.getElementById('s-pending').textContent  = pending;
+  document.getElementById('s-active').textContent   = active;
+  document.getElementById('s-revenue').textContent  = revenue ? '$' + revenue.toLocaleString('es-UY') : '$0';
+}
+
+// ── FILTERS ────────────────────────────────────────────────────────────────
+function setFilter(filter, btn) {
+  curFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderTable();
+}
+
+function onSearch(val) {
+  curSearch = val.toLowerCase().trim();
+  renderTable();
+}
+
+// ── RENDER TABLE ───────────────────────────────────────────────────────────
+var STATUS_LABELS = {
+  pending: 'Pendiente', pending_payment: 'Aguardando pago',
+  active: 'Activo', rejected: 'Rechazado', expired: 'Vencido',
+};
+var PLAN_LABELS_ES = { basico: 'Básico', verificado: 'Verificado', certificado: 'Certificado' };
+
+function renderTable() {
+  var filtered = allBiz.filter(function(b) {
+    if (curFilter !== 'todos' && b.status !== curFilter) return false;
+    if (curSearch) {
+      var hay = ((b.nombre || '') + ' ' + (b.barrio || '') + ' ' + (b.email || '')).toLowerCase();
+      if (hay.indexOf(curSearch) === -1) return false;
+    }
+    return true;
+  });
+
+  var tbody = document.getElementById('biz-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">No hay negocios que coincidan.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(function(b) {
+    var statusBadge = '<span class="badge ' + (b.status || 'pending') + '">' +
+      (STATUS_LABELS[b.status] || b.status) + '</span>';
+    var planPill = '<span class="plan-pill plan-' + (b.plan || 'basico') + '">' +
+      (PLAN_LABELS_ES[b.plan] || b.plan) + '</span>';
+    var fecha = b.created_at ? b.created_at.slice(0, 10) : '—';
+    var actions = buildActions(b);
+    var pos = b.position || 999;
+    var posHtml =
+      '<div class="pos-wrap">' +
+        '<input type="number" class="pos-input" value="' + pos + '" min="1" max="999" ' +
+          'id="pos-' + b.id + '" title="Posición en el directorio (1 = primero)" />' +
+        '<button class="btn-save-pos" onclick="savePosition(\'' + b.id + '\')">✓</button>' +
+      '</div>';
+
+    return '<tr>' +
+      '<td><strong style="cursor:pointer;color:var(--green-deep)" onclick="showDetail(\'' + b.id + '\')">' + (b.nombre || '—') + '</strong>' +
+        (b.email ? '<br><span style="font-size:.75rem;color:var(--gray)">' + b.email + '</span>' : '') +
+      '</td>' +
+      '<td>' + planPill + '</td>' +
+      '<td>' + statusBadge + '</td>' +
+      '<td>' + posHtml + '</td>' +
+      '<td style="color:var(--gray);font-size:.83rem">' + (b.barrio || '—') + '</td>' +
+      '<td style="color:var(--gray);font-size:.8rem">' + fecha + '</td>' +
+      '<td>' + actions + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function buildActions(b) {
+  var btns = '';
+  if (b.status === 'pending' || b.status === 'pending_payment') {
+    btns += '<button class="btn-sm btn-approve" onclick="approve(\'' + b.id + '\')">Aprobar</button>';
+    btns += '<button class="btn-sm btn-reject" onclick="reject(\'' + b.id + '\')">Rechazar</button>';
+  } else if (b.status === 'active') {
+    btns += '<button class="btn-sm btn-expire" onclick="expire(\'' + b.id + '\')">Suspender</button>';
+  } else if (b.status === 'rejected' || b.status === 'expired') {
+    btns += '<button class="btn-sm btn-approve" onclick="approve(\'' + b.id + '\')">Reactivar</button>';
+  }
+  btns += '<button class="btn-sm" style="background:#F3F4F6;color:#374151" onclick="showDetail(\'' + b.id + '\')">Ver</button>';
+  return '<div class="actions">' + btns + '</div>';
+}
+
+// ── PATCH HELPER ───────────────────────────────────────────────────────────
+function patch(id, fields, successMsg) {
+  return fetch(API, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+    body: JSON.stringify(Object.assign({ id: id }, fields)),
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('Error ' + r.status);
+    return r.json();
+  })
+  .then(function(updated) {
+    // Actualizar en allBiz local
+    var idx = allBiz.findIndex(function(b) { return b.id === id; });
+    if (idx !== -1) allBiz[idx] = Object.assign(allBiz[idx], updated, fields);
+    updateStats();
+    renderTable();
+    showToast(successMsg || 'Guardado ✓');
+  })
+  .catch(function(err) { showToast('Error: ' + err.message); });
+}
+
+function approve(id) { patch(id, { status: 'active' }, '✅ Negocio activado'); }
+function reject(id)  { patch(id, { status: 'rejected' }, '🚫 Negocio rechazado'); }
+function expire(id)  { patch(id, { status: 'expired' }, 'Negocio suspendido'); }
+
+function savePosition(id) {
+  var inp = document.getElementById('pos-' + id);
+  if (!inp) return;
+  var pos = parseInt(inp.value, 10);
+  if (isNaN(pos) || pos < 1) { showToast('Posición inválida'); return; }
+  patch(id, { position: pos }, '📍 Posición ' + pos + ' guardada');
+}
+
+// ── DETAIL MODAL ───────────────────────────────────────────────────────────
+function showDetail(id) {
+  var b = allBiz.find(function(x) { return x.id === id; });
+  if (!b) return;
+  var plan = PLAN_LABELS_ES[b.plan] || b.plan;
+  var status = STATUS_LABELS[b.status] || b.status;
+  var modal = document.getElementById('modal-content');
+  modal.innerHTML =
+    '<h3>' + (b.nombre || '—') + '</h3>' +
+    '<p><strong>Plan:</strong> ' + plan + ' &nbsp;|&nbsp; <strong>Estado:</strong> ' + status + '</p>' +
+    '<p><strong>Email:</strong> <a href="mailto:' + b.email + '" style="color:var(--green)">' + (b.email || '—') + '</a></p>' +
+    '<p><strong>Teléfono:</strong> ' + (b.telefono || '—') + '</p>' +
+    '<p><strong>Dirección:</strong> ' + (b.direccion || '—') + ', ' + (b.barrio || '—') + '</p>' +
+    '<p><strong>Tipo:</strong> ' + (b.tipo === 'exclusivo' ? '100% sin gluten' : 'Con opciones SG') + '</p>' +
+    '<p><strong>Categoría:</strong> ' + (b.categoria || '—') + '</p>' +
+    '<p><strong>Registrado:</strong> ' + (b.created_at ? b.created_at.slice(0, 10) : '—') + '</p>' +
+    (b.activated_at ? '<p><strong>Activado:</strong> ' + b.activated_at.slice(0, 10) + '</p>' : '') +
+    (b.expires_at   ? '<p><strong>Vence:</strong> '    + b.expires_at.slice(0, 10)   + '</p>' : '') +
+    (b.mp_payment_id ? '<p><strong>MP Payment ID:</strong> ' + b.mp_payment_id + '</p>' : '') +
+    (b.mensaje ? '<p style="margin-top:.75rem;padding:.75rem;background:var(--bg);border-radius:8px;font-size:.88rem"><em>"' + b.mensaje + '"</em></p>' : '') +
+    '<div class="modal-field" style="margin-top:1rem">' +
+      '<label>Notas internas</label>' +
+      '<textarea id="modal-notes" placeholder="Notas privadas sobre este negocio…">' + (b.admin_notes || '') + '</textarea>' +
+    '</div>' +
+    '<div class="modal-actions">' +
+      '<button class="btn-sm" style="background:#F3F4F6;color:#374151" onclick="closeModal()">Cerrar</button>' +
+      '<button class="btn-sm btn-approve" onclick="saveNotes(\'' + id + '\');closeModal()">Guardar notas</button>' +
+      (b.email ? '<a href="mailto:' + b.email + '" class="btn-sm" style="background:var(--green-light);color:var(--green);text-decoration:none">✉ Email</a>' : '') +
+    '</div>';
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function saveNotes(id) {
+  var notes = (document.getElementById('modal-notes') || {}).value || '';
+  patch(id, { notes: notes }, 'Notas guardadas ✓');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+
+// Auto-refresh cada 60 seg cuando hay sesión activa
+setInterval(function() {
+  if (adminToken) loadBusinesses();
+}, 60000);
+</script>
+
+</body>
+</html>
