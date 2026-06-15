@@ -18,13 +18,14 @@ var catSVG = {
     '</svg>',
   panaderia:
     '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
-      '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>' +
-      '<path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>' +
+      '<path d="M17 8C17 11 13 13 12 14C11 13 7 11 7 8a5 5 0 0110 0z"/>' +
+      '<path d="M9 14v7h6v-7"/>' +
+      '<line x1="9" y1="17.5" x2="15" y2="17.5"/>' +
     '</svg>',
   heladeria:
     '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
-      '<line x1="12" y1="2" x2="12" y2="22"/>' +
-      '<path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>' +
+      '<circle cx="12" cy="9" r="5"/>' +
+      '<path d="M9.5 14l2.5 7 2.5-7"/>' +
     '</svg>',
   rotiseria:
     '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
@@ -340,3 +341,4 @@ document.addEventListener('DOMContentLoaded', function(){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js').catch(function(){});
 }
+                       
