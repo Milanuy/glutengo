@@ -1,5 +1,5 @@
-// GlutenGo — auth.js
-// Google OAuth via Supabase.
+// GlutenGo — auth.js v2
+// Google OAuth via Supabase. Usa implicit flow para evitar PKCE/sessionStorage issues.
 
 (function () {
   'use strict';
@@ -32,14 +32,18 @@
       console.error('GlutenGo auth: supabase-js no cargado');
       return null;
     }
-    _sb = factory.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+    // flowType: 'implicit' — tokens en hash URL, sin PKCE, sin sessionStorage issues
+    _sb = factory.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+      auth: { flowType: 'implicit' }
+    });
     return _sb;
   }
 
   async function signInWithGoogle() {
     var sb = await getSB();
     if (!sb) { alert('Error de configuracion. Contacta al equipo.'); return; }
-    try { sessionStorage.setItem('glutengo_return_to', window.location.href); } catch (e) {}
+    // localStorage es mas resiliente que sessionStorage en redirects cross-origin
+    try { localStorage.setItem('glutengo_return_to', window.location.href); } catch (e) {}
     var result = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -55,6 +59,9 @@
     if (sb) await sb.auth.signOut();
     _user = null;
     updateAllAuthUI(null);
+    if (typeof window.onGlutenAuthSignOut === 'function') {
+      window.onGlutenAuthSignOut();
+    }
   }
 
   async function getCurrentUser() {
@@ -102,19 +109,30 @@
     _user = session ? session.user : null;
     updateAllAuthUI(_user);
 
-    if (_user && typeof window.onGlutenAuthSignIn === 'function') {
-      window.onGlutenAuthSignIn(_user);
+    // Si ya tenemos sesion y hay URL de retorno → redirigir de inmediato
+    if (_user) {
+      try {
+        var returnTo = localStorage.getItem('glutengo_return_to');
+        if (returnTo && returnTo !== window.location.href) {
+          localStorage.removeItem('glutengo_return_to');
+          window.location.href = returnTo;
+          return;
+        }
+      } catch (e) {}
+      if (typeof window.onGlutenAuthSignIn === 'function') {
+        window.onGlutenAuthSignIn(_user);
+      }
     }
 
-    sb.auth.onAuthStateChange(function (event, session) {
-      _user = session ? session.user : null;
+    sb.auth.onAuthStateChange(function (event, sess) {
+      _user = sess ? sess.user : null;
       updateAllAuthUI(_user);
 
       if (event === 'SIGNED_IN') {
         try {
-          var returnTo = sessionStorage.getItem('glutengo_return_to');
+          var returnTo = localStorage.getItem('glutengo_return_to');
           if (returnTo && returnTo !== window.location.href) {
-            sessionStorage.removeItem('glutengo_return_to');
+            localStorage.removeItem('glutengo_return_to');
             window.location.href = returnTo;
             return;
           }
@@ -123,6 +141,10 @@
 
       if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && typeof window.onGlutenAuthSignIn === 'function') {
         window.onGlutenAuthSignIn(_user);
+      }
+
+      if (event === 'SIGNED_OUT' && typeof window.onGlutenAuthSignOut === 'function') {
+        window.onGlutenAuthSignOut();
       }
     });
   }
@@ -139,5 +161,4 @@
   } else {
     init();
   }
-
 })();
