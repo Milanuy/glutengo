@@ -200,9 +200,18 @@
     }
     .map-chip-geo:hover{background:var(--green);border-color:var(--green)}
     #map{
-      height:420px;width:100%;
+      height:500px;width:100%;border-radius:16px;overflow:hidden;
+      box-shadow:0 4px 28px rgba(0,0,0,.12);
     }
-    @media(max-width:600px){#map{height:320px}}
+    @media(max-width:600px){#map{height:380px;border-radius:12px}}
+    /* Pulse ring for 100% GF markers */
+    @keyframes ggPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.55}50%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
+    .gg-pulse-ring{position:absolute;top:19px;left:19px;width:42px;height:42px;border-radius:50%;border:2.5px solid rgba(22,101,52,.5);animation:ggPulse 2.2s ease-out infinite;pointer-events:none;transform:translate(-50%,-50%)}
+    /* Premium popup styling */
+    .gg-popup .leaflet-popup-content-wrapper{border-radius:14px!important;box-shadow:0 8px 32px rgba(0,0,0,.18)!important;padding:0!important;overflow:hidden}
+    .gg-popup .leaflet-popup-content{margin:0!important}
+    .gg-popup .leaflet-popup-tip-container{margin-top:-1px}
+    .gg-popup .leaflet-popup-tip{background:#fff!important;box-shadow:none!important}
 
     /* ─── RAIL 100% GF ───────────────────────────────────────── */
     .rail-section{background:var(--cream)}
