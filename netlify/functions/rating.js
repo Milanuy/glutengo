@@ -2,10 +2,14 @@
  * GlutenGo -- Netlify Function: rating
  * GET  /api/rating?slug=xxx
  * POST /api/rating { token, slug, score, comentario }
+ *
+ * Usa SUPABASE_SERVICE_ROLE_KEY para operaciones DB (bypass RLS).
+ * La identidad del usuario siempre se verifica via JWT antes de escribir.
  */
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const ANON_KEY     = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_URL  = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const ANON_KEY      = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const SERVICE_KEY   = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin':  '*',
@@ -13,12 +17,21 @@ const corsHeaders = {
   'Content-Type': 'application/json',
 };
 
+// DB headers con service role (bypassa RLS, solo server-side)
+function serviceHeaders(extra) {
+  return Object.assign({
+    apikey:        SERVICE_KEY || ANON_KEY,
+    Authorization: 'Bearer ' + (SERVICE_KEY || ANON_KEY),
+    'Content-Type': 'application/json',
+  }, extra || {});
+}
+
 exports.handler = async function (event) {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: corsHeaders, body: '' };
   }
 
-  // GET
+  // ─── GET /api/rating?slug=xxx ───────────────────────────────────────────────
   if (event.httpMethod === 'GET') {
     const slug = (event.queryStringParameters || {}).slug;
     if (!slug) {
@@ -26,30 +39,46 @@ exports.handler = async function (event) {
     }
     try {
       const res = await fetch(
-        SUPABASE_URL + '/rest/v1/ratings?slug=eq.' + encodeURIComponent(slug) + '&select=score,comentario,created_at&order=created_at.desc',
-        { headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + ANON_KEY } }
+        SUPABASE_URL + '/rest/v1/ratings?slug=eq.' + encodeURIComponent(slug) +
+        '&select=score,comentario,created_at,email&order=created_at.desc',
+        { headers: serviceHeaders() }
       );
       if (!res.ok) {
-        return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ slug, count: 0, avg: null, score: null, recent: [] }) };
+        return { statusCode: 200, headers: corsHeaders,
+          body: JSON.stringify({ slug, count: 0, avg: null, score: null, recent: [] }) };
       }
       const rows  = await res.json();
       const count = rows.length;
       if (count === 0) {
-        return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ slug, count: 0, avg: null, score: null, recent: [] }) };
+        return { statusCode: 200, headers: corsHeaders,
+          body: JSON.stringify({ slug, count: 0, avg: null, score: null, recent: [] }) };
       }
       const avg    = rows.reduce(function(s, r) { return s + r.score; }, 0) / count;
       const score  = Math.round((avg - 1) * 25);
       const recent = rows.slice(0, 5).map(function(r) {
-        return { score: r.score, comentario: r.comentario, fecha: r.created_at ? r.created_at.slice(0, 10) : null };
+        // Obfuscar email: "andy***@gmail.com"
+        var emailHint = '';
+        if (r.email) {
+          var parts = r.email.split('@');
+          emailHint = parts[0].slice(0, 3) + '***@' + (parts[1] || '');
+        }
+        return {
+          score:      r.score,
+          comentario: r.comentario,
+          fecha:      r.created_at ? r.created_at.slice(0, 10) : null,
+          autor:      emailHint || 'Miembro GlutenGo',
+        };
       });
-      return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ slug, count, avg: +avg.toFixed(2), score, recent }) };
+      return { statusCode: 200, headers: corsHeaders,
+        body: JSON.stringify({ slug, count, avg: +avg.toFixed(2), score, recent }) };
     } catch (err) {
       console.error('rating GET error:', err.message);
-      return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ slug, count: 0, avg: null, score: null, recent: [] }) };
+      return { statusCode: 200, headers: corsHeaders,
+        body: JSON.stringify({ slug, count: 0, avg: null, score: null, recent: [] }) };
     }
   }
 
-  // POST
+  // ─── POST /api/rating { token, slug, score, comentario } ──────────────────
   if (event.httpMethod === 'POST') {
     let payload;
     try {
@@ -58,9 +87,9 @@ exports.handler = async function (event) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON invalido' }) };
     }
 
-    const token = payload.token;
-    const slug  = payload.slug;
-    const score = payload.score;
+    const token      = payload.token;
+    const slug       = payload.slug;
+    const score      = payload.score;
     const comentario = payload.comentario;
 
     if (!token || !slug) {
@@ -71,7 +100,7 @@ exports.handler = async function (event) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'score debe ser 1-5' }) };
     }
 
-    // Verify JWT
+    // ── 1. Verificar JWT del usuario
     let userEmail;
     try {
       const authRes = await fetch(SUPABASE_URL + '/auth/v1/user', {
@@ -90,44 +119,71 @@ exports.handler = async function (event) {
       return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error al verificar identidad' }) };
     }
 
-    // Upsert rating
+    // ── 2. Verificar si ya existe rating para este usuario+lugar
+    let existingId = null;
     try {
-      const ratingRes = await fetch(SUPABASE_URL + '/rest/v1/ratings', {
-        method: 'POST',
-        headers: {
-          apikey: ANON_KEY,
-          Authorization: 'Bearer ' + token,
-          'Content-Type': 'application/json',
-          Prefer: 'resolution=merge-duplicates,return=minimal'
-        },
-        body: JSON.stringify({
-          email: userEmail,
-          slug: slug,
-          score: scoreNum,
-          comentario: comentario ? comentario.trim().slice(0, 500) : null
-        })
-      });
+      const checkRes = await fetch(
+        SUPABASE_URL + '/rest/v1/ratings?select=id&email=eq.' + encodeURIComponent(userEmail) +
+        '&slug=eq.' + encodeURIComponent(slug),
+        { headers: serviceHeaders() }
+      );
+      if (checkRes.ok) {
+        const rows = await checkRes.json();
+        if (rows.length > 0) existingId = rows[0].id;
+      }
+    } catch (_) { /* continuar con insert */ }
+
+    // ── 3. Upsert usando service role (bypassa RLS)
+    const comentarioTrimmed = comentario ? String(comentario).trim().slice(0, 500) : null;
+    let ratingRes;
+
+    try {
+      if (existingId) {
+        // Actualizar valoración existente
+        ratingRes = await fetch(
+          SUPABASE_URL + '/rest/v1/ratings?id=eq.' + existingId,
+          {
+            method: 'PATCH',
+            headers: serviceHeaders({ Prefer: 'return=minimal' }),
+            body: JSON.stringify({ score: scoreNum, comentario: comentarioTrimmed }),
+          }
+        );
+      } else {
+        // Insertar nueva valoración
+        ratingRes = await fetch(SUPABASE_URL + '/rest/v1/ratings', {
+          method: 'POST',
+          headers: serviceHeaders({ Prefer: 'return=minimal' }),
+          body: JSON.stringify({ email: userEmail, slug, score: scoreNum, comentario: comentarioTrimmed }),
+        });
+      }
 
       if (!ratingRes.ok) {
         const errText = await ratingRes.text();
         console.error('Rating upsert error:', ratingRes.status, errText);
-        return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'No se pudo guardar la valoracion' }) };
+        return { statusCode: 500, headers: corsHeaders,
+          body: JSON.stringify({ error: 'No se pudo guardar la valoracion' }) };
       }
+    } catch (err) {
+      console.error('Rating save error:', err.message);
+      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error interno' }) };
+    }
 
-      // Recalculate score
+    // ── 4. Recalcular score del lugar
+    try {
       const allRes = await fetch(
         SUPABASE_URL + '/rest/v1/ratings?slug=eq.' + encodeURIComponent(slug) + '&select=score',
-        { headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + ANON_KEY } }
+        { headers: serviceHeaders() }
       );
       const allRows  = allRes.ok ? await allRes.json() : [];
       const count    = allRows.length;
       const avg      = count > 0 ? allRows.reduce(function(s, r) { return s + r.score; }, 0) / count : 0;
       const newScore = count > 0 ? Math.round((avg - 1) * 25) : null;
 
-      return { statusCode: 200, headers: corsHeaders, body: JSON.stringify({ ok: true, count: count, avg: +avg.toFixed(2), score: newScore }) };
-    } catch (err) {
-      console.error('Rating save error:', err.message);
-      return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error interno' }) };
+      return { statusCode: 200, headers: corsHeaders,
+        body: JSON.stringify({ ok: true, count, avg: +avg.toFixed(2), score: newScore }) };
+    } catch (_) {
+      return { statusCode: 200, headers: corsHeaders,
+        body: JSON.stringify({ ok: true, count: 1, avg: scoreNum, score: Math.round((scoreNum - 1) * 25) }) };
     }
   }
 
