@@ -376,7 +376,7 @@ var STATUS_LABELS = {
   pending: 'Pendiente', pending_payment: 'Aguardando pago',
   active: 'Activo', rejected: 'Rechazado', expired: 'Vencido',
 };
-var PLAN_LABELS_ES = { basico: 'Básico', verificado: 'Verificado', certificado: 'Certificado' };
+var PLAN_LABELS_ES = { basico: 'Básico', verificado: 'Verificado · datos confirmados', certificado: 'Certificado · protocolo SG' };
 
 function esc(value) {
   return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
@@ -545,8 +545,8 @@ function showDetail(id) {
         <label>Plan contratado</label>
         <select id="cfg-plan">
           <option value="basico"${selected(b.plan, 'basico')}>Básico</option>
-          <option value="verificado"${selected(b.plan, 'verificado')}>Verificado</option>
-          <option value="certificado"${selected(b.plan, 'certificado')}>Certificado</option>
+          <option value="verificado"${selected(b.plan, 'verificado')}>Verificado · datos confirmados</option>
+          <option value="certificado"${selected(b.plan, 'certificado')}>Certificado · protocolo SG</option>
         </select>
       </div>
       <div class="modal-field">
@@ -597,8 +597,8 @@ function showDetail(id) {
     <div class="modal-field">
       <label>Checklist de beneficios habilitados</label>
       <div class="check-grid">
-        <label class="check-item"><input id="benefit-verifiedBadge" type="checkbox"${checked(cfg.benefits.verifiedBadge)}> Badge Verificado</label>
-        <label class="check-item"><input id="benefit-certifiedBadge" type="checkbox"${checked(cfg.benefits.certifiedBadge)}> Badge Certificado</label>
+        <label class="check-item"><input id="benefit-verifiedBadge" type="checkbox"${checked(cfg.benefits.verifiedBadge)}> Insignia Datos confirmados</label>
+        <label class="check-item"><input id="benefit-certifiedBadge" type="checkbox"${checked(cfg.benefits.certifiedBadge)}> Insignia Protocolo certificado</label>
         <label class="check-item"><input id="benefit-directContact" type="checkbox"${checked(cfg.benefits.directContact)}> WhatsApp / Instagram</label>
         <label class="check-item"><input id="benefit-logo" type="checkbox"${checked(cfg.benefits.logo)}> Logo visible</label>
         <label class="check-item"><input id="benefit-priority" type="checkbox"${checked(cfg.benefits.priority)}> Prioridad en listados</label>
@@ -606,7 +606,7 @@ function showDetail(id) {
         <label class="check-item"><input id="benefit-sideBanner" type="checkbox"${checked(cfg.benefits.sideBanner)}> Banner lateral/flotante</label>
         <label class="check-item"><input id="benefit-megaBanner" type="checkbox"${checked(cfg.benefits.megaBanner)}> Mega banner</label>
       </div>
-      <div class="config-help">Este checklist es tu control de activación. Por ahora se guarda como configuración editorial en la solicitud.</div>
+      <div class="config-help">Este checklist es tu control de activación. Datos confirmados no equivale a auditoría; Protocolo certificado sí requiere revisión específica.</div>
     </div>
 
     <div class="modal-field">

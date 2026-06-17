@@ -237,6 +237,46 @@
     .step h3{font-size:.93rem;font-weight:700;color:var(--green-deep);margin-bottom:.35rem}
     .step p{font-size:.83rem;color:var(--gray);line-height:1.55}
 
+    /* CONCEPTOS */
+    .concept-section{padding:4rem 1.25rem;background:#fff}
+    .concept-inner{max-width:960px;margin:0 auto}
+    .concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-top:2rem}
+    .concept-card{
+      background:var(--cream);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:1.4rem;
+      box-shadow:0 3px 16px rgba(0,0,0,.04);
+    }
+    .concept-kicker{
+      display:inline-flex;
+      align-items:center;
+      color:var(--green);
+      background:var(--green-light);
+      font-size:.7rem;
+      font-weight:800;
+      letter-spacing:.07em;
+      text-transform:uppercase;
+      padding:.28rem .62rem;
+      border-radius:999px;
+      margin-bottom:.85rem;
+    }
+    .concept-card h3{font-size:1.05rem;color:var(--green-deep);margin-bottom:.5rem}
+    .concept-card p{font-size:.86rem;color:var(--gray);line-height:1.6;margin-bottom:.75rem}
+    .concept-card ul{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+    .concept-card li{font-size:.82rem;color:#374151;line-height:1.45}
+    .concept-card li::before{content:"✓";color:var(--green);font-weight:900;margin-right:.4rem}
+    .concept-note{
+      margin-top:1rem;
+      padding:.85rem 1rem;
+      background:#FFFBEB;
+      border:1px solid #FDE68A;
+      border-radius:12px;
+      color:#78350F;
+      font-size:.82rem;
+      line-height:1.55;
+    }
+
     /* PLANES */
     .planes-section{background:var(--green-deep);padding:4.5rem 1.25rem;color:#fff}
     .planes-inner{max-width:960px;margin:0 auto}
@@ -468,7 +508,8 @@
       <h1>Convertí a los celíacos<br>en tus clientes <em>más fieles</em></h1>
       <p class="hero-sub">
         GlutenGo conecta tu restaurante, cafetería o panadería con personas que buscan activamente
-        dónde comer sin gluten en Uruguay. Si tu propuesta es clara, segura y confiable, acá te encuentran.
+        dónde comer sin gluten en Uruguay. Mostramos tu propuesta con el nivel correcto: listado básico,
+        datos confirmados o protocolo certificado.
       </p>
       <div class="hero-actions">
         <a href="#form-registro" class="btn-primary">Registrá tu local gratis →</a>
@@ -478,13 +519,13 @@
         <div class="offer-card primary">
           <div class="offer-top">
             <div>
-              <span class="offer-label">Más vendible</span>
-              <h2 class="offer-title">Verificado por GlutenGo</h2>
+              <span class="offer-label">Datos confirmados</span>
+              <h2 class="offer-title">Plan Verificado</h2>
             </div>
             <div class="offer-price">$590<span>UYU / mes</span></div>
           </div>
           <ul class="offer-list">
-            <li><span class="offer-check">✓</span><span>Logo del local y badge visible en la ficha.</span></li>
+            <li><span class="offer-check">✓</span><span>Logo e insignia "Datos confirmados" en la ficha.</span></li>
             <li><span class="offer-check">✓</span><span>Botones directos a WhatsApp e Instagram.</span></li>
             <li><span class="offer-check">✓</span><span>Prioridad editorial cuando alguien busca opciones cerca.</span></li>
           </ul>
@@ -513,7 +554,7 @@
         <div class="proof-item">
           <div class="proof-kicker">Confianza</div>
           <div class="proof-title">La claridad vende más que prometer</div>
-          <div class="proof-text">Mostramos si sos 100% sin gluten o si tenés opciones con protocolo claro.</div>
+          <div class="proof-text">Mostramos si sos 100% sin gluten, si tenés opciones SG y qué revisión tiene tu ficha.</div>
         </div>
         <div class="proof-item">
           <div class="proof-kicker">Mesa completa</div>
@@ -595,13 +636,59 @@
     </div>
   </section>
 
+  <!-- CONCEPTOS -->
+  <section class="concept-section">
+    <div class="concept-inner">
+      <div class="section-header">
+        <span class="section-label">Qué significa cada nivel</span>
+        <h2 class="section-title">Una guía clara: figurar, confirmar datos o certificar protocolo.</h2>
+        <p class="section-desc">Separar estos conceptos ayuda a vender sin exagerar y evita confusión con una certificación sanitaria.</p>
+      </div>
+      <div class="concept-grid">
+        <div class="concept-card">
+          <span class="concept-kicker">Básico</span>
+          <h3>Listado gratuito</h3>
+          <p>El local aparece para que la comunidad tenga más opciones para consultar antes de salir.</p>
+          <ul>
+            <li>Nombre, zona y tipo de oferta</li>
+            <li>Presencia en mapa y directorio</li>
+            <li>Sin logo, prioridad ni contacto destacado</li>
+          </ul>
+        </div>
+        <div class="concept-card">
+          <span class="concept-kicker">Verificado</span>
+          <h3>Datos confirmados</h3>
+          <p>GlutenGo revisa datos comerciales y ordena la ficha para que el usuario pueda contactar al local con menos fricción.</p>
+          <ul>
+            <li>Logo, WhatsApp e Instagram visibles</li>
+            <li>Ficha más completa y prioritaria</li>
+            <li>No equivale a auditoría de protocolo</li>
+          </ul>
+        </div>
+        <div class="concept-card">
+          <span class="concept-kicker">Certificado</span>
+          <h3>Protocolo certificado</h3>
+          <p>Es el nivel para locales que aceptan una revisión específica del manejo sin gluten y quieren diferenciarse por seguridad.</p>
+          <ul>
+            <li>Revisión presencial del protocolo SG</li>
+            <li>Informe y recomendaciones</li>
+            <li>Insignia premium para búsquedas de alta confianza</li>
+          </ul>
+        </div>
+      </div>
+      <div class="concept-note">
+        Importante: GlutenGo organiza información y señales de confianza. El usuario siempre debe confirmar con el local antes de consumir, especialmente cuando existe riesgo de contaminación cruzada.
+      </div>
+    </div>
+  </section>
+
   <!-- PLANES -->
   <section class="planes-section" id="planes">
     <div class="planes-inner">
       <div class="section-header">
         <span class="section-label" style="color:var(--amber)">Planes y precios</span>
-        <h2 class="section-title" style="color:#fff">Básico para figurar. Verificado para vender confianza.</h2>
-        <p class="section-desc" style="color:rgba(255,255,255,.6)">El alta gratuita mantiene el directorio completo. Los planes pagos son para locales que quieren destacarse y convertir más visitas.</p>
+        <h2 class="section-title" style="color:#fff">Básico para figurar. Verificado para convertir. Certificado para diferenciarte.</h2>
+        <p class="section-desc" style="color:rgba(255,255,255,.6)">El alta gratuita mantiene el directorio completo. Verificado confirma datos y mejora la ficha. Certificado suma revisión de protocolo sin gluten.</p>
       </div>
 
       <div class="planes-grid">
@@ -610,7 +697,7 @@
         <div class="plan-card">
           <div class="plan-badge free">Gratuito</div>
           <div class="plan-name">Básico</div>
-          <div class="plan-tagline">Una ficha mínima para que podamos mapear más opciones sin gluten.</div>
+          <div class="plan-tagline">Listado simple para que podamos mapear más opciones sin gluten.</div>
           <div class="plan-price">
             <span class="currency">$</span>0
             <span class="period">/ siempre</span>
@@ -621,7 +708,7 @@
             <li><span class="check">✓</span>Aparece en el directorio y el mapa</li>
             <li><span class="check">✓</span>Etiqueta 100% SG o con opciones SG</li>
             <li><span class="check">✓</span>Solicitud revisada manualmente</li>
-            <li><span class="check">✓</span>Sin badge, prioridad ni links destacados</li>
+            <li><span class="check">✓</span>Sin insignia, prioridad ni links destacados</li>
           </ul>
           <button type="button" class="plan-cta ghost" onclick="selectPlan('basico')">Registrarme gratis →</button>
         </div>
@@ -631,7 +718,7 @@
           <div class="plan-popular">Más elegido</div>
           <div class="plan-badge recommended">Recomendado</div>
           <div class="plan-name">Verificado</div>
-          <div class="plan-tagline">Para locales que quieren demostrar cuidado y recibir más contacto directo.</div>
+          <div class="plan-tagline">Datos y canales confirmados para recibir más contacto directo.</div>
           <div class="plan-price">
             <span class="currency">$</span>590
             <span class="period">UYU / mes</span>
@@ -641,11 +728,11 @@
             <li><span class="check">✓</span>Ficha enriquecida con horarios, menú y descripción cuidada</li>
             <li><span class="check">✓</span>Logo del local en ficha y tarjetas del directorio</li>
             <li><span class="check">✓</span>Botones destacados a WhatsApp e Instagram</li>
-            <li><span class="check">✓</span>Badge "Verificado por GlutenGo"</li>
+            <li><span class="check">✓</span>Insignia "Datos confirmados"</li>
             <li><span class="check">✓</span>Posición prioritaria en directorio y búsquedas</li>
             <li><span class="check">✓</span>Destacado en la home cuando haya cupo de zona</li>
             <li><span class="check">✓</span>Opción a banner lateral/flotante con cupo limitado</li>
-            <li><span class="check">✓</span>Acompañamiento para ordenar tu ficha SG</li>
+            <li><span class="check">✓</span>Acompañamiento para ordenar tu ficha SG sin prometer auditoría</li>
           </ul>
           <button type="button" class="plan-cta primary" onclick="selectPlan('verificado')">Quiero ser Verificado →</button>
         </div>
@@ -654,7 +741,7 @@
         <div class="plan-card">
           <div class="plan-badge premium">Premium</div>
           <div class="plan-name">Certificado</div>
-          <div class="plan-tagline">Para locales que hacen de la celiaquía su principal diferenciador.</div>
+          <div class="plan-tagline">Protocolo revisado para locales que hacen de la celiaquía su principal diferenciador.</div>
           <div class="plan-price">
             <span class="currency">$</span>1.590
             <span class="period">UYU / mes</span>
@@ -663,7 +750,7 @@
           <ul class="plan-features">
             <li><span class="check">✓</span>Todo lo del plan Verificado</li>
             <li><span class="check">✓</span>Auditoría presencial de protocolo sin gluten</li>
-            <li><span class="check">✓</span>Badge dorado "GlutenGo Certified"</li>
+            <li><span class="check">✓</span>Insignia premium "Protocolo certificado"</li>
             <li><span class="check">✓</span>Informe de protocolo para mostrar a clientes</li>
             <li><span class="check">✓</span>Primer lugar en búsquedas de tu zona</li>
             <li><span class="check">✓</span>Cupo preferente para banner lateral, home y mega banner</li>
@@ -687,17 +774,17 @@
       </div>
       <div class="visibility-grid">
         <div class="visibility-card">
-          <strong>Verificado+</strong>
+          <strong>Verificado con cupo</strong>
           <h3>Banner lateral/flotante</h3>
           <p>Aparece como recomendación discreta en zonas o categorías relevantes. Ideal para empujar consultas sin tapar el mapa ni la ficha.</p>
         </div>
         <div class="visibility-card">
-          <strong>Verificado / Certificado</strong>
+          <strong>Datos confirmados</strong>
           <h3>Destacado en home</h3>
           <p>Tarjeta prioritaria dentro de la página principal cuando el usuario está explorando lugares 100% SG o por zona.</p>
         </div>
         <div class="visibility-card">
-          <strong>Certificado / sponsor</strong>
+          <strong>Protocolo certificado</strong>
           <h3>Mega banner</h3>
           <p>Espacio premium por campaña, zona o temporada. Lo reservaría para certificados, lanzamientos o acuerdos puntuales, no para cualquier alta básica.</p>
         </div>
@@ -731,14 +818,14 @@
           <tr><td>Menú, horarios y descripción destacados</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Logo del local en ficha y tarjetas</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>GlutenGo Score visible</td><td class="center">Cuando tenga datos</td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
-          <tr><td>Badge de verificación</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Insignia "Datos confirmados"</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Posición prioritaria en búsquedas</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Destacado en la home</td><td class="center"><span class="no">—</span></td><td class="center">Según cupo</td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Banner lateral/flotante</td><td class="center"><span class="no">—</span></td><td class="center">Con cupo</td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Mega banner</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center">Campaña premium</td></tr>
           <tr><td>Menciones editoriales o newsletter</td><td class="center"><span class="no">—</span></td><td class="center">Ocasional</td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Auditoría presencial protocolo SG</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
-          <tr><td>Badge dorado "Certified"</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Insignia "Protocolo certificado"</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Primer lugar en búsquedas locales</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Feature en redes sociales</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr>
@@ -862,14 +949,14 @@
               <label class="plan-option">
                 <input type="radio" name="plan" value="verificado" />
                 <span class="plan-option-label">
-                  <span class="plan-option-name">Verificado</span>
+                  <span class="plan-option-name">Verificado · datos confirmados</span>
                   <span class="plan-option-price">$590/mes</span>
                 </span>
               </label>
               <label class="plan-option">
                 <input type="radio" name="plan" value="certificado" />
                 <span class="plan-option-label">
-                  <span class="plan-option-name">Certificado</span>
+                  <span class="plan-option-name">Certificado · protocolo SG</span>
                   <span class="plan-option-price">$1.590/mes</span>
                 </span>
               </label>
@@ -946,7 +1033,7 @@
 
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿Es realmente gratis el plan Básico?</div>
-      <div class="faq-answer">Sí. El plan Básico es gratuito, pero es una ficha simple: nombre, zona, tipo de oferta y presencia en el mapa/directorio. No incluye logo, badge, prioridad, ficha enriquecida ni links destacados.</div>
+      <div class="faq-answer">Sí. El plan Básico es gratuito, pero es una ficha simple: nombre, zona, tipo de oferta y presencia en el mapa/directorio. No incluye logo, insignia, prioridad, ficha enriquecida ni links destacados.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿En cuánto tiempo aparece mi local?</div>
@@ -958,7 +1045,11 @@
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿GlutenGo certifica automáticamente a todos los locales?</div>
-      <div class="faq-answer">No. El directorio puede incluir información pública o aportada por la comunidad. Los locales deben mantener actualizada su oferta y el usuario siempre debe confirmar antes de consumir. Los badges Verificado y Certificado se otorgan manualmente desde administración según el plan, la información recibida y la revisión correspondiente.</div>
+      <div class="faq-answer">No. El directorio puede incluir información pública o aportada por la comunidad. Los locales deben mantener actualizada su oferta y el usuario siempre debe confirmar antes de consumir. La insignia "Datos confirmados" indica revisión de datos comerciales; la insignia "Protocolo certificado" requiere una revisión específica del manejo sin gluten.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-question">¿Qué significa "Datos confirmados"?</div>
+      <div class="faq-answer">Significa que GlutenGo revisó identidad del local, contacto, canales públicos, tipo de oferta declarada y datos básicos de la ficha. Ayuda a generar confianza y contacto directo, pero no garantiza ausencia de gluten ni reemplaza una auditoría de contaminación cruzada.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿Puedo cambiar de plan después de registrarme?</div>
@@ -974,7 +1065,7 @@
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿En qué consiste la auditoría del plan Certificado?</div>
-      <div class="faq-answer">Una persona de nuestro equipo visita tu local en horario normal. Evalúa: manejo de ingredientes, riesgo de contaminación cruzada, conocimiento del personal y presentación del menú sin gluten. Entregamos un informe detallado. El badge Certificado solo se otorga si el protocolo supera el estándar — lo que hace que valga de verdad para el celíaco.</div>
+      <div class="faq-answer">Una persona de nuestro equipo visita tu local en horario normal. Evalúa: manejo de ingredientes, riesgo de contaminación cruzada, conocimiento del personal y presentación del menú sin gluten. Entregamos un informe detallado. La insignia "Protocolo certificado" solo se otorga si el protocolo supera el estándar, para que valga de verdad para el celíaco.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿Aceptan locales fuera de Montevideo?</div>
@@ -994,7 +1085,7 @@
     <div class="footer-logo">Gluten<span>Go</span></div>
     <p style="opacity:.6;margin-bottom:.5rem">La guía sin gluten de Uruguay — hecha por la comunidad, para la comunidad.</p>
     <p style="max-width:680px;margin:.5rem auto .75rem;font-size:.78rem;line-height:1.55;opacity:.55">
-      GlutenGo organiza información pública, datos aportados por locales y señales de la comunidad. La publicación de una ficha no implica certificación sanitaria ni garantía permanente de protocolo; los badges pagos se activan manualmente según el plan y la revisión correspondiente.
+      GlutenGo organiza información pública, datos aportados por locales y señales de la comunidad. La publicación de una ficha no implica certificación sanitaria ni garantía permanente de protocolo; las insignias y destacados pagos se activan manualmente según el plan y la revisión correspondiente.
     </p>
     <p>
       <a href="mailto:hola@monvi.com.uy">Contacto</a>
@@ -1071,7 +1162,10 @@
     scrollToForm();
   }
 
-  var PLAN_LABELS = { verificado: 'Plan Verificado · $590 UYU/mes', certificado: 'Plan Certificado · $1.590 UYU/mes' };
+  var PLAN_LABELS = {
+    verificado: 'Plan Verificado · datos confirmados · $590 UYU/mes',
+    certificado: 'Plan Certificado · protocolo SG · $1.590 UYU/mes'
+  };
 
   function showPago(mpLink, plan) {
     document.querySelector('.form-body').classList.add('hidden');

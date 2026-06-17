@@ -25,8 +25,8 @@ Estados principales:
 
 ## Checklist de beneficios
 
-- `Badge Verificado`: mostrar insignia de verificacion.
-- `Badge Certificado`: mostrar insignia de certificacion.
+- `Insignia Datos confirmados`: mostrar que GlutenGo reviso identidad, contacto, canales y datos basicos del local. No equivale a auditoria de protocolo.
+- `Insignia Protocolo certificado`: mostrar que el local supero una revision especifica del manejo sin gluten.
 - `WhatsApp / Instagram`: habilitar contacto directo en la ficha.
 - `Logo visible`: usar logo real del negocio.
 - `Prioridad en listados`: ordenar antes que fichas basicas.
@@ -37,8 +37,8 @@ Estados principales:
 ## Criterio comercial para banners
 
 - Basico: sin banners ni prioridad.
-- Verificado: puede acceder a destacado en home o banner lateral/flotante si hay cupo de zona.
-- Certificado: prioridad para home, banner lateral/flotante y mega banner.
+- Verificado / Datos confirmados: puede acceder a destacado en home o banner lateral/flotante si hay cupo de zona.
+- Certificado / Protocolo certificado: prioridad para home, banner lateral/flotante y mega banner.
 - Mega banner: usarlo como campana limitada por zona, temporada o sponsor. No conviene mostrar muchos a la vez porque baja la confianza de la guia.
 
 ## Notas tecnicas
