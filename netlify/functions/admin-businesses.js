@@ -1,11 +1,10 @@
 /**
  * GlutenGo — Netlify Function: admin-businesses
  * GET  /api/admin-businesses          → lista todos los negocios
- * PATCH /api/admin-businesses         → actualiza status
+ * PATCH /api/admin-businesses         → actualiza status, plan, position y admin_notes
  *
  * Autenticación: header x-admin-token debe coincidir con ADMIN_PASSWORD env var.
  * Si Netlify todavía no tiene la variable, mantiene el token histórico del MVP.
- * La tabla businesses actual no tiene position/admin_notes/activated_at/expires_at.
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -77,11 +76,26 @@ exports.handler = async function (event) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON inválido' }) };
     }
 
-    const { id, status } = body;
+    const { id, status, plan, position, admin_notes } = body;
     if (!id) return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'id requerido' }) };
 
     const patch = {};
     if (status !== undefined) patch.status = status;
+    if (plan !== undefined) {
+      if (!['basico', 'verificado', 'certificado'].includes(plan)) {
+        return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'plan inválido' }) };
+      }
+      patch.plan = plan;
+    }
+    if (position !== undefined) {
+      const parsedPosition = Number(position);
+      if (!Number.isInteger(parsedPosition) || parsedPosition < 1 || parsedPosition > 999) {
+        return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'posición inválida' }) };
+      }
+      patch.position = parsedPosition;
+    }
+    if (admin_notes !== undefined) patch.admin_notes = String(admin_notes).slice(0, 6000);
+    if (status === 'active') patch.activated_at = new Date().toISOString();
 
     try {
       const res = await fetch(

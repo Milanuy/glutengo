@@ -194,6 +194,19 @@
       margin-top:.6rem;color:var(--gray);
       font-size:.95rem;max-width:500px;margin-left:auto;margin-right:auto;
     }
+    .map-legend{
+      display:flex;justify-content:center;gap:.65rem;flex-wrap:wrap;
+      margin:1rem auto 0;padding:0 1.25rem;
+    }
+    .legend-pill{
+      display:inline-flex;align-items:center;gap:.45rem;
+      background:var(--cream);border:1px solid var(--border);
+      border-radius:999px;padding:.42rem .8rem;
+      font-size:.8rem;font-weight:700;color:#374151;
+    }
+    .legend-dot{width:.72rem;height:.72rem;border-radius:999px;display:inline-block}
+    .legend-dot.sg{background:var(--green);box-shadow:0 0 0 4px rgba(22,101,52,.1)}
+    .legend-dot.mix{background:var(--amber);box-shadow:0 0 0 4px rgba(232,169,60,.18)}
 
     /* ─── MAPA ───────────────────────────────────────────────── */
     .map-section{
@@ -236,17 +249,20 @@
 
     /* ─── RAIL 100% GF ───────────────────────────────────────── */
     .rail-section{background:var(--cream)}
+    .rail-shell{position:relative;max-width:1120px;margin:0 auto}
     .rail{
       display:flex;gap:1rem;
       overflow-x:auto;padding:.5rem 1.25rem 1.5rem;
       scroll-snap-type:x mandatory;
       scrollbar-width:none;-webkit-overflow-scrolling:touch;
+      scroll-behavior:smooth;
     }
     .rail::-webkit-scrollbar{display:none}
     .rail-card{
-      flex:0 0 auto;width:200px;
+      flex:0 0 clamp(220px,28vw,280px);
+      min-height:214px;
       background:#fff;border-radius:var(--radius);
-      padding:1.25rem;box-shadow:var(--shadow);
+      padding:1.35rem;box-shadow:var(--shadow);
       scroll-snap-align:start;
       border-top:3px solid var(--green);
       text-decoration:none;color:inherit;
@@ -272,6 +288,17 @@
       font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
       padding:.15rem .5rem;border-radius:20px;
     }
+    .rail-controls{
+      display:flex;justify-content:center;gap:.6rem;margin-top:.25rem;
+    }
+    .rail-btn{
+      width:42px;height:42px;border-radius:50%;border:1.5px solid var(--border);
+      background:#fff;color:var(--green-deep);display:inline-flex;
+      align-items:center;justify-content:center;cursor:pointer;
+      box-shadow:var(--shadow);transition:transform .15s,background .15s;
+    }
+    .rail-btn:hover{background:var(--green-light);transform:translateY(-1px)}
+    .rail-btn svg{width:18px;height:18px}
 
     /* ─── DIRECTORIO ─────────────────────────────────────────── */
     .dir-section{background:var(--cream)}
@@ -535,7 +562,10 @@
     <div class="section-header" data-aos="fade-up">
       <span class="section-label">Mapa Interactivo</span>
       <h2 class="section-title">Encontrá tu próximo lugar</h2>
-      <p class="section-sub">Verde = 100% libre de gluten · Naranja = con opciones SG, confirmar protocolo</p>
+      <div class="map-legend" aria-label="Referencias del mapa">
+        <span class="legend-pill"><span class="legend-dot sg"></span>100% libre de gluten</span>
+        <span class="legend-pill"><span class="legend-dot mix"></span>Con opciones SG: confirmar protocolo</span>
+      </div>
     </div>
 
     <div class="map-controls">
@@ -558,7 +588,17 @@
       <h2 class="section-title">Locales 100% Sin Gluten</h2>
       <p class="section-sub">Lugares dedicados a comida sin gluten. Confirmá horarios y disponibilidad antes de ir.</p>
     </div>
-    <div class="rail" id="rail-exclusivos"></div>
+    <div class="rail-shell">
+      <div class="rail" id="rail-exclusivos" aria-label="Carrusel de locales 100% sin gluten"></div>
+      <div class="rail-controls" aria-label="Controles del carrusel">
+        <button type="button" class="rail-btn" onclick="scrollRail(-1)" aria-label="Ver locales anteriores">
+          <svg fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="rail-btn" onclick="scrollRail(1)" aria-label="Ver más locales">
+          <svg fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+    </div>
   </section>
 
   <!-- ── DIRECTORIO ───────────────────────────────────────────── -->
@@ -727,9 +767,9 @@
   </footer>
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
-  <script src="/data.js?v=1.8"></script>
-  <script src="/app.js?v=1.8"></script>
-  <script src="/auth.js?v=1.8"></script>
+  <script src="/data.js?v=2.0"></script>
+  <script src="/app.js?v=2.0"></script>
+  <script src="/auth.js?v=2.0"></script>
 
 </body>
 </html>

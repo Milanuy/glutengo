@@ -295,6 +295,14 @@ function buildRail(){
   }).join('');
 }
 
+function scrollRail(direction){
+  var rail = document.getElementById('rail-exclusivos');
+  if(!rail) return;
+  var card = rail.querySelector('.rail-card');
+  var step = card ? card.getBoundingClientRect().width + 16 : 280;
+  rail.scrollBy({ left: step * direction, behavior: 'smooth' });
+}
+
 // ────────────────────────────────────────────────────
 // DIRECTORIO
 // ────────────────────────────────────────────────────

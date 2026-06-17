@@ -58,7 +58,7 @@
       background:radial-gradient(ellipse at 70% 0%,rgba(232,169,60,.18) 0%,transparent 60%);
       pointer-events:none;
     }
-    .hero-inner{position:relative;max-width:700px;margin:0 auto}
+    .hero-inner{position:relative;max-width:980px;margin:0 auto}
     .hero-eyebrow{
       display:inline-block;
       background:rgba(232,169,60,.15);
@@ -95,6 +95,57 @@
       text-decoration:none;transition:background .2s;
     }
     .btn-ghost:hover{background:rgba(255,255,255,.17)}
+    .hero-offer{
+      margin:2rem auto 0;
+      display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);
+      gap:1rem;text-align:left;max-width:860px;
+    }
+    .offer-card{
+      background:#fff;color:#1a1a1a;border-radius:18px;
+      padding:1.25rem;border:1px solid rgba(255,255,255,.18);
+      box-shadow:0 18px 50px rgba(0,0,0,.22);
+    }
+    .offer-card.primary{border:2px solid var(--amber)}
+    .offer-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.8rem}
+    .offer-label{
+      display:inline-flex;align-items:center;gap:.35rem;
+      background:var(--green-light);color:var(--green);
+      border-radius:999px;padding:.22rem .58rem;
+      font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+    }
+    .offer-title{font-family:'Fraunces',Georgia,serif;font-size:1.35rem;font-weight:900;color:var(--green-deep);line-height:1.1}
+    .offer-price{font-family:'Fraunces',Georgia,serif;font-size:2rem;font-weight:900;color:var(--green-deep);line-height:1;text-align:right}
+    .offer-price span{display:block;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:700;color:var(--gray);margin-top:.25rem}
+    .offer-list{display:grid;gap:.55rem;margin:1rem 0 1.15rem;list-style:none}
+    .offer-list li{display:flex;gap:.5rem;font-size:.9rem;color:#374151;line-height:1.35}
+    .offer-check{color:var(--green);font-weight:900}
+    .offer-actions{display:flex;gap:.65rem;flex-wrap:wrap}
+    .offer-btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      border:none;border-radius:12px;padding:.78rem 1rem;
+      font-family:inherit;font-weight:800;text-decoration:none;cursor:pointer;
+    }
+    .offer-btn.main{background:var(--amber);color:var(--green-deep)}
+    .offer-btn.secondary{background:var(--green-light);color:var(--green)}
+    .offer-note{font-size:.75rem;color:var(--gray);line-height:1.45;margin-top:.75rem}
+    .offer-mini{
+      background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);
+      border-radius:18px;padding:1.25rem;color:#fff;
+    }
+    .offer-mini h3{font-size:1rem;margin-bottom:.6rem}
+    .offer-mini p{font-size:.85rem;line-height:1.6;color:rgba(255,255,255,.68);margin-bottom:1rem}
+    .mini-flow{display:grid;gap:.6rem}
+    .mini-step{display:flex;gap:.55rem;align-items:flex-start;font-size:.82rem;color:rgba(255,255,255,.82)}
+    .mini-step strong{
+      width:24px;height:24px;border-radius:50%;background:rgba(232,169,60,.18);
+      color:var(--amber);display:inline-flex;align-items:center;justify-content:center;
+      flex-shrink:0;font-size:.76rem;
+    }
+    @media(max-width:760px){
+      .hero-offer{grid-template-columns:1fr}
+      .offer-top{align-items:flex-start}
+      .offer-price{text-align:left}
+    }
 
     /* Proof strip */
     .proof-strip{
@@ -401,6 +452,36 @@
       <div class="hero-actions">
         <a href="#form-registro" class="btn-primary">Registrá tu local gratis →</a>
         <a href="#planes" class="btn-ghost">Ver planes</a>
+      </div>
+      <div class="hero-offer">
+        <div class="offer-card primary">
+          <div class="offer-top">
+            <div>
+              <span class="offer-label">Más vendible</span>
+              <h2 class="offer-title">Verificado por GlutenGo</h2>
+            </div>
+            <div class="offer-price">$590<span>UYU / mes</span></div>
+          </div>
+          <ul class="offer-list">
+            <li><span class="offer-check">✓</span><span>Logo del local y badge visible en la ficha.</span></li>
+            <li><span class="offer-check">✓</span><span>Botones directos a WhatsApp e Instagram.</span></li>
+            <li><span class="offer-check">✓</span><span>Prioridad editorial cuando alguien busca opciones cerca.</span></li>
+          </ul>
+          <div class="offer-actions">
+            <button type="button" class="offer-btn main" onclick="selectPlan('verificado')">Quiero Verificado</button>
+            <button type="button" class="offer-btn secondary" onclick="selectPlan('basico')">Empezar gratis</button>
+          </div>
+          <p class="offer-note">Sin comisión por pedido o visita. Revisamos los datos antes de publicar para cuidar la confianza.</p>
+        </div>
+        <div class="offer-mini">
+          <h3>Cómo se activa</h3>
+          <p>La solicitud entra al panel admin. Desde ahí se revisa, se configura la ficha y se activa el plan contratado.</p>
+          <div class="mini-flow">
+            <div class="mini-step"><strong>1</strong><span>Completás la solicitud.</span></div>
+            <div class="mini-step"><strong>2</strong><span>Si elegís Verificado, activás la suscripción.</span></div>
+            <div class="mini-step"><strong>3</strong><span>GlutenGo valida y publica con los beneficios habilitados.</span></div>
+          </div>
+        </div>
       </div>
       <div class="proof-strip">
         <div class="proof-item">
