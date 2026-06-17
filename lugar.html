@@ -353,7 +353,7 @@
     document.getElementById('page-desc').content =
       lugar.desc.slice(0,155) + '…';
 
-    // ── Score (se carga dinámicamente desde /api/rating)
+    // ── Puntaje (se carga dinámicamente desde /api/rating)
     const r = 30; const circ = 2*Math.PI*r;
 
     function scoreInfo(scorePct) {
@@ -364,11 +364,11 @@
           : scorePct >= 80 ? 'band-muy-recomendado'
           : scorePct >= 60 ? 'band-consulta-antes'
           : 'band-requiere-validacion',
-        bandLabel: scorePct === null ? 'Aún sin valoraciones'
-          : scorePct >= 95 ? 'Come tranquilo'
-          : scorePct >= 80 ? 'Muy recomendado'
-          : scorePct >= 60 ? 'Consultá antes'
-          : 'Requiere validación',
+        bandLabel: scorePct === null ? 'Aún sin puntaje'
+          : scorePct >= 95 ? 'Excelente'
+          : scorePct >= 80 ? 'Muy bueno'
+          : scorePct >= 60 ? 'Confirmar antes'
+          : 'En revisión',
         dash: scorePct !== null ? circ * (1 - scorePct/100) : circ,
         ringColor: scorePct === null ? '#d1d5db'
           : scorePct >= 80 ? '#166534'
@@ -446,9 +446,9 @@
         </div>
       </div>
 
-      <!-- SCORE -->
+      <!-- PUNTAJE -->
       <div class="score-card" id="score-card">
-        <div class="score-ring" title="GlutenGo Score">
+        <div class="score-ring" title="Puntaje GlutenGo">
           <svg width="72" height="72" viewBox="0 0 72 72">
             <circle cx="36" cy="36" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="7"/>
             <circle id="score-arc" cx="36" cy="36" r="${r}" fill="none"
@@ -459,13 +459,13 @@
           </svg>
           <div class="score-number">
             <span id="score-num">${si.scoreNum}</span>
-            <span class="score-label">score</span>
+            <span class="score-label">/100</span>
           </div>
         </div>
         <div class="score-info">
-          <h3>GlutenGo Score</h3>
+          <h3>Puntaje GlutenGo</h3>
           <span class="score-band-pill ${si.bandClass}" id="score-band">${si.bandLabel}</span>
-          <p id="score-desc" style="margin-top:.4rem">Calculando con visitas reales…</p>
+          <p id="score-desc" style="margin-top:.4rem">Calculando puntaje con visitas reales…</p>
         </div>
       </div>
 
@@ -585,7 +585,7 @@
       t._timer = setTimeout(function(){ t.classList.remove('show'); }, 3500);
     }
 
-    // ── Score ring UI
+    // ── Puntaje ring UI
     function updateScoreUI(scorePct, count) {
       var info = scoreInfo(scorePct);
       var arcEl  = document.getElementById('score-arc');
@@ -601,7 +601,7 @@
       if (descEl) {
         descEl.textContent = (!count || scorePct === null)
           ? '¡Sé el primero en valorar este lugar!'
-          : 'Basado en ' + count + ' valoraci' + (count === 1 ? 'ón' : 'ones') + ' de la comunidad.';
+          : 'Puntaje basado en ' + count + ' valoraci' + (count === 1 ? 'ón' : 'ones') + ' de la comunidad.';
       }
     }
 
@@ -636,7 +636,7 @@
         '</div>';
     }
 
-    // ── Fetch score + reseñas
+    // ── Fetch puntaje + reseñas
     fetch('/api/rating?slug=' + encodeURIComponent(slug))
       .then(function(res){ return res.json(); })
       .then(function(data){
@@ -647,7 +647,7 @@
 
     // ── Star rating
     var selectedStars = 0;
-    var STAR_LABELS = ['','Peligroso: contaminación cruzada','Mala experiencia','Regular: pedir con cuidado','Buena experiencia','Excelente: come tranquilo'];
+    var STAR_LABELS = ['','Peligroso: contaminación cruzada','Mala experiencia','Regular: pedir con cuidado','Buena experiencia','Excelente experiencia'];
 
     function renderStars() {
       var h = '';

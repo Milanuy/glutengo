@@ -1,20 +1,22 @@
-# GlutenGo Score — Especificación del Algoritmo
+# Puntaje GlutenGo — Especificación del Algoritmo
 
 **Última actualización:** 2026-06-12
 
-El score es el activo central de la plataforma. Esta especificación prioriza tres propiedades, en este orden: **(1) un falso "verde" es peor que un falso "rojo"**, (2) resistencia a manipulación, (3) explicabilidad — un usuario debe poder entender por qué un local tiene el score que tiene.
+El nombre público es **Puntaje GlutenGo**: un número de 0 a 100 que resume experiencias reales de la comunidad. En la base y el código puede seguir llamándose `score` para evitar migraciones innecesarias.
+
+El puntaje es el activo central de la plataforma. Esta especificación prioriza tres propiedades, en este orden: **(1) un falso "verde" es peor que un falso "rojo"**, (2) resistencia a manipulación, (3) explicabilidad — un usuario debe poder entender por qué un local tiene el puntaje que tiene.
 
 ---
 
 ## 1. Escala y bandas
 
-| Score | Banda | Pin |
+| Puntaje | Banda visible | Pin |
 |---|---|---|
-| 95–100 | Comé tranquilo | Verde |
-| 80–94 | Muy recomendado | Verde |
-| 60–79 | Consultá antes | Amarillo |
-| 0–59 | Requiere validación | Rojo |
-| sin datos suficientes | Requiere validación | Gris |
+| 95–100 | Excelente | Verde |
+| 80–94 | Muy bueno | Verde |
+| 60–79 | Confirmar antes | Amarillo |
+| 0–59 | En revisión | Rojo |
+| sin datos suficientes | Aún sin puntaje | Gris |
 
 ## 2. Diseño del cálculo
 
