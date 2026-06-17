@@ -1,4 +1,4 @@
-// GlutenGo — app.js v0.8
+// GlutenGo — app.js v0.9
 // Script principal de la home. Separado del HTML para evitar bloqueo de extensiones.
 
 // ────────────────────────────────────────────────────
@@ -53,6 +53,27 @@ function getCatSVG(category, color) {
   var svg = catSVG[category] || catSVG.otro;
   // Inyectar color de stroke para uso en cards (no markers)
   return color ? svg.replace('stroke="currentColor"', 'stroke="' + color + '"') : svg;
+}
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[ch];
+  });
+}
+
+function placeLogoHtml(lugar, className) {
+  if (!lugar || !lugar.logoUrl) return '';
+  var classes = ['brand-logo'];
+  if (className) classes.push(className);
+  return '<span class="' + classes.join(' ') + '">' +
+    '<img src="' + escapeHtml(lugar.logoUrl) + '" alt="Logo de ' + escapeHtml(lugar.name) + '" loading="lazy">' +
+  '</span>';
 }
 
 function emptyStateSvg(color) {
@@ -263,10 +284,12 @@ function buildRail(){
   var excl = lugares.filter(function(l){ return l.tipo === 'exclusivo'; });
   rail.innerHTML = excl.map(function(l){
     var iconSvg = getCatSVG(l.category, '#166534');
-    return '<a href="/lugar.html?slug='+l.slug+'" class="rail-card">' +
-      '<div class="icon" style="display:flex;align-items:center;justify-content:center">' + iconSvg + '</div>' +
-      '<div class="rc-name">'+l.name+'</div>' +
-      '<div class="rc-hood">'+l.neighborhood+'</div>' +
+    var visual = placeLogoHtml(l, 'rail-brand-logo') ||
+      '<div class="icon" style="display:flex;align-items:center;justify-content:center">' + iconSvg + '</div>';
+    return '<a href="/lugar.html?slug='+encodeURIComponent(l.slug)+'" class="rail-card">' +
+      visual +
+      '<div class="rc-name">'+escapeHtml(l.name)+'</div>' +
+      '<div class="rc-hood">'+escapeHtml(l.neighborhood)+'</div>' +
       '<span class="rc-tag">100% libre de gluten</span>' +
       '</a>';
   }).join('');
@@ -298,15 +321,17 @@ function buildDir(filter, q){
   grid.innerHTML = filtered.map(function(l){
     var iconColor = l.tipo === 'exclusivo' ? '#166534' : '#D97706';
     var iconSvg   = getCatSVG(l.category, iconColor);
-    return '<a href="/lugar.html?slug='+l.slug+'" class="dir-card '+l.tipo+'">' +
+    var visual = placeLogoHtml(l, 'dc-brand-logo') ||
+      '<span class="dc-category-icon">' + iconSvg + '</span>';
+    return '<a href="/lugar.html?slug='+encodeURIComponent(l.slug)+'" class="dir-card '+escapeHtml(l.tipo)+'">' +
       '<div class="dc-header">' +
         '<span class="dc-name" style="display:flex;align-items:center;gap:.4rem">' +
-          '<span style="flex-shrink:0">' + iconSvg + '</span>' + l.name +
+          visual + escapeHtml(l.name) +
         '</span>' +
-        '<span class="dc-badge '+l.tipo+'">'+(l.tipo==='exclusivo'?'100% GF':'Mixto')+'</span>' +
+        '<span class="dc-badge '+escapeHtml(l.tipo)+'">'+(l.tipo==='exclusivo'?'100% GF':'Mixto')+'</span>' +
       '</div>' +
-      '<div class="dc-meta"><span>'+l.neighborhood+'</span><span class="dc-sep">·</span><span>'+l.category+'</span></div>' +
-      '<p class="dc-desc">'+l.desc+'</p>' +
+      '<div class="dc-meta"><span>'+escapeHtml(l.neighborhood)+'</span><span class="dc-sep">·</span><span>'+escapeHtml(l.category)+'</span></div>' +
+      '<p class="dc-desc">'+escapeHtml(l.desc)+'</p>' +
       '<span class="dc-cta">Ver ficha <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>' +
     '</a>';
   }).join('');

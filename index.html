@@ -254,6 +254,16 @@
     }
     .rail-card:hover{transform:translateY(-3px);box-shadow:0 6px 24px rgba(0,0,0,.1)}
     .rail-card .icon{font-size:1.8rem;margin-bottom:.6rem}
+    .brand-logo{
+      display:inline-flex;align-items:center;justify-content:center;
+      background:#fff;border:1px solid var(--border);
+      overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);
+    }
+    .brand-logo img{width:100%;height:100%;object-fit:contain;padding:5px}
+    .rail-brand-logo{
+      width:46px;height:46px;border-radius:14px;
+      margin-bottom:.65rem;
+    }
     .rail-card .rc-name{font-weight:700;font-size:.95rem;margin-bottom:.2rem}
     .rail-card .rc-hood{font-size:.78rem;color:var(--gray)}
     .rail-card .rc-tag{
@@ -296,6 +306,12 @@
     .dir-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.1)}
     .dc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
     .dc-name{font-weight:700;font-size:1rem}
+    .dc-category-icon{display:inline-flex;flex-shrink:0;align-items:center}
+    .dc-brand-logo{
+      width:24px;height:24px;border-radius:8px;flex-shrink:0;
+      margin-right:.05rem;
+    }
+    .dc-brand-logo img{padding:3px}
     .dc-badge{
       flex-shrink:0;font-size:.65rem;font-weight:700;
       text-transform:uppercase;letter-spacing:.04em;
@@ -711,9 +727,9 @@
   </footer>
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
-  <script src="/data.js?v=1.6"></script>
-  <script src="/app.js?v=1.6"></script>
-  <script src="/auth.js?v=1.6"></script>
+  <script src="/data.js?v=1.7"></script>
+  <script src="/app.js?v=1.7"></script>
+  <script src="/auth.js?v=1.7"></script>
 
 </body>
 </html>

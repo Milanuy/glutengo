@@ -1,5 +1,6 @@
 // GlutenGo — datos de establecimientos v0.5
 // Coordenadas para Leaflet (OpenStreetMap)
+// Logo opcional para planes pagos: logoUrl: "/assets/logos/slug-del-local.svg"
 var lugares = [
   // ─── 100% SIN GLUTEN ───────────────────────────────────────────────────
   {
