@@ -1,7 +1,7 @@
-// GlutenGo Service Worker v1.1
-// Cache-first para assets estáticos, network-first para data
+// GlutenGo Service Worker v1.2
+// Cache-first solo para assets estáticos. Las APIs siempre van a red.
 
-const CACHE = 'glutengo-v1.1';
+const CACHE = 'glutengo-v1.2';
 const STATIC = [
   '/',
   '/index.html',
@@ -32,20 +32,27 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 
-  // Siempre red para CDN externos (Leaflet, AOS, etc.)
-  if (
-    url.hostname.includes('cdn') ||
-    url.hostname.includes('unpkg') ||
-    url.hostname.includes('tile.openstreetmap') ||
-    url.hostname.includes('basemaps.cartocdn') ||
-    url.hostname.includes('carto.com')
-  ) {
+  // Nunca cachear APIs ni requests no-GET.
+  if (e.request.method !== 'GET' || url.pathname.startsWith('/api/')) {
     return;
   }
 
-  // Cache-first para nuestros archivos estáticos
+  // Siempre red para CDN externos (Leaflet, AOS, tiles, fonts, etc.).
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Cache-first para nuestros archivos estáticos.
   e.respondWith(
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
       return fetch(e.request).then((res) => {
         if (res.ok && e.request.method === 'GET') {
+          const clone = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, clone));
+        }
+        return res;
+      });
+    })
+  );
+});

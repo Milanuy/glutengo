@@ -140,4 +140,122 @@ function buildWelcomeEmail(activationLink) {
 </html>`;
 }
 
-// ───────────────────────�
+// ─────────────────────────────────────────────────────────────────
+// Handler principal
+// ─────────────────────────────────────────────────────────────────
+exports.handler = async function (event) {
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Content-Type': 'application/json',
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers: corsHeaders, body: '' };
+  }
+
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, headers: corsHeaders, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+  }
+
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'Supabase no configurado' }),
+    };
+  }
+
+  // ── Parsear email
+  let email;
+  try {
+    const body = JSON.parse(event.body || '{}');
+    email = (body.email || '').toLowerCase().trim();
+  } catch (_) {
+    const params = new URLSearchParams(event.body || '');
+    email = (params.get('email') || '').toLowerCase().trim();
+  }
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return {
+      statusCode: 400,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'Email inválido' }),
+    };
+  }
+
+  const results = { saved: false, emailed: false, token: null };
+
+  // ── 1. Upsert en Supabase: insert o ignora duplicado
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/waitlist', {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=ignore-duplicates',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    // Obtener el token (sea nuevo o existente)
+    const getRes = await fetch(
+      SUPABASE_URL + '/rest/v1/waitlist?email=eq.' + encodeURIComponent(email) + '&select=token',
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: 'Bearer ' + SUPABASE_KEY,
+        },
+      }
+    );
+
+    if (getRes.ok) {
+      const rows = await getRes.json();
+      if (rows && rows.length > 0 && rows[0].token) {
+        results.token = rows[0].token;
+        results.saved = true;
+      }
+    }
+  } catch (err) {
+    console.error('Supabase error:', err.message);
+  }
+
+  // ── 2. Enviar email de bienvenida con magic link
+  if (RESEND_API_KEY && results.token) {
+    try {
+      const activationLink = BASE_URL + '/bienvenido?t=' + results.token;
+      const emailRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + RESEND_API_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: FROM_EMAIL,
+          reply_to: REPLY_TO,
+          to: [email],
+          subject: '¡Activá tu cuenta de GlutenGo! 🌾',
+          html: buildWelcomeEmail(activationLink),
+        }),
+      });
+      results.emailed = emailRes.ok;
+      if (!emailRes.ok) {
+        const errBody = await emailRes.text();
+        console.error('Resend error:', errBody);
+      }
+    } catch (err) {
+      console.error('Resend exception:', err.message);
+    }
+  } else if (!RESEND_API_KEY) {
+    console.warn('RESEND_API_KEY no configurada — email no enviado');
+  } else if (!results.token) {
+    console.warn('No se obtuvo token de Supabase — email no enviado');
+  }
+
+  return {
+    statusCode: 200,
+    headers: corsHeaders,
+    body: JSON.stringify({ ok: true, ...results }),
+  };
+};

@@ -317,8 +317,15 @@ function handleWaitlist(e){
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email })
   })
-  .then(function(){ window.location.href = '/gracias.html'; })
-  .catch(function(){ window.location.href = '/gracias.html'; });
+  .then(function(res){
+    if (!res.ok) throw new Error('No se pudo guardar tu email');
+    window.location.href = '/gracias.html';
+  })
+  .catch(function(err){
+    btn.disabled = false;
+    btn.textContent = 'Unirme';
+    alert(err.message || 'No se pudo guardar tu email. Intentá de nuevo.');
+  });
 }
 
 // ────────────────────────────────────────────────────
@@ -341,4 +348,3 @@ document.addEventListener('DOMContentLoaded', function(){
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js').catch(function(){});
 }
-                       

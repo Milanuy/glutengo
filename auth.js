@@ -12,9 +12,18 @@
     if (_configCache) return _configCache;
     try {
       var res = await fetch('/api/config');
-      _configCache = await res.json();
+      if (!res.ok) throw new Error('endpoint /api/config respondió ' + res.status);
+      var contentType = res.headers.get('content-type') || '';
+      if (contentType.indexOf('application/json') === -1) {
+        throw new Error('endpoint /api/config no devolvió JSON');
+      }
+      var data = await res.json();
+      _configCache = {
+        supabaseUrl: data.supabaseUrl || '',
+        supabaseAnonKey: data.supabaseAnonKey || '',
+      };
     } catch (e) {
-      console.error('GlutenGo auth: error cargando config', e);
+      console.warn('GlutenGo auth: no se pudo cargar config pública:', e.message);
       _configCache = { supabaseUrl: '', supabaseAnonKey: '' };
     }
     return _configCache;

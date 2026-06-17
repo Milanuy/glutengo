@@ -555,4 +555,369 @@
           <tr><td>Newsletter mensual</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Responder valoraciones</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Auditoría presencial protocolo SG</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
-          <tr><td>Badge dorado "Certified"</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓<
+          <tr><td>Badge dorado "Certified"</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Primer lugar en búsquedas locales</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Feature en redes sociales</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr>
+            <td><strong>Precio</strong></td>
+            <td class="center"><strong>Gratis</strong></td>
+            <td class="center"><strong>$590/mes UYU</strong></td>
+            <td class="center"><strong>$1.590/mes UYU</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ROI -->
+  <section class="roi-section">
+    <div class="roi-inner">
+      <div class="section-header">
+        <span class="section-label" style="color:var(--amber)">El número que importa</span>
+        <h2 class="section-title" style="color:#fff">El cliente celíaco bien atendido paga el plan en la primera visita</h2>
+      </div>
+      <div class="roi-grid">
+        <div class="roi-card">
+          <div class="roi-number">~$800</div>
+          <div class="roi-label">gasto promedio por visita de grupo en un restaurante de Montevideo (UYU)</div>
+          <div class="roi-note">Estimación basada en ticket promedio casual dining</div>
+        </div>
+        <div class="roi-card">
+          <div class="roi-number">2–3×</div>
+          <div class="roi-label">frecuencia de visita mensual cuando confían en el local</div>
+          <div class="roi-note">Comportamiento del consumidor con restricción dietaria</div>
+        </div>
+        <div class="roi-card">
+          <div class="roi-number">+4</div>
+          <div class="roi-label">personas que trae en promedio — el celíaco elige, el grupo lo acompaña</div>
+          <div class="roi-note">El celíaco es el decisor de dónde come el grupo</div>
+        </div>
+        <div class="roi-card">
+          <div class="roi-number">$590</div>
+          <div class="roi-label">cuesta el plan Verificado — 1 cliente fidelizado lo paga en la primera visita</div>
+          <div class="roi-note">Retorno desde el primer mes de estar activo</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMULARIO -->
+  <section class="form-section-wrap" id="form-registro">
+    <div class="form-card">
+
+      <div class="form-body">
+        <div class="form-header">
+          <h2 class="form-title">Registrá tu local</h2>
+          <p class="form-subtitle">
+            Completá el formulario y te contactamos en <strong>48–72 horas</strong> para confirmar los detalles y activar tu ficha en el directorio.
+          </p>
+        </div>
+
+        <form id="negocio-form" onsubmit="handleNegocio(event)" novalidate>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="nombre">Nombre del local *</label>
+              <input type="text" id="nombre" name="nombre" placeholder="Ej: La Panadería Natural" required maxlength="120" />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="tipo">Tipo de oferta *</label>
+              <select id="tipo" name="tipo" required>
+                <option value="">Elegir…</option>
+                <option value="exclusivo">100% sin gluten</option>
+                <option value="mixto">Con opciones sin gluten</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="categoria">Categoría</label>
+              <select id="categoria" name="categoria">
+                <option value="restaurante">Restaurante</option>
+                <option value="cafeteria">Cafetería</option>
+                <option value="panaderia">Panadería</option>
+                <option value="heladeria">Heladería</option>
+                <option value="almacen">Almacén / Dietética</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="direccion">Dirección</label>
+              <input type="text" id="direccion" name="direccion" placeholder="Ej: Av. Italia 3456" maxlength="200" />
+            </div>
+            <div class="field">
+              <label for="barrio">Barrio / Ciudad</label>
+              <input type="text" id="barrio" name="barrio" placeholder="Ej: Pocitos" maxlength="100" />
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="field">
+              <label for="email">Email de contacto *</label>
+              <input type="email" id="email" name="email" placeholder="tu@local.com o Gmail" required maxlength="200" />
+            </div>
+            <div class="field">
+              <label for="telefono">Teléfono / WhatsApp</label>
+              <input type="tel" id="telefono" name="telefono" placeholder="098 XXX XXX" maxlength="50" />
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom:1rem">
+            <label>Plan de interés</label>
+            <div class="plan-selector">
+              <label class="plan-option">
+                <input type="radio" name="plan" value="basico" checked />
+                <span class="plan-option-label">
+                  <span class="plan-option-name">Básico</span>
+                  <span class="plan-option-price">Gratuito</span>
+                </span>
+              </label>
+              <label class="plan-option">
+                <input type="radio" name="plan" value="verificado" />
+                <span class="plan-option-label">
+                  <span class="plan-option-name">Verificado</span>
+                  <span class="plan-option-price">$590/mes</span>
+                </span>
+              </label>
+              <label class="plan-option">
+                <input type="radio" name="plan" value="certificado" />
+                <span class="plan-option-label">
+                  <span class="plan-option-name">Certificado</span>
+                  <span class="plan-option-price">$1.590/mes</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="mensaje">¿Algo que quieras contarnos? (opcional)</label>
+              <textarea id="mensaje" name="mensaje" placeholder="Protocolo sin gluten, certificaciones actuales, preguntas…" maxlength="800"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-submit">
+            Enviar solicitud →
+          </button>
+          <p class="form-note">Sin compromisos. Te respondemos en 48–72 horas. Podés actualizar tu plan en cualquier momento.</p>
+          <div class="form-trust">
+            <span class="trust-item">Sin spam</span>
+            <span class="trust-item">Listing gratuito garantizado</span>
+            <span class="trust-item">Sin comisiones por visita</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success: plan básico -->
+      <div class="form-success" id="form-success">
+        <div style="width:64px;height:64px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.8rem;">✓</div>
+        <h2 style="font-family:'Fraunces',Georgia,serif;font-size:1.7rem;color:var(--green-deep);margin-bottom:.75rem">¡Solicitud enviada!</h2>
+        <p style="color:var(--gray);line-height:1.7;margin-bottom:.75rem;max-width:400px;margin-left:auto;margin-right:auto">
+          Recibimos la información de tu local. Te contactamos en las próximas <strong>48–72 horas</strong> para activar tu ficha.
+        </p>
+        <p style="color:var(--gray);font-size:.87rem;margin-bottom:1.75rem">
+          ¿Urgente? Escribinos a <a href="mailto:anmaurano@gmail.com" style="color:var(--green);font-weight:700">anmaurano@gmail.com</a>
+        </p>
+        <a href="/" style="display:inline-block;background:var(--green);color:#fff;text-decoration:none;padding:.85rem 1.75rem;border-radius:12px;font-weight:700">Ver el directorio →</a>
+      </div>
+
+      <!-- Pago: plan verificado/certificado -->
+      <div class="form-success" id="form-pago" style="display:none">
+        <div style="width:64px;height:64px;background:#FEF3C7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;font-size:1.8rem;">🎉</div>
+        <h2 style="font-family:'Fraunces',Georgia,serif;font-size:1.7rem;color:var(--green-deep);margin-bottom:.5rem">¡Un paso más para activar tu ficha!</h2>
+        <p id="pago-plan-label" style="color:var(--green);font-weight:700;font-size:1rem;margin-bottom:.75rem"></p>
+        <p style="color:var(--gray);line-height:1.7;margin-bottom:1.25rem;max-width:420px;margin-left:auto;margin-right:auto">
+          Escaneá el QR con la app de MercadoPago o hacé clic en el botón para completar el pago.
+          Tu local se activa <strong>automáticamente</strong> en minutos.
+        </p>
+
+        <!-- QR container -->
+        <div id="mp-qr-wrap" style="display:inline-flex;flex-direction:column;align-items:center;gap:.75rem;margin-bottom:1.5rem">
+          <div id="qr-canvas-wrap" style="background:#fff;border:2px solid var(--border);border-radius:16px;padding:1rem;box-shadow:0 4px 20px rgba(0,0,0,.08)">
+            <canvas id="qr-canvas"></canvas>
+          </div>
+          <span style="font-size:.78rem;color:var(--gray)">Escanear con la app de MercadoPago</span>
+        </div>
+
+        <div>
+          <a id="mp-link-btn" href="#" target="_blank" rel="noopener"
+             style="display:inline-block;background:#009EE3;color:#fff;text-decoration:none;
+                    padding:.85rem 2rem;border-radius:12px;font-weight:700;font-size:1rem;
+                    margin-bottom:.75rem">
+            💳 Pagar en MercadoPago →
+          </a>
+        </div>
+        <p style="color:var(--gray);font-size:.82rem;margin-top:.5rem">
+          Ante cualquier consulta escribinos a <a href="mailto:anmaurano@gmail.com" style="color:var(--green);font-weight:700">anmaurano@gmail.com</a>
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-header" style="text-align:center;margin-bottom:2rem">
+      <span class="section-label">Preguntas frecuentes</span>
+      <h2 class="section-title">Todo lo que necesitás saber</h2>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-question">¿Es realmente gratis el plan Básico?</div>
+      <div class="faq-answer">Sí, sin letra chica. El plan Básico es gratuito para siempre. Los planes de pago existen para quienes quieren más visibilidad y funciones avanzadas, pero el listing básico no tiene costo ni caducidad.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-question">¿En cuánto tiempo aparece mi local?</div>
+      <div class="faq-answer">Para el plan Básico, 3–5 días hábiles. Revisamos todas las solicitudes manualmente para garantizar la calidad del directorio. Para planes de pago, te contactamos antes para coordinar los detalles.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-question">¿Qué diferencia hay entre "100% sin gluten" y "con opciones"?</div>
+      <div class="faq-answer">"100% sin gluten" significa que tu local no maneja gluten en ninguna preparación — máximo nivel de seguridad. "Con opciones sin gluten" significa que ofrecés platos SG pero en una cocina que también maneja gluten, con posible riesgo de contaminación cruzada. Ambas opciones son válidas y útiles, siempre que sean honestas.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-question">¿Puedo cambiar de plan después de registrarme?</div>
+      <div class="faq-answer">Sí. Podés empezar con Básico y pasar a Verificado o Certificado cuando quieras. Los planes mensuales se pueden cancelar en cualquier momento sin penalidad.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-question">¿En qué consiste la auditoría del plan Certificado?</div>
+      <div class="faq-answer">Una persona de nuestro equipo visita tu local en horario normal. Evalúa: manejo de ingredientes, riesgo de contaminación cruzada, conocimiento del personal y presentación del menú sin gluten. Entregamos un informe detallado. El badge Certificado solo se otorga si el protocolo supera el estándar — lo que hace que valga de verdad para el celíaco.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-question">¿Aceptan locales fuera de Montevideo?</div>
+      <div class="faq-answer">Sí. El foco actual del tráfico es Montevideo y el área metropolitana, pero los celíacos de todo el país usan GlutenGo cuando viajan. Los locales del interior registrados ahora serán los primeros en beneficiarse cuando expandamos la cobertura.</div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <h2>Tu local puede ser el lugar de confianza<br>de miles de celíacos en Uruguay.</h2>
+    <p>Registrarte es gratis y tarda menos de 5 minutos. Sin compromisos, sin comisiones.</p>
+    <a href="#form-registro" class="btn">Registrá mi local ahora →</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Gluten<span>Go</span></div>
+    <p style="opacity:.6;margin-bottom:.5rem">La guía sin gluten de Uruguay — hecha por la comunidad, para la comunidad.</p>
+    <p>
+      <a href="mailto:anmaurano@gmail.com">Contacto</a>
+      &nbsp;·&nbsp;
+      <a href="/">Ver el directorio</a>
+      &nbsp;·&nbsp;
+      <a href="#planes">Planes</a>
+    </p>
+  </footer>
+
+  <script>
+  function selectPlan(plan) {
+    var radio = document.querySelector('input[name="plan"][value="' + plan + '"]');
+    if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+    var el = document.getElementById('form-registro');
+    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  }
+
+  function toggleFaq(item) {
+    var wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  function handleNegocio(e) {
+    e.preventDefault();
+    var form = e.target;
+    var btn = document.getElementById('btn-submit');
+    var data = {
+      nombre:    form.nombre.value.trim(),
+      tipo:      form.tipo.value,
+      categoria: form.categoria.value,
+      direccion: form.direccion.value.trim(),
+      barrio:    form.barrio.value.trim(),
+      email:     form.email.value.trim(),
+      telefono:  form.telefono.value.trim(),
+      plan:      (form.querySelector('input[name="plan"]:checked') || {}).value || 'basico',
+      mensaje:   form.mensaje.value.trim(),
+    };
+    if (!data.nombre || !data.email || !data.tipo) {
+      alert('Por favor completá: nombre del local, tipo de oferta y email.');
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    fetch('/api/negocio', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    .then(function(r){
+      return r.json().then(function(j){
+        if (!r.ok) throw new Error(j.error || 'No se pudo enviar la solicitud');
+        return j;
+      });
+    })
+    .then(function(j){
+      if (j.mp_link) {
+        showPago(j.mp_link, data.plan);
+      } else {
+        showSuccess();
+      }
+    })
+    .catch(function(err){
+      btn.disabled = false;
+      btn.textContent = 'Enviar solicitud →';
+      alert(err.message || 'No se pudo enviar la solicitud. Intentá de nuevo.');
+    });
+  }
+
+  function showSuccess() {
+    document.querySelector('.form-body').classList.add('hidden');
+    document.getElementById('form-success').classList.add('show');
+    scrollToForm();
+  }
+
+  var PLAN_LABELS = { verificado: 'Plan Verificado · $590 UYU/mes', certificado: 'Plan Certificado · $1.590 UYU/mes' };
+
+  function showPago(mpLink, plan) {
+    document.querySelector('.form-body').classList.add('hidden');
+    var pago = document.getElementById('form-pago');
+    pago.style.display = 'block';
+    pago.classList.add('show');
+    document.getElementById('pago-plan-label').textContent = PLAN_LABELS[plan] || plan;
+    document.getElementById('mp-link-btn').href = mpLink;
+    scrollToForm();
+    // Generar QR con qrcode.js (cargamos dinámicamente si no está ya)
+    function renderQR() {
+      var canvas = document.getElementById('qr-canvas');
+      if (!canvas) return;
+      var size = Math.min(200, window.innerWidth - 80);
+      canvas.width = size; canvas.height = size;
+      /* eslint-disable no-undef */
+      QRCode.toCanvas(canvas, mpLink, { width: size, margin: 2, errorCorrectionLevel: 'M' }, function(err) {
+        if (err) document.getElementById('qr-canvas-wrap').style.display = 'none';
+      });
+    }
+    if (typeof QRCode === 'undefined') {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js';
+      s.onload = renderQR;
+      document.head.appendChild(s);
+    } else {
+      renderQR();
+    }
+  }
+
+  function scrollToForm() {
+    var el = document.getElementById('form-registro');
+    if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: 'smooth' });
+  }
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+  }
+  </script>
+
+</body>
+</html>

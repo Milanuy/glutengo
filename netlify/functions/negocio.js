@@ -136,19 +136,27 @@ function buildAutoReply(data) {
 }
 
 exports.handler = async function (event) {
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' }, body: '' };
-  }
-
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
-  }
-
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json',
   };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers: corsHeaders, body: '' };
+  }
+
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, headers: corsHeaders, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+  }
+
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'Supabase no configurado' }),
+    };
+  }
 
   let data;
   try {
@@ -218,4 +226,24 @@ exports.handler = async function (event) {
           from: FROM_EMAIL,
           reply_to: ADMIN_EMAIL,
           to: [email.toLowerCase().trim()],
-          subject: 
+          subject: '¡Recibimos tu solicitud para GlutenGo! 🌾',
+          html: buildAutoReply({ nombre, tipo, plan: plan || 'basico', mensaje }),
+        }),
+      });
+      results.replied = replyRes.ok;
+    } catch (err) {
+      console.error('Resend negocio error:', err.message);
+    }
+  }
+
+  // Incluir link de pago MP para planes pagos
+  const mp_link = (plan === 'verificado' || plan === 'certificado')
+    ? MP_LINKS[plan]
+    : null;
+
+  return {
+    statusCode: 200,
+    headers: corsHeaders,
+    body: JSON.stringify({ ok: true, plan: plan || 'basico', mp_link, ...results }),
+  };
+};

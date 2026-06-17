@@ -8,7 +8,7 @@
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const ADMIN_PASS   = process.env.ADMIN_PASSWORD || 'glutengo2026';
+const ADMIN_PASS   = process.env.ADMIN_PASSWORD;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin':  '*',
@@ -31,6 +31,14 @@ function unauthorized() {
 exports.handler = async function (event) {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: corsHeaders, body: '' };
+  }
+
+  if (!ADMIN_PASS) {
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'ADMIN_PASSWORD no configurado' }),
+    };
   }
 
   // Verificar token admin
