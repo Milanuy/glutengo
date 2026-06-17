@@ -185,6 +185,23 @@ function initMap(){
         .catch(function(){ if(el) el.innerHTML = ''; });
     });
   });
+
+  setTimeout(function(){
+    try { map.invalidateSize(); } catch(e) {}
+  }, 120);
+}
+
+function updateStats(){
+  var totalEl = document.getElementById('stat-total');
+  var exclEl  = document.getElementById('stat-exclusivos');
+  var mixtEl  = document.getElementById('stat-mixtos');
+  if(!totalEl || !exclEl || !mixtEl) return;
+
+  var exclusivos = lugares.filter(function(l){ return l.tipo === 'exclusivo'; }).length;
+  var mixtos = lugares.filter(function(l){ return l.tipo === 'mixto'; }).length;
+  totalEl.textContent = lugares.length;
+  exclEl.textContent = exclusivos;
+  mixtEl.textContent = mixtos;
 }
 
 function setMapFilter(btn, filter){
@@ -254,7 +271,8 @@ function buildDir(filter, q){
     var matchFilter =
       filter === 'todos' ||
       l.tipo === filter ||
-      l.neighborhood === filter;
+      l.neighborhood === filter ||
+      (filter === 'Online' && l.neighborhood.indexOf('Online') === 0);
     var matchQ = !q ||
       l.name.toLowerCase().indexOf(q) !== -1 ||
       l.neighborhood.toLowerCase().indexOf(q) !== -1 ||
@@ -309,6 +327,7 @@ document.addEventListener('DOMContentLoaded', function(){
   try { AOS.init({duration:600, once:true, offset:60}); } catch(e){}
 
   if(typeof lugares !== 'undefined' && lugares.length){
+    try { updateStats(); } catch(e){ console.error('Stats error:', e); }
     try { initMap(); } catch(e){ console.error('Map error:', e); }
     try { buildRail(); } catch(e){ console.error('Rail error:', e); }
     try { buildDir('todos',''); } catch(e){ console.error('Dir error:', e); }

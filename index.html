@@ -468,16 +468,16 @@
   <!-- ── STATS STRIP ──────────────────────────────────────────── -->
   <div class="stats-strip">
     <div class="stat">
-      <strong>23</strong>
-      <span>lugares validados</span>
+      <strong id="stat-total">—</strong>
+      <span>lugares cargados</span>
     </div>
     <div class="stat">
-      <strong>9</strong>
+      <strong id="stat-exclusivos">—</strong>
       <span>100% sin gluten</span>
     </div>
     <div class="stat">
-      <strong>0%</strong>
-      <span>listings pagados</span>
+      <strong id="stat-mixtos">—</strong>
+      <span>con opciones SG</span>
     </div>
   </div>
 
@@ -486,7 +486,7 @@
     <div class="section-header" data-aos="fade-up">
       <span class="section-label">Mapa Interactivo</span>
       <h2 class="section-title">Encontrá tu próximo lugar</h2>
-      <p class="section-sub">Verde = 100% libre de gluten · Naranja = con opciones seguras</p>
+      <p class="section-sub">Verde = 100% libre de gluten · Naranja = con opciones SG, confirmar protocolo</p>
     </div>
 
     <div class="map-controls">
@@ -505,9 +505,9 @@
   <!-- ── RAIL 100% GF ─────────────────────────────────────────── -->
   <section class="section rail-section">
     <div class="section-header" data-aos="fade-up">
-      <span class="section-label">Sin riesgo, sin preguntas</span>
+      <span class="section-label">100% sin gluten</span>
       <h2 class="section-title">Locales 100% Sin Gluten</h2>
-      <p class="section-sub">En estos lugares todo el menú es libre de gluten. Sin contaminación cruzada.</p>
+      <p class="section-sub">Lugares dedicados a comida sin gluten. Confirmá horarios y disponibilidad antes de ir.</p>
     </div>
     <div class="rail" id="rail-exclusivos"></div>
   </section>
@@ -525,10 +525,13 @@
       <button class="chip" data-filter="exclusivo" onclick="setDirFilter(this,'exclusivo')">🌟 100% GF</button>
       <button class="chip" data-filter="mixto" onclick="setDirFilter(this,'mixto')">⚡ Mixtos</button>
       <button class="chip" data-filter="Centro" onclick="setDirFilter(this,'Centro')">Centro</button>
+      <button class="chip" data-filter="Ciudad Vieja" onclick="setDirFilter(this,'Ciudad Vieja')">Ciudad Vieja</button>
       <button class="chip" data-filter="Pocitos" onclick="setDirFilter(this,'Pocitos')">Pocitos</button>
       <button class="chip" data-filter="Punta Carretas" onclick="setDirFilter(this,'Punta Carretas')">P. Carretas</button>
       <button class="chip" data-filter="Cordón" onclick="setDirFilter(this,'Cordón')">Cordón</button>
+      <button class="chip" data-filter="Palermo" onclick="setDirFilter(this,'Palermo')">Palermo</button>
       <button class="chip" data-filter="Carrasco" onclick="setDirFilter(this,'Carrasco')">Carrasco</button>
+      <button class="chip" data-filter="Online" onclick="setDirFilter(this,'Online')">Online</button>
     </div>
 
     <div class="dir-grid" id="dir-grid"></div>
@@ -665,9 +668,9 @@
   </footer>
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
-  <script src="/data.js"></script>
-  <script src="/app.js"></script>
-  <script src="/auth.js"></script>
+  <script src="/data.js?v=1.4"></script>
+  <script src="/app.js?v=1.4"></script>
+  <script src="/auth.js?v=1.4"></script>
 
 </body>
 </html>

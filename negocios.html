@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GlutenGo para negocios — Llegá a 50.000 celíacos en Uruguay</title>
-  <meta name="description" content="Registrá tu restaurante, cafetería o panadería en GlutenGo y llegá a toda la comunidad celíaca de Uruguay. El cliente más fiel del mercado gastronómico." />
+  <title>GlutenGo para negocios — Aparecé donde la comunidad celíaca decide</title>
+  <meta name="description" content="Registrá tu restaurante, cafetería o panadería en GlutenGo y llegá a la comunidad celíaca de Uruguay con una ficha clara, verificable y sin comisiones por visita." />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#166534" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700..900;1,9..144,700..900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -36,8 +36,16 @@
       font-weight:700;font-size:.85rem;
       padding:.5rem 1.1rem;border-radius:10px;
       text-decoration:none;transition:opacity .2s;
+      white-space:nowrap;
     }
     .header-cta:hover{opacity:.9}
+    @media(max-width:560px){
+      .site-header{padding:.75rem 1rem}
+      .logo{font-size:1.25rem}
+      .header-link{display:none}
+      .header-nav{gap:.75rem}
+      .header-cta{font-size:.78rem;padding:.48rem .8rem}
+    }
 
     /* HERO */
     .hero{
@@ -88,23 +96,56 @@
     }
     .btn-ghost:hover{background:rgba(255,255,255,.17)}
 
-    /* Stats bar */
-    .stats-bar{
-      display:flex;justify-content:center;
-      margin-top:3.5rem;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:16px;
+    /* Proof strip */
+    .proof-strip{
+      margin-top:3rem;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:14px;
+      background:rgba(255,255,255,.05);
       overflow:hidden;
+      text-align:left;
     }
-    .stat-item{
-      flex:1;text-align:center;
-      padding:1.25rem .75rem;
+    .proof-item{
+      padding:1rem;
       border-right:1px solid rgba(255,255,255,.1);
+      min-height:116px;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
     }
-    .stat-item:last-child{border-right:none}
-    .stat-num{font-family:'Fraunces',Georgia,serif;font-size:1.8rem;font-weight:900;color:var(--amber)}
-    .stat-label{font-size:.72rem;opacity:.6;margin-top:.2rem;line-height:1.3}
+    .proof-item:last-child{border-right:none}
+    .proof-kicker{
+      color:var(--amber);
+      font-size:.72rem;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:.45rem;
+    }
+    .proof-title{
+      font-weight:800;
+      color:#fff;
+      font-size:.96rem;
+      line-height:1.25;
+      margin-bottom:.3rem;
+    }
+    .proof-text{
+      color:rgba(255,255,255,.64);
+      font-size:.78rem;
+      line-height:1.45;
+    }
+    @media(max-width:720px){
+      .proof-strip{grid-template-columns:1fr 1fr}
+      .proof-item:nth-child(2){border-right:none}
+      .proof-item:nth-child(1),.proof-item:nth-child(2){border-bottom:1px solid rgba(255,255,255,.1)}
+    }
+    @media(max-width:460px){
+      .proof-strip{grid-template-columns:1fr}
+      .proof-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.1)}
+      .proof-item:last-child{border-bottom:none}
+    }
 
     /* POR QUÉ */
     .why-section{background:#fff;padding:4rem 1.25rem;border-bottom:1px solid var(--border)}
@@ -354,29 +395,33 @@
       <div class="hero-eyebrow">Para negocios gastronómicos</div>
       <h1>Convertí a los celíacos<br>en tus clientes <em>más fieles</em></h1>
       <p class="hero-sub">
-        GlutenGo conecta tu restaurante, cafetería o panadería con los ~50.000 celíacos de Uruguay.
-        Un segmento que busca activamente dónde comer seguro — y vuelve siempre al lugar que los cuida.
+        GlutenGo conecta tu restaurante, cafetería o panadería con personas que buscan activamente
+        dónde comer sin gluten en Uruguay. Si tu propuesta es clara, segura y confiable, acá te encuentran.
       </p>
       <div class="hero-actions">
         <a href="#form-registro" class="btn-primary">Registrá tu local gratis →</a>
         <a href="#planes" class="btn-ghost">Ver planes</a>
       </div>
-      <div class="stats-bar">
-        <div class="stat-item">
-          <div class="stat-num">~50k</div>
-          <div class="stat-label">celíacos en Uruguay</div>
+      <div class="proof-strip">
+        <div class="proof-item">
+          <div class="proof-kicker">Intención real</div>
+          <div class="proof-title">Te buscan cuando van a salir</div>
+          <div class="proof-text">No es publicidad fría: aparecen locales cuando alguien necesita decidir dónde comer.</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-num">3–5×</div>
-          <div class="stat-label">más leales que el cliente promedio</div>
+        <div class="proof-item">
+          <div class="proof-kicker">Confianza</div>
+          <div class="proof-title">La claridad vende más que prometer</div>
+          <div class="proof-text">Mostramos si sos 100% sin gluten o si tenés opciones con protocolo claro.</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-num">2–4</div>
-          <div class="stat-label">personas por visita</div>
+        <div class="proof-item">
+          <div class="proof-kicker">Mesa completa</div>
+          <div class="proof-title">El celíaco define el lugar</div>
+          <div class="proof-text">Cuando una persona no puede improvisar, todo el grupo suele acompañar esa decisión.</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-num">0%</div>
-          <div class="stat-label">comisión por pedido</div>
+        <div class="proof-item">
+          <div class="proof-kicker">Sin comisión</div>
+          <div class="proof-title">El contacto llega directo</div>
+          <div class="proof-text">No cobramos por pedido ni por visita. El valor está en la visibilidad y la confianza.</div>
         </div>
       </div>
     </div>
@@ -390,8 +435,8 @@
         <h2 class="why-title">Este cliente no elige tu local por precio. Lo elige porque confía en vos.</h2>
         <div class="why-body">
           <p>El celíaco tiene una restricción que no negocia. Cuando encuentra un lugar donde puede comer tranquilo, sin ansiedad y sin riesgo de contaminación cruzada, lo convierte en su lugar.</p>
-          <p>Vuelve semanas seguidas. Lleva a toda la mesa. Lo recomienda en la comunidad. En un mercado donde fidelizar cuesta 5× más que retener, el celíaco es el segmento más valioso que podés captar.</p>
-          <p>GlutenGo es la herramienta que usa esa comunidad para decidir dónde comer. Aparecer acá no es publicidad — es ser la respuesta cuando alguien busca dónde ir hoy.</p>
+          <p>Vuelve, lleva a toda la mesa y recomienda cuando la experiencia fue buena. Para un local, esa confianza vale más que una promo aislada.</p>
+          <p>GlutenGo quiere ser el lugar donde esa comunidad decide con menos fricción. Aparecer acá no es gritar más fuerte, es estar cuando alguien busca dónde ir hoy.</p>
         </div>
       </div>
       <div class="highlights">
@@ -442,7 +487,7 @@
         <div class="step">
           <div class="step-num">4</div>
           <h3>El cliente llega directo</h3>
-          <p>Sin intermediarios. Pueden llamarte, escribirte por WhatsApp o ir directo con Google Maps.</p>
+          <p>Sin intermediarios. En planes verificados destacamos tus canales de contacto para que la consulta llegue a vos.</p>
         </div>
       </div>
     </div>
@@ -453,8 +498,8 @@
     <div class="planes-inner">
       <div class="section-header">
         <span class="section-label" style="color:var(--amber)">Planes y precios</span>
-        <h2 class="section-title" style="color:#fff">Empezá gratis. Escalá cuando quieras.</h2>
-        <p class="section-desc" style="color:rgba(255,255,255,.6)">Sin contratos ni compromisos. Podés cambiar o cancelar en cualquier momento.</p>
+        <h2 class="section-title" style="color:#fff">Básico para figurar. Verificado para vender confianza.</h2>
+        <p class="section-desc" style="color:rgba(255,255,255,.6)">El alta gratuita mantiene el directorio completo. Los planes pagos son para locales que quieren destacarse y convertir más visitas.</p>
       </div>
 
       <div class="planes-grid">
@@ -463,19 +508,18 @@
         <div class="plan-card">
           <div class="plan-badge free">Gratuito</div>
           <div class="plan-name">Básico</div>
-          <div class="plan-tagline">Para empezar a aparecer en el radar celíaco de Uruguay.</div>
+          <div class="plan-tagline">Una ficha mínima para que podamos mapear más opciones sin gluten.</div>
           <div class="plan-price">
             <span class="currency">$</span>0
             <span class="period">/ siempre</span>
           </div>
-          <p class="plan-price-note">Sin costo, sin letra chica</p>
+          <p class="plan-price-note">Alta manual, sin prioridad comercial</p>
           <ul class="plan-features">
-            <li><span class="check">✓</span>Ficha con nombre, categoría y descripción</li>
-            <li><span class="check">✓</span>Pin en el mapa interactivo</li>
-            <li><span class="check">✓</span>Links a WhatsApp, Instagram y sitio web</li>
-            <li><span class="check">✓</span>Horarios de atención editables</li>
-            <li><span class="check">✓</span>GlutenGo Score de la comunidad</li>
-            <li><span class="check">✓</span>Búsquedas por barrio y categoría</li>
+            <li><span class="check">✓</span>Ficha simple: nombre, zona y tipo de oferta</li>
+            <li><span class="check">✓</span>Aparece en el directorio y el mapa</li>
+            <li><span class="check">✓</span>Etiqueta 100% SG o con opciones SG</li>
+            <li><span class="check">✓</span>Solicitud revisada manualmente</li>
+            <li><span class="check">✓</span>Sin badge, prioridad ni links destacados</li>
           </ul>
           <button type="button" class="plan-cta ghost" onclick="selectPlan('basico')">Registrarme gratis →</button>
         </div>
@@ -485,20 +529,20 @@
           <div class="plan-popular">Más elegido</div>
           <div class="plan-badge recommended">Recomendado</div>
           <div class="plan-name">Verificado</div>
-          <div class="plan-tagline">Para locales que quieren diferenciarse y captar más clientes.</div>
+          <div class="plan-tagline">Para locales que quieren demostrar cuidado y recibir más contacto directo.</div>
           <div class="plan-price">
             <span class="currency">$</span>590
             <span class="period">UYU / mes</span>
           </div>
           <p class="plan-price-note">≈ $15 USD · menos que un cubierto por semana</p>
           <ul class="plan-features">
-            <li><span class="check">✓</span>Todo lo del plan Básico</li>
+            <li><span class="check">✓</span>Perfil completo con fotos, horarios y menú</li>
+            <li><span class="check">✓</span>Botones destacados a WhatsApp, Instagram y Maps</li>
             <li><span class="check">✓</span>Badge "Verificado por GlutenGo"</li>
             <li><span class="check">✓</span>Posición prioritaria en directorio y búsquedas</li>
-            <li><span class="check">✓</span>Destacado en el carrusel de la home</li>
-            <li><span class="check">✓</span>Mención mensual en el newsletter</li>
+            <li><span class="check">✓</span>Destacado en la home cuando haya cupo de zona</li>
             <li><span class="check">✓</span>Responder valoraciones públicamente</li>
-            <li><span class="check">✓</span>Soporte por WhatsApp</li>
+            <li><span class="check">✓</span>Acompañamiento para ordenar tu ficha SG</li>
           </ul>
           <button type="button" class="plan-cta primary" onclick="selectPlan('verificado')">Quiero ser Verificado →</button>
         </div>
@@ -519,7 +563,7 @@
             <li><span class="check">✓</span>Badge dorado "GlutenGo Certified"</li>
             <li><span class="check">✓</span>Informe de protocolo para mostrar a clientes</li>
             <li><span class="check">✓</span>Primer lugar en búsquedas de tu zona</li>
-            <li><span class="check">✓</span>Feature en redes sociales de GlutenGo</li>
+            <li><span class="check">✓</span>Contenido destacado en redes de GlutenGo</li>
             <li><span class="check">✓</span>Recomendaciones para mejorar tu protocolo SG</li>
           </ul>
           <button type="button" class="plan-cta ghost" onclick="selectPlan('certificado')">Quiero ser Certificado →</button>
@@ -546,13 +590,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td>Ficha en el directorio</td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Ficha en el directorio</td><td class="center">Simple</td><td class="center">Completa</td><td class="center">Completa</td></tr>
           <tr><td>Pin en el mapa</td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
-          <tr><td>GlutenGo Score</td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Links destacados a WhatsApp, Instagram y Maps</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Fotos, menú y horarios destacados</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>GlutenGo Score visible</td><td class="center">Cuando tenga datos</td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Badge de verificación</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Posición prioritaria en búsquedas</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
-          <tr><td>Destacado en carrusel home</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
-          <tr><td>Newsletter mensual</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Destacado en la home</td><td class="center"><span class="no">—</span></td><td class="center">Según cupo</td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Menciones editoriales o newsletter</td><td class="center"><span class="no">—</span></td><td class="center">Ocasional</td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Responder valoraciones</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Auditoría presencial protocolo SG</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Badge dorado "Certified"</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
@@ -573,29 +619,29 @@
   <section class="roi-section">
     <div class="roi-inner">
       <div class="section-header">
-        <span class="section-label" style="color:var(--amber)">El número que importa</span>
-        <h2 class="section-title" style="color:#fff">El cliente celíaco bien atendido paga el plan en la primera visita</h2>
+        <span class="section-label" style="color:var(--amber)">Retorno simple</span>
+        <h2 class="section-title" style="color:#fff">Un cliente que confía puede justificar el plan rápidamente</h2>
       </div>
       <div class="roi-grid">
         <div class="roi-card">
-          <div class="roi-number">~$800</div>
-          <div class="roi-label">gasto promedio por visita de grupo en un restaurante de Montevideo (UYU)</div>
-          <div class="roi-note">Estimación basada en ticket promedio casual dining</div>
-        </div>
-        <div class="roi-card">
-          <div class="roi-number">2–3×</div>
-          <div class="roi-label">frecuencia de visita mensual cuando confían en el local</div>
-          <div class="roi-note">Comportamiento del consumidor con restricción dietaria</div>
-        </div>
-        <div class="roi-card">
-          <div class="roi-number">+4</div>
-          <div class="roi-label">personas que trae en promedio — el celíaco elige, el grupo lo acompaña</div>
-          <div class="roi-note">El celíaco es el decisor de dónde come el grupo</div>
-        </div>
-        <div class="roi-card">
           <div class="roi-number">$590</div>
-          <div class="roi-label">cuesta el plan Verificado — 1 cliente fidelizado lo paga en la primera visita</div>
-          <div class="roi-note">Retorno desde el primer mes de estar activo</div>
+          <div class="roi-label">cuesta el plan Verificado por mes</div>
+          <div class="roi-note">Monto fijo, sin comisión por pedido o visita</div>
+        </div>
+        <div class="roi-card">
+          <div class="roi-number">1 mesa</div>
+          <div class="roi-label">puede cubrir una parte importante del costo mensual</div>
+          <div class="roi-note">Depende del ticket real de cada local</div>
+        </div>
+        <div class="roi-card">
+          <div class="roi-number">0%</div>
+          <div class="roi-label">comisión por visita, pedido o reserva</div>
+          <div class="roi-note">La relación comercial queda entre vos y el cliente</div>
+        </div>
+        <div class="roi-card">
+          <div class="roi-number">Alta</div>
+          <div class="roi-label">manual después de confirmar datos y pago</div>
+          <div class="roi-note">Preferimos cuidar la confianza antes que publicar apurados</div>
         </div>
       </div>
     </div>
@@ -732,7 +778,7 @@
         <p id="pago-plan-label" style="color:var(--green);font-weight:700;font-size:1rem;margin-bottom:.75rem"></p>
         <p style="color:var(--gray);line-height:1.7;margin-bottom:1.25rem;max-width:420px;margin-left:auto;margin-right:auto">
           Escaneá el QR con la app de MercadoPago o hacé clic en el botón para completar el pago.
-          Tu local se activa <strong>automáticamente</strong> en minutos.
+          Después revisamos la ficha y la activamos desde el panel de administración.
         </p>
 
         <!-- QR container -->
@@ -768,11 +814,11 @@
 
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿Es realmente gratis el plan Básico?</div>
-      <div class="faq-answer">Sí, sin letra chica. El plan Básico es gratuito para siempre. Los planes de pago existen para quienes quieren más visibilidad y funciones avanzadas, pero el listing básico no tiene costo ni caducidad.</div>
+      <div class="faq-answer">Sí. El plan Básico es gratuito, pero es una ficha simple: nombre, zona, tipo de oferta y presencia en el mapa/directorio. No incluye badge, prioridad, fotos, links destacados ni respuestas públicas.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿En cuánto tiempo aparece mi local?</div>
-      <div class="faq-answer">Para el plan Básico, 3–5 días hábiles. Revisamos todas las solicitudes manualmente para garantizar la calidad del directorio. Para planes de pago, te contactamos antes para coordinar los detalles.</div>
+      <div class="faq-answer">Para el plan Básico, 3–5 días hábiles. Revisamos todas las solicitudes manualmente para cuidar la calidad del directorio. En planes pagos, confirmamos pago y datos antes de activarlo desde el panel de administración.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿Qué diferencia hay entre "100% sin gluten" y "con opciones"?</div>

@@ -1,7 +1,7 @@
-// GlutenGo Service Worker v1.3
+// GlutenGo Service Worker v1.4
 // Cache-first solo para assets estáticos. Las APIs siempre van a red.
 
-const CACHE = 'glutengo-v1.3';
+const CACHE = 'glutengo-v1.4';
 const STATIC = [
   '/',
   '/index.html',
@@ -9,9 +9,9 @@ const STATIC = [
   '/gracias.html',
   '/negocios.html',
   '/bienvenido.html',
-  '/data.js',
-  '/app.js',
-  '/auth.js',
+  '/data.js?v=1.4',
+  '/app.js?v=1.4',
+  '/auth.js?v=1.4',
   '/manifest.json',
 ];
 
@@ -39,6 +39,20 @@ self.addEventListener('fetch', (e) => {
 
   // Siempre red para CDN externos (Leaflet, AOS, tiles, fonts, etc.).
   if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // HTML network-first para que cambios de contenido se vean enseguida.
+  if (e.request.mode === 'navigate' || e.request.headers.get('accept')?.includes('text/html')) {
+    e.respondWith(
+      fetch(e.request).then((res) => {
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE).then((c) => c.put(e.request, clone));
+        }
+        return res;
+      }).catch(() => caches.match(e.request).then((cached) => cached || caches.match('/index.html')))
+    );
     return;
   }
 
