@@ -295,6 +295,27 @@
     .plan-cta.primary{background:var(--amber);color:var(--green-deep)}
     .plan-cta.primary:hover{background:#d4941f;transform:translateY(-1px)}
 
+    /* VISIBILIDAD DESTACADA */
+    .visibility-section{padding:4rem 1.25rem;background:var(--cream)}
+    .visibility-inner{max-width:960px;margin:0 auto}
+    .visibility-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-top:2rem}
+    .visibility-card{
+      background:#fff;border:1px solid var(--border);border-radius:14px;
+      padding:1.35rem;box-shadow:0 3px 18px rgba(0,0,0,.06);
+    }
+    .visibility-card strong{
+      display:inline-flex;align-items:center;
+      font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--green);margin-bottom:.55rem;
+    }
+    .visibility-card h3{font-size:1.05rem;color:var(--green-deep);margin-bottom:.45rem}
+    .visibility-card p{font-size:.86rem;color:var(--gray);line-height:1.6}
+    .visibility-note{
+      margin-top:1rem;color:var(--gray);font-size:.8rem;line-height:1.55;
+      background:#fff;border:1px solid var(--border);border-radius:12px;
+      padding:.85rem 1rem;
+    }
+
     /* TABLA */
     .compare-section{padding:4rem 1.25rem;background:#fff}
     .compare-inner{max-width:860px;margin:0 auto}
@@ -623,6 +644,7 @@
             <li><span class="check">✓</span>Badge "Verificado por GlutenGo"</li>
             <li><span class="check">✓</span>Posición prioritaria en directorio y búsquedas</li>
             <li><span class="check">✓</span>Destacado en la home cuando haya cupo de zona</li>
+            <li><span class="check">✓</span>Opción a banner lateral/flotante con cupo limitado</li>
             <li><span class="check">✓</span>Acompañamiento para ordenar tu ficha SG</li>
           </ul>
           <button type="button" class="plan-cta primary" onclick="selectPlan('verificado')">Quiero ser Verificado →</button>
@@ -644,6 +666,7 @@
             <li><span class="check">✓</span>Badge dorado "GlutenGo Certified"</li>
             <li><span class="check">✓</span>Informe de protocolo para mostrar a clientes</li>
             <li><span class="check">✓</span>Primer lugar en búsquedas de tu zona</li>
+            <li><span class="check">✓</span>Cupo preferente para banner lateral, home y mega banner</li>
             <li><span class="check">✓</span>Contenido destacado en redes de GlutenGo</li>
             <li><span class="check">✓</span>Recomendaciones para mejorar tu protocolo SG</li>
           </ul>
@@ -651,6 +674,37 @@
         </div>
 
       </div>
+    </div>
+  </section>
+
+  <!-- VISIBILIDAD DESTACADA -->
+  <section class="visibility-section">
+    <div class="visibility-inner">
+      <div class="section-header">
+        <span class="section-label">Banners y destacados</span>
+        <h2 class="section-title">Más visibilidad, sin romper la confianza del usuario</h2>
+        <p class="section-desc">Los espacios destacados son limitados y se activan manualmente. La prioridad es que GlutenGo siga pareciendo una guía útil, no una página llena de anuncios.</p>
+      </div>
+      <div class="visibility-grid">
+        <div class="visibility-card">
+          <strong>Verificado+</strong>
+          <h3>Banner lateral/flotante</h3>
+          <p>Aparece como recomendación discreta en zonas o categorías relevantes. Ideal para empujar consultas sin tapar el mapa ni la ficha.</p>
+        </div>
+        <div class="visibility-card">
+          <strong>Verificado / Certificado</strong>
+          <h3>Destacado en home</h3>
+          <p>Tarjeta prioritaria dentro de la página principal cuando el usuario está explorando lugares 100% SG o por zona.</p>
+        </div>
+        <div class="visibility-card">
+          <strong>Certificado / sponsor</strong>
+          <h3>Mega banner</h3>
+          <p>Espacio premium por campaña, zona o temporada. Lo reservaría para certificados, lanzamientos o acuerdos puntuales, no para cualquier alta básica.</p>
+        </div>
+      </div>
+      <p class="visibility-note">
+        Recomendación comercial: no vender más de un mega banner activo por zona o período. Si todo está destacado, nada está destacado; y la confianza del celíaco es el activo principal.
+      </p>
     </div>
   </section>
 
@@ -680,6 +734,8 @@
           <tr><td>Badge de verificación</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Posición prioritaria en búsquedas</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Destacado en la home</td><td class="center"><span class="no">—</span></td><td class="center">Según cupo</td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Banner lateral/flotante</td><td class="center"><span class="no">—</span></td><td class="center">Con cupo</td><td class="center"><span class="yes">✓</span></td></tr>
+          <tr><td>Mega banner</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center">Campaña premium</td></tr>
           <tr><td>Menciones editoriales o newsletter</td><td class="center"><span class="no">—</span></td><td class="center">Ocasional</td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Auditoría presencial protocolo SG</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Badge dorado "Certified"</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
@@ -908,12 +964,20 @@
       <div class="faq-answer">"100% sin gluten" significa que tu local no maneja gluten en ninguna preparación — máximo nivel de seguridad. "Con opciones sin gluten" significa que ofrecés platos SG pero en una cocina que también maneja gluten, con posible riesgo de contaminación cruzada. Ambas opciones son válidas y útiles, siempre que sean honestas.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-question">¿GlutenGo certifica automáticamente a todos los locales?</div>
+      <div class="faq-answer">No. El directorio puede incluir información pública o aportada por la comunidad. Los locales deben mantener actualizada su oferta y el usuario siempre debe confirmar antes de consumir. Los badges Verificado y Certificado se otorgan manualmente desde administración según el plan, la información recibida y la revisión correspondiente.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿Puedo cambiar de plan después de registrarme?</div>
       <div class="faq-answer">Sí. Podés empezar con Básico y pasar a Verificado o Certificado cuando quieras. Los planes mensuales se pueden cancelar en cualquier momento sin penalidad.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿El negocio tiene un panel para gestionar su ficha?</div>
       <div class="faq-answer">Todavía no. En esta etapa el logo, menú, horarios y cambios de ficha se coordinan con GlutenGo y se activan desde el panel de administración después de validar los datos y el pago. El panel propio para locales queda para una etapa posterior.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-question">¿Qué son los banners flotantes y mega banners?</div>
+      <div class="faq-answer">Son espacios de visibilidad limitada que GlutenGo puede activar manualmente desde administración. El banner lateral/flotante es una recomendación discreta para Verificado o Certificado. El mega banner es premium y lo reservaríamos para Certificado, sponsor o campañas puntuales, porque ocupa mucha atención y debe usarse con cuidado.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿En qué consiste la auditoría del plan Certificado?</div>
@@ -936,6 +1000,9 @@
   <footer>
     <div class="footer-logo">Gluten<span>Go</span></div>
     <p style="opacity:.6;margin-bottom:.5rem">La guía sin gluten de Uruguay — hecha por la comunidad, para la comunidad.</p>
+    <p style="max-width:680px;margin:.5rem auto .75rem;font-size:.78rem;line-height:1.55;opacity:.55">
+      GlutenGo organiza información pública, datos aportados por locales y señales de la comunidad. La publicación de una ficha no implica certificación sanitaria ni garantía permanente de protocolo; los badges pagos se activan manualmente según el plan y la revisión correspondiente.
+    </p>
     <p>
       <a href="mailto:anmaurano@gmail.com">Contacto</a>
       &nbsp;·&nbsp;

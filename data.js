@@ -3,6 +3,7 @@
 // Campos pagos opcionales:
 // - plan: "verificado" | "certificado" habilita contacto directo en la ficha.
 // - logoUrl: "/assets/logos/slug-del-local.svg" muestra el logo del negocio.
+// Algunas fichas iniciales usan informacion publica/comunitaria y deben confirmarse con cada local.
 var lugares = [
   // ─── 100% SIN GLUTEN ───────────────────────────────────────────────────
   {
@@ -350,13 +351,13 @@ var lugares = [
     name: "Milena Gluten Free",
     category: "cafeteria",
     tipo: "exclusivo",
-    address: "Bvar. Artigas 2748 esq. Caraguatay",
-    neighborhood: "Bella Vista",
+    address: "Bvar. Artigas 2748 esq. Caraguata",
+    neighborhood: "La Comercial",
     phone: "+598 91 628 458",
     desc: "Tienda y café 100% libre de gluten con desayunos, meriendas, productos para llevar y encargues dentro de Montevideo.",
     hours: { lun_sab: "9:00–21:00", dom: "Cerrado" },
-    lat: -34.8718,
-    lng: -56.1952,
+    lat: -34.8768,
+    lng: -56.1667,
     instagram: "@milena.glutenfree",
   },
   {

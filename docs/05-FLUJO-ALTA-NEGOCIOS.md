@@ -31,8 +31,15 @@ Estados principales:
 - `Logo visible`: usar logo real del negocio.
 - `Prioridad en listados`: ordenar antes que fichas basicas.
 - `Home destacado`: cupo de destaque dentro de la home.
-- `Banner lateral`: inventario publicitario secundario.
-- `Mega banner`: inventario premium, recomendado solo para Certificado o acuerdos especiales.
+- `Banner lateral/flotante`: inventario comercial secundario, visible pero discreto.
+- `Mega banner`: inventario premium, recomendado solo para Certificado, sponsor o acuerdos especiales.
+
+## Criterio comercial para banners
+
+- Basico: sin banners ni prioridad.
+- Verificado: puede acceder a destacado en home o banner lateral/flotante si hay cupo de zona.
+- Certificado: prioridad para home, banner lateral/flotante y mega banner.
+- Mega banner: usarlo como campana limitada por zona, temporada o sponsor. No conviene mostrar muchos a la vez porque baja la confianza de la guia.
 
 ## Notas tecnicas
 

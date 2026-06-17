@@ -89,6 +89,15 @@
       margin-top:.75rem;opacity:.85;font-size:.9rem;
     }
     .lugar-meta span{display:flex;align-items:center;gap:.3rem}
+    .source-alert{
+      margin-top:1rem;max-width:760px;
+      background:rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.18);
+      color:rgba(255,255,255,.82);
+      border-radius:12px;padding:.75rem .9rem;
+      font-size:.82rem;line-height:1.5;
+    }
+    .source-alert strong{color:#fff}
 
     /* SCORE */
     .score-card{
@@ -297,8 +306,8 @@
     <div class="loading">Cargando…</div>
   </div>
 
-  <script src="/data.js?v=2.0"></script>
-  <script src="/auth.js?v=2.0"></script>
+  <script src="/data.js?v=2.1"></script>
+  <script src="/auth.js?v=2.1"></script>
   <script>
   (function(){
     function escapeHtml(value) {
@@ -430,6 +439,9 @@
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
             ${lugar.category}
           </span>
+        </div>
+        <div class="source-alert">
+          <strong>Antes de ir:</strong> esta ficha organiza información pública y aportes de comunidad. Confirmá con el local horarios, disponibilidad y protocolo sin gluten, especialmente si hay riesgo de contaminación cruzada.
         </div>
       </div>
 

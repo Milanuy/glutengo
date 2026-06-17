@@ -173,6 +173,9 @@ function initMap(){
         '<div id="pop-score-' + l.slug + '" style="font-size:.78rem;color:#6B7280;margin:.2rem 0 .5rem">' +
           '<span style="opacity:.5">Cargando valoración…</span>' +
         '</div>' +
+        '<div style="font-size:.69rem;color:#8a8f98;line-height:1.35;margin:0 0 .55rem">' +
+          'Info pública: confirmá protocolo y disponibilidad con el local.' +
+        '</div>' +
         '<a href="/lugar.html?slug=' + l.slug + '" ' +
           'style="display:block;text-align:center;padding:.42rem .75rem;' +
           'background:#166534;color:#fff;border-radius:9px;' +

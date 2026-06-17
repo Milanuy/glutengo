@@ -207,6 +207,13 @@
     .legend-dot{width:.72rem;height:.72rem;border-radius:999px;display:inline-block}
     .legend-dot.sg{background:var(--green);box-shadow:0 0 0 4px rgba(22,101,52,.1)}
     .legend-dot.mix{background:var(--amber);box-shadow:0 0 0 4px rgba(232,169,60,.18)}
+    .source-note{
+      max-width:760px;margin:.95rem auto 0;
+      color:#6B7280;font-size:.82rem;line-height:1.55;
+      background:#fff;border:1px solid var(--border);
+      border-radius:12px;padding:.75rem 1rem;
+    }
+    .source-note strong{color:var(--green-deep)}
 
     /* ─── MAPA ───────────────────────────────────────────────── */
     .map-section{
@@ -566,6 +573,9 @@
         <span class="legend-pill"><span class="legend-dot sg"></span>100% libre de gluten</span>
         <span class="legend-pill"><span class="legend-dot mix"></span>Con opciones SG: confirmar protocolo</span>
       </div>
+      <p class="source-note">
+        <strong>Información pública y comunitaria.</strong> GlutenGo ordena datos disponibles y aportes de usuarios para ayudarte a decidir; no reemplaza la confirmación directa con cada local sobre menú, horarios, protocolos o riesgo de contaminación cruzada.
+      </p>
     </div>
 
     <div class="map-controls">
@@ -606,7 +616,7 @@
     <div class="section-header" data-aos="fade-up">
       <span class="section-label">Directorio Completo</span>
       <h2 class="section-title">Todos los lugares</h2>
-      <p class="section-sub">Filtrate por tipo o barrio y encontrá dónde comer.</p>
+      <p class="section-sub">Filtrate por tipo o barrio y encontrá dónde comer. Confirmá siempre con el local antes de ir.</p>
     </div>
 
     <div class="filter-row" data-aos="fade-up" data-aos-delay="50">
@@ -618,7 +628,7 @@
       <button class="chip" data-filter="Pocitos" onclick="setDirFilter(this,'Pocitos')">Pocitos</button>
       <button class="chip" data-filter="Punta Carretas" onclick="setDirFilter(this,'Punta Carretas')">P. Carretas</button>
       <button class="chip" data-filter="Cordón" onclick="setDirFilter(this,'Cordón')">Cordón</button>
-      <button class="chip" data-filter="Bella Vista" onclick="setDirFilter(this,'Bella Vista')">Bella Vista</button>
+      <button class="chip" data-filter="La Comercial" onclick="setDirFilter(this,'La Comercial')">La Comercial</button>
       <button class="chip" data-filter="Palermo" onclick="setDirFilter(this,'Palermo')">Palermo</button>
       <button class="chip" data-filter="Carrasco" onclick="setDirFilter(this,'Carrasco')">Carrasco</button>
       <button class="chip" data-filter="Ciudad de la Costa" onclick="setDirFilter(this,'Ciudad de la Costa')">Ciudad de la Costa</button>
@@ -755,7 +765,10 @@
   <!-- ── FOOTER ────────────────────────────────────────────────── -->
   <footer>
     <div class="footer-logo">Gluten<span>Go</span></div>
-    <p>Hecho en Montevideo · Todos los listings son gratuitos y sin publicidad</p>
+    <p>Hecho en Montevideo · GlutenGo es un puente informativo entre la comunidad y los locales</p>
+    <p style="max-width:680px;margin:.6rem auto 0;font-size:.76rem;line-height:1.55;opacity:.62">
+      La información inicial puede provenir de fuentes públicas, comercios y comunidad. GlutenGo no garantiza por defecto que un local mantenga su oferta, horarios o protocolo sin gluten; cada usuario debe confirmar directamente antes de consumir.
+    </p>
     <p style="margin-top:.5rem">
       <a href="mailto:anmaurano@gmail.com">Contacto</a>
       &nbsp;·&nbsp;
@@ -767,9 +780,9 @@
   </footer>
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
-  <script src="/data.js?v=2.0"></script>
-  <script src="/app.js?v=2.0"></script>
-  <script src="/auth.js?v=2.0"></script>
+  <script src="/data.js?v=2.1"></script>
+  <script src="/app.js?v=2.1"></script>
+  <script src="/auth.js?v=2.1"></script>
 
 </body>
 </html>
