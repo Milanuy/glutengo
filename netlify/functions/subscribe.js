@@ -17,7 +17,11 @@
  */
 
 const SUPABASE_URL   = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_KEY   = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_KEY   =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_SERVICE_KEY ||
+  process.env.SUPABASE_SECRET_KEY ||
+  process.env.SERVICE_ROLE_KEY;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 // ─── Cambiar a 'GlutenGo <hola@monvi.com.uy>' cuando verifiques el dominio

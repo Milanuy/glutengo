@@ -8,7 +8,11 @@
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SERVICE_KEY  =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_SERVICE_KEY ||
+  process.env.SUPABASE_SECRET_KEY ||
+  process.env.SERVICE_ROLE_KEY;
 const ADMIN_PASS   = process.env.ADMIN_PASSWORD || 'glutengo2026';
 
 const corsHeaders = {
@@ -37,6 +41,14 @@ exports.handler = async function (event) {
   // Verificar token admin
   const token = event.headers['x-admin-token'] || '';
   if (token !== ADMIN_PASS) return unauthorized();
+
+  if (!SUPABASE_URL || !SERVICE_KEY) {
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'Supabase service key no configurada en Netlify' }),
+    };
+  }
 
   // ─── GET: listar todos los negocios ────────────────────────────────────────
   if (event.httpMethod === 'GET') {
