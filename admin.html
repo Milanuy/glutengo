@@ -441,6 +441,10 @@ function slugify(value) {
     .slice(0, 80);
 }
 
+function sameId(a, b) {
+  return String(a) === String(b);
+}
+
 function defaultConfig(b) {
   var paid = b.plan === 'verificado' || b.plan === 'certificado';
   return {
@@ -548,7 +552,7 @@ function patch(id, fields, successMsg) {
   })
   .then(function(updated) {
     // Actualizar en allBiz local
-    var idx = allBiz.findIndex(function(b) { return b.id === id; });
+    var idx = allBiz.findIndex(function(b) { return sameId(b.id, id); });
     if (idx !== -1) allBiz[idx] = Object.assign(allBiz[idx], updated, fields);
     updateStats();
     renderTable();
@@ -566,7 +570,7 @@ function checked(value) { return value ? ' checked' : ''; }
 function selected(current, value) { return current === value ? ' selected' : ''; }
 
 function showDetail(id) {
-  var b = allBiz.find(function(x) { return x.id === id; });
+  var b = allBiz.find(function(x) { return sameId(x.id, id); });
   if (!b) return;
   var cfg = readConfig(b);
   var modal = document.getElementById('modal-content');
