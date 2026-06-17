@@ -3,43 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>¡Gracias! — GlutenGo</title>
+  <title>Entrá con Google — GlutenGo</title>
   <meta name="robots" content="noindex" />
+  <meta http-equiv="refresh" content="0; url=/#cuenta" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#166534" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
-    :root{--cream:#FAF5EC;--green:#166534;--green-deep:#0E3D22;--amber:#E8A93C;--terra:#C4654A}
+    :root{--green-deep:#0E3D22;--amber:#E8A93C}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--green-deep);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center}
-    .logo{font-family:'Fraunces',Georgia,serif;font-size:1.5rem;font-weight:900;color:#fff;text-decoration:none;margin-bottom:2rem;display:block}
-    .logo span{color:var(--amber)}
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--green-deep);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center}
     .card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:2.5rem;max-width:460px;width:100%}
-    .emoji{font-size:3.5rem;margin-bottom:1rem}
-    h1{font-family:'Fraunces',Georgia,serif;font-size:2.2rem;font-weight:900;margin-bottom:.75rem;line-height:1.1}
-    p{font-size:1rem;opacity:.8;line-height:1.6;margin-bottom:1rem}
-    .badge{display:inline-block;background:var(--amber);color:var(--green-deep);font-weight:700;font-size:.85rem;padding:.4rem 1rem;border-radius:50px;margin-bottom:1.5rem}
-    .btn-back{display:inline-block;background:var(--amber);color:var(--green-deep);font-weight:700;padding:.8rem 1.75rem;border-radius:12px;text-decoration:none;transition:opacity .2s;font-size:1rem}
-    .btn-back:hover{opacity:.85}
-    .share-note{margin-top:1.5rem;font-size:.82rem;opacity:.6}
-    .share-note a{color:var(--amber)}
+    h1{font-family:'Fraunces',Georgia,serif;font-size:2rem;font-weight:900;margin-bottom:.75rem}
+    p{opacity:.8;line-height:1.6;margin-bottom:1.25rem}
+    a{display:inline-block;background:var(--amber);color:var(--green-deep);font-weight:700;padding:.8rem 1.75rem;border-radius:12px;text-decoration:none}
   </style>
 </head>
 <body>
-  <a href="/" class="logo">Gluten<span>Go</span></a>
   <div class="card">
-    <div class="emoji">🌾</div>
-    <div class="badge">📬 Revisá tu email</div>
-    <h1>¡Ya casi estás!</h1>
-    <p>Te mandamos un email con tu link de activación. Hacé click en el botón del email para activar tu cuenta y empezar a votar.</p>
-    <p>Mientras tanto, el directorio ya está disponible. Explorá los 23 lugares validados por la comunidad.</p>
-    <a href="/" class="btn-back">Ver el directorio →</a>
-    <p class="share-note">
-      ¿Conocés otro celíaco que necesite esto?<br>
-      Compartí <a href="https://glutengo.netlify.app">glutengo.netlify.app</a> 💚
-    </p>
+    <h1>Entrá con Google</h1>
+    <p>El registro por email fue reemplazado por inicio de sesión con Google.</p>
+    <a href="/#cuenta">Ir a GlutenGo</a>
   </div>
-
   <script>
     if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('/sw.js').catch(function(){})
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
+    }
+  </script>
+</body>
+</html>

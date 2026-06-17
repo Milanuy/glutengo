@@ -3,242 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>¡Bienvenido a GlutenGo!</title>
+  <title>Bienvenido a GlutenGo</title>
   <meta name="robots" content="noindex" />
+  <meta http-equiv="refresh" content="0; url=/#cuenta" />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#166534" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,900;1,900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
-    :root{--cream:#FAF5EC;--green:#166534;--green-deep:#0E3D22;--amber:#E8A93C;--green-light:#DCFCE7}
+    :root{--green-deep:#0E3D22;--amber:#E8A93C}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family:'DM Sans',system-ui,sans-serif;
-      background:var(--green-deep);
-      color:#fff;
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      padding:2rem 1.25rem;
-      text-align:center;
-    }
-
-    /* Logo */
-    .logo{
-      font-family:'Fraunces',Georgia,serif;
-      font-size:1.5rem;font-weight:900;color:#fff;
-      text-decoration:none;margin-bottom:2.5rem;display:block;
-    }
-    .logo span{color:var(--amber)}
-
-    /* Card principal */
-    .card{
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.15);
-      border-radius:24px;
-      padding:2.5rem 2rem;
-      max-width:460px;width:100%;
-      backdrop-filter:blur(8px);
-    }
-
-    /* Estados */
-    .state{display:none}
-    .state.active{display:block}
-
-    /* Loading */
-    #state-loading .spinner{
-      width:48px;height:48px;
-      border:4px solid rgba(255,255,255,.2);
-      border-top-color:var(--amber);
-      border-radius:50%;
-      animation:spin .8s linear infinite;
-      margin:0 auto 1.5rem;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* Success */
-    .emoji-big{font-size:4rem;margin-bottom:1rem;display:block}
-    h1{
-      font-family:'Fraunces',Georgia,serif;
-      font-size:2rem;font-weight:900;
-      margin-bottom:.75rem;line-height:1.1;
-    }
-    p.subtitle{font-size:1rem;opacity:.8;line-height:1.6;margin-bottom:1.5rem}
-
-    /* Features list */
-    .features{
-      background:rgba(255,255,255,.07);
-      border-radius:14px;
-      padding:1.25rem 1.5rem;
-      margin-bottom:1.5rem;
-      text-align:left;
-    }
-    .feature{
-      display:flex;align-items:flex-start;gap:.75rem;
-      padding:.45rem 0;
-      font-size:.92rem;
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-    .feature:last-child{border-bottom:none}
-    .feature-icon{font-size:1.1rem;margin-top:.05rem;flex-shrink:0}
-
-    /* Botón principal */
-    .btn-primary{
-      display:block;
-      background:var(--amber);
-      color:var(--green-deep);
-      font-weight:700;
-      font-size:1.05rem;
-      padding:1rem 2rem;
-      border-radius:14px;
-      text-decoration:none;
-      transition:opacity .2s, transform .15s;
-      margin-bottom:.75rem;
-    }
-    .btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-
-    .btn-outline{
-      display:block;
-      border:1.5px solid rgba(255,255,255,.3);
-      color:rgba(255,255,255,.8);
-      font-size:.9rem;font-weight:500;
-      padding:.65rem 1.5rem;
-      border-radius:12px;
-      text-decoration:none;
-      transition:border-color .2s,color .2s;
-    }
-    .btn-outline:hover{border-color:#fff;color:#fff}
-
-    /* Error */
-    #state-error .emoji-big{font-size:3rem}
-    .btn-retry{
-      display:inline-block;
-      background:rgba(255,255,255,.12);
-      border:1.5px solid rgba(255,255,255,.25);
-      color:#fff;font-weight:600;font-size:.9rem;
-      padding:.7rem 1.5rem;border-radius:10px;
-      text-decoration:none;cursor:pointer;
-      transition:background .2s;margin-top:1rem;
-    }
-    .btn-retry:hover{background:rgba(255,255,255,.18)}
-
-    /* Badge activado */
-    .badge-activated{
-      display:inline-block;
-      background:rgba(232,169,60,.2);
-      border:1px solid rgba(232,169,60,.4);
-      color:var(--amber);
-      font-size:.78rem;font-weight:700;
-      letter-spacing:.05em;text-transform:uppercase;
-      padding:.3rem .9rem;border-radius:20px;
-      margin-bottom:1.25rem;
-    }
+    body{font-family:'DM Sans',system-ui,sans-serif;background:var(--green-deep);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center}
+    .card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:2.5rem;max-width:460px;width:100%}
+    h1{font-family:'Fraunces',Georgia,serif;font-size:2rem;font-weight:900;margin-bottom:.75rem}
+    p{opacity:.8;line-height:1.6;margin-bottom:1.25rem}
+    a{display:inline-block;background:var(--amber);color:var(--green-deep);font-weight:700;padding:.8rem 1.75rem;border-radius:12px;text-decoration:none}
   </style>
 </head>
 <body>
-
-  <a href="/" class="logo">Gluten<span>Go</span></a>
-
   <div class="card">
-
-    <!-- Estado: cargando -->
-    <div id="state-loading" class="state active">
-      <div class="spinner"></div>
-      <p style="opacity:.7;font-size:.95rem">Activando tu cuenta…</p>
-    </div>
-
-    <!-- Estado: éxito -->
-    <div id="state-success" class="state">
-      <span class="emoji-big">🎉</span>
-      <div class="badge-activated">✓ Cuenta activada</div>
-      <h1>¡Ya podés valorar!</h1>
-      <p class="subtitle">
-        Tu cuenta está activa. Visitá cualquier lugar del directorio
-        y contanos tu experiencia — tu valoración ayuda a toda la comunidad celíaca.
-      </p>
-
-      <div class="features">
-        <div class="feature">
-          <span class="feature-icon">⭐</span>
-          <span>Valorá lugares y construí el GlutenGo Score</span>
-        </div>
-        <div class="feature">
-          <span class="feature-icon">🔖</span>
-          <span>Guardá tus favoritos (próximamente)</span>
-        </div>
-        <div class="feature">
-          <span class="feature-icon">🔔</span>
-          <span>Alertas de nuevos locales (próximamente)</span>
-        </div>
-        <div class="feature">
-          <span class="feature-icon">🛡️</span>
-          <span>Tu voz protege a otros celíacos</span>
-        </div>
-      </div>
-
-      <a href="/" class="btn-primary">Explorar el directorio →</a>
-      <a href="/#mapa" class="btn-outline">Ver el mapa</a>
-    </div>
-
-    <!-- Estado: error / sin token -->
-    <div id="state-error" class="state">
-      <span class="emoji-big">🔗</span>
-      <h1 style="font-size:1.6rem">Link inválido o vencido</h1>
-      <p class="subtitle">
-        Este link de activación no es válido o ya fue usado.<br>
-        Registrate de nuevo para recibir uno nuevo.
-      </p>
-      <a href="/#waitlist" class="btn-primary">Registrarme →</a>
-      <a href="/" class="btn-outline">Ver el directorio</a>
-    </div>
-
+    <h1>Bienvenido a GlutenGo</h1>
+    <p>Para valorar lugares, iniciá sesión con tu cuenta de Google.</p>
+    <a href="/#cuenta">Entrar con Google</a>
   </div>
-
   <script>
-  (function() {
-    var params = new URLSearchParams(location.search);
-    var token  = params.get('t') || params.get('token');
-
-    function showState(id) {
-      document.querySelectorAll('.state').forEach(function(s){
-        s.classList.remove('active');
-      });
-      var el = document.getElementById(id);
-      if (el) el.classList.add('active');
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
     }
-
-    if (!token) {
-      showState('state-error');
-      return;
-    }
-
-    // Verificar que el token es un UUID válido (básico)
-    var isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token);
-    if (!isUUID) {
-      showState('state-error');
-      return;
-    }
-
-    // Guardar en localStorage para poder votar
-    try {
-      localStorage.setItem('glutengo_token', token);
-      // Limpiar el token de la URL sin recargar (privacidad)
-      if (history.replaceState) {
-        history.replaceState({}, document.title, '/bienvenido');
-      }
-      showState('state-success');
-    } catch(e) {
-      // Fallback si localStorage no disponible (modo privado muy restringido)
-      showState('state-success');
-    }
-  })();
-
-  // Service Worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(function(){});
-  }
   </script>
-
 </body>
 </html>

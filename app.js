@@ -303,32 +303,6 @@ function scrollToDir(e){
 }
 
 // ────────────────────────────────────────────────────
-// WAITLIST
-// ────────────────────────────────────────────────────
-function handleWaitlist(e){
-  e.preventDefault();
-  var form  = e.target;
-  var email = form.querySelector('input[name="email"]').value.trim();
-  var btn   = form.querySelector('button[type="submit"]');
-  btn.disabled    = true;
-  btn.textContent = 'Guardando…';
-  fetch('/api/subscribe', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email })
-  })
-  .then(function(res){
-    if (!res.ok) throw new Error('No se pudo guardar tu email');
-    window.location.href = '/gracias.html';
-  })
-  .catch(function(err){
-    btn.disabled = false;
-    btn.textContent = 'Unirme';
-    alert(err.message || 'No se pudo guardar tu email. Intentá de nuevo.');
-  });
-}
-
-// ────────────────────────────────────────────────────
 // INIT
 // ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function(){

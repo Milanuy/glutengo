@@ -14,6 +14,7 @@ const SUPABASE_KEY   =
   process.env.SUPABASE_SECRET_KEY ||
   process.env.SERVICE_ROLE_KEY;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const SEND_BUSINESS_EMAILS = process.env.ENABLE_BUSINESS_EMAILS === 'true';
 
 const FROM_EMAIL = 'GlutenGo <onboarding@resend.dev>';
 const ADMIN_EMAIL = 'anmaurano@gmail.com';
@@ -204,8 +205,8 @@ exports.handler = async function (event) {
     console.error('Supabase negocio error:', err.message);
   }
 
-  // ── 2. Enviar emails (requiere RESEND_API_KEY)
-  if (RESEND_API_KEY) {
+  // ── 2. Emails opcionales. Por defecto no se envian: el flujo vive en admin.html.
+  if (SEND_BUSINESS_EMAILS && RESEND_API_KEY) {
     try {
       // Notificación a Andy
       const adminRes = await fetch('https://api.resend.com/emails', {

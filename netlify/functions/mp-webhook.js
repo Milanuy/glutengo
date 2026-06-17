@@ -23,6 +23,8 @@ const SERVICE_KEY    =
   process.env.SERVICE_ROLE_KEY;
 const MP_TOKEN       = process.env.MP_ACCESS_TOKEN;
 const RESEND_KEY     = process.env.RESEND_API_KEY;
+const SEND_BUSINESS_EMAILS = process.env.ENABLE_BUSINESS_EMAILS === 'true';
+const AUTO_ACTIVATE_PAID_BUSINESSES = process.env.AUTO_ACTIVATE_PAID_BUSINESSES === 'true';
 const FROM_EMAIL     = 'GlutenGo <onboarding@resend.dev>';
 const ADMIN_EMAIL    = 'anmaurano@gmail.com';
 const BASE_URL       = 'https://glutengo.netlify.app';
@@ -163,7 +165,12 @@ exports.handler = async function (event) {
     return { statusCode: 200, body: 'OK' };
   }
 
-  // ── 3. Activar el negocio ──────────────────────────────────────────────────
+  if (!AUTO_ACTIVATE_PAID_BUSINESSES) {
+    console.log('Pago confirmado. Alta manual requerida desde admin:', negocio.nombre, paymentId);
+    return { statusCode: 200, body: 'OK' };
+  }
+
+  // ── 3. Activar el negocio (solo si se habilita explicitamente) ─────────────
   try {
     await fetch(
       SUPABASE_URL + '/rest/v1/businesses?id=eq.' + negocio.id,
@@ -182,7 +189,7 @@ exports.handler = async function (event) {
   }
 
   // ── 4. Enviar email de bienvenida ──────────────────────────────────────────
-  if (RESEND_KEY && negocio.email) {
+  if (SEND_BUSINESS_EMAILS && RESEND_KEY && negocio.email) {
     try {
       const html = await buildWelcomeEmail({ ...negocio, plan });
       await fetch('https://api.resend.com/emails', {

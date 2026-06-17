@@ -5,7 +5,10 @@
  *
  * Usa SUPABASE_SERVICE_ROLE_KEY para operaciones DB (bypass RLS).
  * La identidad del usuario siempre se verifica via JWT antes de escribir.
+ * Para no guardar el Gmail en claro, ratings.email contiene un hash estable.
  */
+
+const { createHash } = require('crypto');
 
 const SUPABASE_URL  = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const ANON_KEY      = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -30,6 +33,12 @@ function serviceHeaders(extra) {
   }, extra || {});
 }
 
+function userKeyFromEmail(email) {
+  return 'sha256:' + createHash('sha256')
+    .update(String(email || '').trim().toLowerCase())
+    .digest('hex');
+}
+
 exports.handler = async function (event) {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers: corsHeaders, body: '' };
@@ -44,7 +53,7 @@ exports.handler = async function (event) {
     try {
       const res = await fetch(
         SUPABASE_URL + '/rest/v1/ratings?slug=eq.' + encodeURIComponent(slug) +
-        '&select=score,comentario,created_at,email&order=created_at.desc',
+        '&select=score,comentario,created_at&order=created_at.desc',
         { headers: serviceHeaders() }
       );
       if (!res.ok) {
@@ -60,17 +69,11 @@ exports.handler = async function (event) {
       const avg    = rows.reduce(function(s, r) { return s + r.score; }, 0) / count;
       const score  = Math.round((avg - 1) * 25);
       const recent = rows.slice(0, 5).map(function(r) {
-        // Obfuscar email: "andy***@gmail.com"
-        var emailHint = '';
-        if (r.email) {
-          var parts = r.email.split('@');
-          emailHint = parts[0].slice(0, 3) + '***@' + (parts[1] || '');
-        }
         return {
           score:      r.score,
           comentario: r.comentario,
           fecha:      r.created_at ? r.created_at.slice(0, 10) : null,
-          autor:      emailHint || 'Miembro GlutenGo',
+          autor:      'Miembro GlutenGo',
         };
       });
       return { statusCode: 200, headers: corsHeaders,
@@ -105,7 +108,7 @@ exports.handler = async function (event) {
     }
 
     // ── 1. Verificar JWT del usuario
-    let userEmail;
+    let userKey;
     try {
       const authRes = await fetch(SUPABASE_URL + '/auth/v1/user', {
         headers: { apikey: ANON_KEY, Authorization: 'Bearer ' + token }
@@ -117,7 +120,7 @@ exports.handler = async function (event) {
       if (!userData || !userData.email) {
         return { statusCode: 401, headers: corsHeaders, body: JSON.stringify({ error: 'No se pudo identificar al usuario' }) };
       }
-      userEmail = userData.email;
+      userKey = userKeyFromEmail(userData.email);
     } catch (err) {
       console.error('Auth check error:', err.message);
       return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: 'Error al verificar identidad' }) };
@@ -127,7 +130,7 @@ exports.handler = async function (event) {
     let existingId = null;
     try {
       const checkRes = await fetch(
-        SUPABASE_URL + '/rest/v1/ratings?select=id&email=eq.' + encodeURIComponent(userEmail) +
+        SUPABASE_URL + '/rest/v1/ratings?select=id&email=eq.' + encodeURIComponent(userKey) +
         '&slug=eq.' + encodeURIComponent(slug),
         { headers: serviceHeaders() }
       );
@@ -157,7 +160,7 @@ exports.handler = async function (event) {
         ratingRes = await fetch(SUPABASE_URL + '/rest/v1/ratings', {
           method: 'POST',
           headers: serviceHeaders({ Prefer: 'return=minimal' }),
-          body: JSON.stringify({ email: userEmail, slug, score: scoreNum, comentario: comentarioTrimmed }),
+          body: JSON.stringify({ email: userKey, slug, score: scoreNum, comentario: comentarioTrimmed }),
         });
       }
 
