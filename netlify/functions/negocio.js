@@ -1,6 +1,6 @@
 /**
  * GlutenGo — Netlify Function: negocio
- * POST /api/negocio { nombre, tipo, direccion, barrio, email, telefono, plan, mensaje }
+ * POST /api/negocio { nombre, tipo, categoria, direccion, barrio, email, telefono, plan, mensaje }
  *
  * 1. Guarda el registro en Supabase (tabla businesses)
  * 2. Envía notificación al administrador
@@ -40,6 +40,14 @@ const PLANES = {
   verificado: { label: 'Verificado ($590/mes)',   precio: '$590 UYU/mes' },
   certificado:{ label: 'Certificado ($1.590/mes)', precio: '$1.590 UYU/mes' },
 };
+
+function slugify(value) {
+  return String(value || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+}
 
 function buildAdminEmail(data) {
   const plan = PLANES[data.plan] || PLANES.basico;
@@ -178,7 +186,7 @@ exports.handler = async function (event) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON inválido' }) };
   }
 
-  const { nombre, tipo, direccion, barrio, email, telefono, plan, mensaje } = data;
+  const { nombre, tipo, categoria, direccion, barrio, email, telefono, plan, mensaje } = data;
 
   if (!nombre || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'nombre y email son requeridos' }) };
@@ -204,8 +212,21 @@ exports.handler = async function (event) {
         email:     email.toLowerCase().trim(),
         telefono:  (telefono || '').trim(),
         plan:      plan || 'basico',
-        mensaje:   (mensaje || '').trim().slice(0, 1000),
         status:    plan === 'basico' ? 'pending' : 'pending_payment',
+        mensaje: JSON.stringify({
+          slug: slugify(nombre),
+          category: categoria || 'restaurante',
+          position: 999,
+          description: '',
+          lat: '',
+          lng: '',
+          instagram: '',
+          logoUrl: '',
+          photoUrls: '',
+          featuredPlacement: 'none',
+          internal: (mensaje || '').trim().slice(0, 1000),
+          benefits: {},
+        }),
       }),
     });
     results.saved = sbRes.ok;

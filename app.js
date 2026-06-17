@@ -1,4 +1,4 @@
-// GlutenGo — app.js v0.9
+// GlutenGo — app.js v1.0
 // Script principal de la home. Separado del HTML para evitar bloqueo de extensiones.
 
 // ────────────────────────────────────────────────────
@@ -110,6 +110,74 @@ function placeLogoHtml(lugar, className) {
   '</span>';
 }
 
+function hasValidCoords(lugar) {
+  return lugar &&
+    Number.isFinite(Number(lugar.lat)) &&
+    Number.isFinite(Number(lugar.lng));
+}
+
+function getPlacePosition(lugar) {
+  var n = Number(lugar && lugar.position);
+  return Number.isFinite(n) ? n : 999;
+}
+
+function sortPlacesForDisplay(list) {
+  return list.slice().sort(function(a, b) {
+    return getPlacePosition(a) - getPlacePosition(b);
+  });
+}
+
+function normalizePublicPlace(place) {
+  if (!place || !place.slug || !place.name) return null;
+  return {
+    slug: String(place.slug),
+    name: String(place.name),
+    category: CATEGORY_LABELS[place.category] ? place.category : 'otro',
+    tipo: place.tipo === 'exclusivo' ? 'exclusivo' : 'mixto',
+    address: place.address || 'Dirección a confirmar',
+    neighborhood: place.neighborhood || 'Zona a confirmar',
+    phone: place.phone || '',
+    desc: place.desc || 'Local registrado en GlutenGo. Confirmá información antes de ir.',
+    hours: place.hours || null,
+    lat: place.lat,
+    lng: place.lng,
+    instagram: place.instagram || '',
+    plan: place.plan || 'basico',
+    position: getPlacePosition(place),
+    logoUrl: place.logoUrl || '',
+    photoUrls: Array.isArray(place.photoUrls) ? place.photoUrls : [],
+    featuredPlacement: place.featuredPlacement || 'none',
+    benefits: place.benefits || {},
+    source: place.source || 'admin',
+  };
+}
+
+function mergePublicPlaces(publicPlaces) {
+  if (!Array.isArray(publicPlaces) || !publicPlaces.length) return;
+  var bySlug = {};
+  lugares.forEach(function(place) {
+    bySlug[place.slug] = Object.assign({}, place);
+  });
+  publicPlaces.forEach(function(raw) {
+    var place = normalizePublicPlace(raw);
+    if (!place) return;
+    var existing = bySlug[place.slug];
+    if (existing && !hasValidCoords(place) && hasValidCoords(existing)) {
+      place.lat = existing.lat;
+      place.lng = existing.lng;
+    }
+    bySlug[place.slug] = Object.assign({}, existing || {}, place);
+  });
+  lugares = Object.keys(bySlug).map(function(slug) { return bySlug[slug]; });
+}
+
+function loadPublicPlaces() {
+  return fetch('/api/public-businesses')
+    .then(function(r) { return r.ok ? r.json() : []; })
+    .then(function(list) { mergePublicPlaces(list); })
+    .catch(function(err) { console.warn('No se pudieron cargar negocios activos:', err.message); });
+}
+
 function emptyStateSvg(color) {
   var stroke = color || '#9CA3AF';
   return '<svg width="42" height="42" fill="none" stroke="' + stroke + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">' +
@@ -177,6 +245,7 @@ function initMap(){
   L.control.zoom({ position: 'bottomright' }).addTo(map);
 
   lugares.forEach(function(l){
+    if (!hasValidCoords(l)) return;
     var isExcl = l.tipo === 'exclusivo';
     var color  = isExcl ? '#166534' : '#D97706';
 
@@ -320,7 +389,7 @@ function geolocateMe(){
 // ────────────────────────────────────────────────────
 function buildRail(){
   var rail = document.getElementById('rail-exclusivos');
-  var excl = lugares.filter(function(l){ return l.tipo === 'exclusivo'; });
+  var excl = sortPlacesForDisplay(lugares.filter(function(l){ return l.tipo === 'exclusivo'; }));
   rail.innerHTML = excl.map(function(l){
     var iconSvg = getCatSVG(l.category, '#166534');
     var visual = placeLogoHtml(l, 'rail-brand-logo') ||
@@ -362,6 +431,8 @@ function buildDir(filter, q){
     return;
   }
 
+  filtered = sortPlacesForDisplay(filtered);
+
   grid.innerHTML = filtered.map(function(l){
     var iconColor = l.tipo === 'exclusivo' ? '#166534' : '#D97706';
     var iconSvg   = getCatSVG(l.category, iconColor);
@@ -402,7 +473,7 @@ function scrollToDir(e){
 // ────────────────────────────────────────────────────
 // INIT
 // ────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function(){
+function initApp() {
   try { AOS.init({duration:600, once:true, offset:60}); } catch(e){}
 
   if(typeof lugares !== 'undefined' && lugares.length){
@@ -415,6 +486,13 @@ document.addEventListener('DOMContentLoaded', function(){
     document.getElementById('dir-grid').innerHTML =
       '<div id="dir-empty">' + emptyStateSvg('#D97706') + '<p>No se pudieron cargar los lugares. Recargá la página.</p></div>';
   }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  if (typeof lugares === 'undefined') {
+    window.lugares = [];
+  }
+  loadPublicPlaces().then(initApp);
 });
 
 if('serviceWorker' in navigator){

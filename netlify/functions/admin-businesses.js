@@ -1,7 +1,7 @@
 /**
  * GlutenGo — Netlify Function: admin-businesses
  * GET  /api/admin-businesses          → lista todos los negocios
- * PATCH /api/admin-businesses         → actualiza status, plan, position y admin_notes
+ * PATCH /api/admin-businesses         → actualiza datos públicos, status, plan y configuración editorial
  *
  * Autenticación: header x-admin-token debe coincidir con ADMIN_PASSWORD env var.
  * Si Netlify todavía no tiene la variable, mantiene el token histórico del MVP.
@@ -76,27 +76,41 @@ exports.handler = async function (event) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON inválido' }) };
     }
 
-    const { id, status, plan, position, admin_notes } = body;
+    const { id, nombre, tipo, direccion, barrio, telefono, status, plan, admin_notes, mensaje } = body;
     if (!id) return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'id requerido' }) };
 
     const patch = {};
-    if (status !== undefined) patch.status = status;
+    if (nombre !== undefined) {
+      const cleanName = String(nombre).trim().slice(0, 140);
+      if (!cleanName) {
+        return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'nombre requerido' }) };
+      }
+      patch.nombre = cleanName;
+    }
+    if (tipo !== undefined) {
+      if (!['exclusivo', 'mixto'].includes(tipo)) {
+        return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'tipo inválido' }) };
+      }
+      patch.tipo = tipo;
+    }
+    if (direccion !== undefined) patch.direccion = String(direccion).trim().slice(0, 220);
+    if (barrio !== undefined) patch.barrio = String(barrio).trim().slice(0, 120);
+    if (telefono !== undefined) patch.telefono = String(telefono).trim().slice(0, 60);
+    if (status !== undefined) {
+      if (!['pending', 'pending_payment', 'active', 'rejected', 'expired'].includes(status)) {
+        return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'estado inválido' }) };
+      }
+      patch.status = status;
+    }
     if (plan !== undefined) {
       if (!['basico', 'verificado', 'certificado'].includes(plan)) {
         return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'plan inválido' }) };
       }
       patch.plan = plan;
     }
-    if (position !== undefined) {
-      const parsedPosition = Number(position);
-      if (!Number.isInteger(parsedPosition) || parsedPosition < 1 || parsedPosition > 999) {
-        return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'posición inválida' }) };
-      }
-      patch.position = parsedPosition;
+    if (mensaje !== undefined || admin_notes !== undefined) {
+      patch.mensaje = String(mensaje !== undefined ? mensaje : admin_notes).slice(0, 6000);
     }
-    if (admin_notes !== undefined) patch.admin_notes = String(admin_notes).slice(0, 6000);
-    if (status === 'active') patch.activated_at = new Date().toISOString();
-
     try {
       const res = await fetch(
         SUPABASE_URL + '/rest/v1/businesses?id=eq.' + encodeURIComponent(id),

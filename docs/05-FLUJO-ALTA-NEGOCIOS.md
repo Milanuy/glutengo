@@ -21,7 +21,10 @@ Estados principales:
 4. Definir plan, estado y prioridad.
 5. Completar la configuracion editorial: slug, descripcion, coordenadas, logo, fotos y destaque.
 6. Marcar el checklist de beneficios habilitados.
-7. Guardar o usar `Guardar y activar`.
+7. Guardar o usar `Guardar y publicar`.
+
+Cuando el estado queda en `active`, el local se publica automaticamente en GlutenGo mediante `/api/public-businesses`.
+Si tiene latitud y longitud validas aparece tambien en el mapa. Si todavia no tiene coordenadas, queda visible en el directorio y en su ficha publica, pero sin pin de mapa hasta completar la ubicacion.
 
 ## Checklist de beneficios
 
@@ -43,7 +46,8 @@ Estados principales:
 
 ## Notas tecnicas
 
-El checklist y los campos editoriales se guardan en `businesses.admin_notes` como JSON.
-Esto permite operar el alta sin crear nuevas tablas inmediatamente.
+La tabla real de produccion actualmente tiene campos basicos (`nombre`, `tipo`, `direccion`, `barrio`, `email`, `telefono`, `plan`, `mensaje`, `status`, `created_at`).
+Para no depender de migraciones, el checklist y los campos editoriales se guardan en `businesses.mensaje` como JSON.
+Si mas adelante se agrega `admin_notes`, la funcion publica ya esta preparada para leer ese campo primero y mantener compatibilidad.
 
-La ficha publica estatica sigue usando `data.js`. Para publicacion automatica completa desde admin, el siguiente paso es exponer negocios `active` desde una funcion publica y renderizarlos con coordenadas, logo y beneficios.
+La home, el mapa, el directorio y `lugar.html` mezclan los lugares estaticos de `data.js` con los negocios activos que devuelve `/api/public-businesses`.

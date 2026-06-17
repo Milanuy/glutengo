@@ -169,6 +169,22 @@
     .modal h3{font-size:1.1rem;font-weight:800;color:var(--green-deep);margin-bottom:.75rem}
     .modal p{font-size:.9rem;color:var(--gray);line-height:1.6;margin-bottom:.5rem}
     .modal-actions{display:flex;gap:.75rem;margin-top:1.25rem;justify-content:flex-end}
+    .publish-note{
+      border:1px solid #BBF7D0;background:#F0FDF4;color:#14532D;
+      border-radius:12px;padding:.8rem .9rem;margin:.9rem 0 1rem;
+      font-size:.84rem;line-height:1.5;
+    }
+    .publish-note strong{display:block;margin-bottom:.2rem;color:var(--green-deep)}
+    .modal-section-title{
+      display:flex;align-items:center;gap:.5rem;
+      font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--green-deep);margin:1rem 0 .75rem;
+    }
+    .modal-section-title span{
+      width:24px;height:24px;border-radius:50%;
+      display:inline-flex;align-items:center;justify-content:center;
+      background:var(--green-light);color:var(--green);font-size:.72rem;
+    }
     .modal-field{margin-bottom:.85rem}
     .modal-field label{display:block;font-size:.82rem;font-weight:700;color:#374151;margin-bottom:.3rem}
     .modal-field input,.modal-field textarea,.modal-field select{
@@ -423,9 +439,19 @@ function onSearch(val) {
 // ── RENDER TABLE ───────────────────────────────────────────────────────────
 var STATUS_LABELS = {
   pending: 'Pendiente', pending_payment: 'Aguardando pago',
-  active: 'Activo', rejected: 'Rechazado', expired: 'Vencido',
+  active: 'Publicado', rejected: 'Rechazado', expired: 'Vencido',
 };
 var PLAN_LABELS_ES = { basico: 'Básico', verificado: 'Verificado · datos confirmados', certificado: 'Certificado · protocolo SG' };
+var CATEGORY_LABELS_ES = {
+  restaurante: 'Restaurante',
+  cafeteria: 'Cafetería',
+  panaderia: 'Panadería',
+  heladeria: 'Heladería',
+  rotiseria: 'Rotisería / para llevar',
+  almacen: 'Almacén / dietética',
+  hotel: 'Hotel',
+  otro: 'Otro',
+};
 
 function esc(value) {
   return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
@@ -449,6 +475,8 @@ function defaultConfig(b) {
   var paid = b.plan === 'verificado' || b.plan === 'certificado';
   return {
     slug: slugify(b.nombre),
+    category: b.categoria || 'restaurante',
+    position: Number(b.position || 999),
     description: '',
     lat: '',
     lng: '',
@@ -472,16 +500,17 @@ function defaultConfig(b) {
 
 function readConfig(b) {
   var cfg = defaultConfig(b || {});
-  if (!b || !b.admin_notes) return cfg;
+  var rawNotes = b && (b.admin_notes || b.mensaje);
+  if (!b || !rawNotes) return cfg;
   try {
-    var parsed = JSON.parse(b.admin_notes);
+    var parsed = JSON.parse(rawNotes);
     if (parsed && typeof parsed === 'object') {
       Object.assign(cfg, parsed);
       cfg.benefits = Object.assign(defaultConfig(b).benefits, parsed.benefits || {});
       return cfg;
     }
   } catch (_) {}
-  cfg.internal = b.admin_notes;
+  cfg.internal = rawNotes;
   return cfg;
 }
 
@@ -489,7 +518,8 @@ function renderTable() {
   var filtered = allBiz.filter(function(b) {
     if (curFilter !== 'todos' && b.status !== curFilter) return false;
     if (curSearch) {
-      var hay = ((b.nombre || '') + ' ' + (b.barrio || '') + ' ' + (b.email || '')).toLowerCase();
+      var cfg = readConfig(b);
+      var hay = ((b.nombre || '') + ' ' + (b.barrio || '') + ' ' + (b.email || '') + ' ' + (cfg.category || '')).toLowerCase();
       if (hay.indexOf(curSearch) === -1) return false;
     }
     return true;
@@ -502,6 +532,7 @@ function renderTable() {
   }
 
   tbody.innerHTML = filtered.map(function(b) {
+    var cfg = readConfig(b);
     var statusBadge = '<span class="badge ' + (b.status || 'pending') + '">' +
       esc(STATUS_LABELS[b.status] || b.status || 'Pendiente') + '</span>';
     var planPill = '<span class="plan-pill plan-' + (b.plan || 'basico') + '">' +
@@ -512,9 +543,10 @@ function renderTable() {
     return '<tr>' +
       '<td data-label="Local"><strong style="cursor:pointer;color:var(--green-deep)" onclick="showDetail(\'' + b.id + '\')">' + esc(b.nombre || '—') + '</strong>' +
         (b.email ? '<br><span style="font-size:.75rem;color:var(--gray)">' + esc(b.email) + '</span>' : '') +
+        '<br><span style="font-size:.72rem;color:var(--gray)">' + esc(CATEGORY_LABELS_ES[cfg.category] || cfg.category || 'Sin categoría') + '</span>' +
       '</td>' +
       '<td data-label="Plan">' + planPill + '</td>' +
-      '<td data-label="Prioridad" style="font-weight:800;color:var(--green-deep)">' + esc(b.position || 999) + '</td>' +
+      '<td data-label="Prioridad" style="font-weight:800;color:var(--green-deep)">' + esc(cfg.position || 999) + '</td>' +
       '<td data-label="Estado">' + statusBadge + '</td>' +
       '<td data-label="Barrio" style="color:var(--gray);font-size:.83rem">' + esc(b.barrio || '—') + '</td>' +
       '<td data-label="Registro" style="color:var(--gray);font-size:.8rem">' + fecha + '</td>' +
@@ -527,14 +559,14 @@ function buildActions(b) {
   var btns = '';
   if (b.status === 'pending' || b.status === 'pending_payment') {
     btns += '<button class="btn-sm btn-approve" onclick="showDetail(\'' + b.id + '\')">Configurar</button>';
-    btns += '<button class="btn-sm btn-approve" onclick="approve(\'' + b.id + '\')">Activar</button>';
+    btns += '<button class="btn-sm btn-approve" onclick="approve(\'' + b.id + '\')">Publicar</button>';
     btns += '<button class="btn-sm btn-reject" onclick="reject(\'' + b.id + '\')">Rechazar</button>';
   } else if (b.status === 'active') {
     btns += '<button class="btn-sm btn-approve" onclick="showDetail(\'' + b.id + '\')">Editar</button>';
     btns += '<button class="btn-sm btn-expire" onclick="expire(\'' + b.id + '\')">Suspender</button>';
   } else if (b.status === 'rejected' || b.status === 'expired') {
     btns += '<button class="btn-sm btn-approve" onclick="showDetail(\'' + b.id + '\')">Revisar</button>';
-    btns += '<button class="btn-sm btn-approve" onclick="approve(\'' + b.id + '\')">Reactivar</button>';
+    btns += '<button class="btn-sm btn-approve" onclick="approve(\'' + b.id + '\')">Republicar</button>';
   }
   return '<div class="actions">' + btns + '</div>';
 }
@@ -557,11 +589,12 @@ function patch(id, fields, successMsg) {
     updateStats();
     renderTable();
     showToast(successMsg || 'Guardado ✓');
+    return true;
   })
-  .catch(function(err) { showToast('Error: ' + err.message); });
+  .catch(function(err) { showToast('Error: ' + err.message); return false; });
 }
 
-function approve(id) { patch(id, { status: 'active' }, 'Negocio activado'); }
+function approve(id) { patch(id, { status: 'active' }, 'Negocio publicado en GlutenGo'); }
 function reject(id)  { patch(id, { status: 'rejected' }, '🚫 Negocio rechazado'); }
 function expire(id)  { patch(id, { status: 'expired' }, 'Negocio suspendido'); }
 
@@ -579,17 +612,22 @@ function showDetail(id) {
     <p><strong>Email:</strong> <a href="mailto:${esc(b.email || '')}" style="color:var(--green)">${esc(b.email || '—')}</a></p>
     <p><strong>Teléfono:</strong> ${esc(b.telefono || '—')} &nbsp;|&nbsp; <strong>Registrado:</strong> ${esc(b.created_at ? b.created_at.slice(0, 10) : '—')}</p>
     <p><strong>Dirección:</strong> ${esc(b.direccion || '—')}, ${esc(b.barrio || '—')}</p>
-    ${b.mensaje ? `<p style="margin-top:.75rem;padding:.75rem;background:var(--bg);border-radius:8px;font-size:.88rem"><em>"${esc(b.mensaje)}"</em></p>` : ''}
+    ${cfg.internal ? `<p style="margin-top:.75rem;padding:.75rem;background:var(--bg);border-radius:8px;font-size:.88rem"><em>"${esc(cfg.internal)}"</em></p>` : ''}
 
     <div class="modal-divider"></div>
+    <div class="publish-note">
+      <strong>Cómo se publica</strong>
+      Si el estado queda en Publicado, este local aparece en GlutenGo. Con latitud y longitud aparece también en el mapa; sin coordenadas queda visible en el directorio y en su ficha hasta completar ubicación.
+    </div>
 
+    <div class="modal-section-title"><span>1</span> Estado y plan</div>
     <div class="modal-grid">
       <div class="modal-field">
         <label>Estado</label>
         <select id="cfg-status">
           <option value="pending"${selected(b.status, 'pending')}>Pendiente</option>
           <option value="pending_payment"${selected(b.status, 'pending_payment')}>Aguardando pago</option>
-          <option value="active"${selected(b.status, 'active')}>Activo</option>
+          <option value="active"${selected(b.status, 'active')}>Publicado en GlutenGo</option>
           <option value="rejected"${selected(b.status, 'rejected')}>Rechazado</option>
           <option value="expired"${selected(b.status, 'expired')}>Vencido / suspendido</option>
         </select>
@@ -604,16 +642,60 @@ function showDetail(id) {
       </div>
       <div class="modal-field">
         <label>Prioridad / posición</label>
-        <input id="cfg-position" type="number" min="1" max="999" value="${esc(b.position || 999)}" />
+        <input id="cfg-position" type="number" min="1" max="999" value="${esc(cfg.position || 999)}" />
         <div class="config-help">Menor número = aparece antes en listados destacados.</div>
+      </div>
+    </div>
+
+    <div class="modal-section-title"><span>2</span> Ficha pública</div>
+    <div class="modal-grid">
+      <div class="modal-field">
+        <label>Nombre público</label>
+        <input id="cfg-name" value="${esc(b.nombre || '')}" />
+      </div>
+      <div class="modal-field">
+        <label>Tipo de oferta</label>
+        <select id="cfg-tipo">
+          <option value="exclusivo"${selected(b.tipo, 'exclusivo')}>100% sin gluten</option>
+          <option value="mixto"${selected(b.tipo, 'mixto')}>Con opciones sin gluten</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Categoría</label>
+        <select id="cfg-category">
+          <option value="restaurante"${selected(cfg.category, 'restaurante')}>Restaurante</option>
+          <option value="cafeteria"${selected(cfg.category, 'cafeteria')}>Cafetería</option>
+          <option value="panaderia"${selected(cfg.category, 'panaderia')}>Panadería</option>
+          <option value="heladeria"${selected(cfg.category, 'heladeria')}>Heladería</option>
+          <option value="rotiseria"${selected(cfg.category, 'rotiseria')}>Rotisería / para llevar</option>
+          <option value="almacen"${selected(cfg.category, 'almacen')}>Almacén / dietética</option>
+          <option value="hotel"${selected(cfg.category, 'hotel')}>Hotel</option>
+          <option value="otro"${selected(cfg.category, 'otro')}>Otro</option>
+        </select>
+        <div class="config-help">Define filtros, icono del mapa y experiencia de búsqueda.</div>
+      </div>
+      <div class="modal-field">
+        <label>Teléfono / WhatsApp</label>
+        <input id="cfg-phone" value="${esc(b.telefono || '')}" placeholder="098 XXX XXX" />
+        <div class="config-help">Solo se muestra si está marcado "WhatsApp / Instagram".</div>
+      </div>
+      <div class="modal-field">
+        <label>Dirección</label>
+        <input id="cfg-address" value="${esc(b.direccion || '')}" />
+      </div>
+      <div class="modal-field">
+        <label>Barrio / ciudad</label>
+        <input id="cfg-neighborhood" value="${esc(b.barrio || '')}" />
       </div>
       <div class="modal-field">
         <label>Slug público</label>
         <input id="cfg-slug" value="${esc(cfg.slug)}" />
+        <div class="config-help">URL final: /lugar.html?slug=${esc(cfg.slug)}</div>
       </div>
       <div class="modal-field full">
         <label>Descripción para ficha pública</label>
         <textarea id="cfg-description">${esc(cfg.description)}</textarea>
+        <div class="config-help">Texto visible para usuarios. Evitá prometer certificación si no corresponde.</div>
       </div>
       <div class="modal-field">
         <label>Latitud</label>
@@ -627,6 +709,20 @@ function showDetail(id) {
         <label>Instagram público</label>
         <input id="cfg-instagram" value="${esc(cfg.instagram)}" placeholder="@local" />
       </div>
+      <div class="modal-field full">
+        <label>Logo URL</label>
+        <input id="cfg-logo" value="${esc(cfg.logoUrl)}" placeholder="/assets/logos/local.svg o URL pública" />
+        <div class="config-help">Solo se muestra si está marcado "Logo visible".</div>
+      </div>
+      <div class="modal-field full">
+        <label>Fotos URL</label>
+        <textarea id="cfg-photos" placeholder="Una URL por línea">${esc(cfg.photoUrls)}</textarea>
+        <div class="config-help">Preparado para galería pública. Por ahora se guarda para la ficha.</div>
+      </div>
+    </div>
+
+    <div class="modal-section-title"><span>3</span> Visibilidad y beneficios</div>
+    <div class="modal-grid">
       <div class="modal-field">
         <label>Destaque comercial</label>
         <select id="cfg-featured">
@@ -636,17 +732,8 @@ function showDetail(id) {
           <option value="mega"${selected(cfg.featuredPlacement, 'mega')}>Mega banner</option>
         </select>
       </div>
-      <div class="modal-field full">
-        <label>Logo URL</label>
-        <input id="cfg-logo" value="${esc(cfg.logoUrl)}" placeholder="/assets/logos/local.svg o URL pública" />
-      </div>
-      <div class="modal-field full">
-        <label>Fotos URL</label>
-        <textarea id="cfg-photos" placeholder="Una URL por línea">${esc(cfg.photoUrls)}</textarea>
-      </div>
     </div>
 
-    <div class="modal-divider"></div>
     <div class="modal-field">
       <label>Checklist de beneficios habilitados</label>
       <div class="check-grid">
@@ -671,7 +758,7 @@ function showDetail(id) {
       <button class="btn-sm" style="background:#F3F4F6;color:#374151" onclick="closeModal()">Cerrar</button>
       ${b.email ? `<a href="mailto:${esc(b.email)}" class="btn-sm" style="background:#F3F4F6;color:#374151;text-decoration:none">Email</a>` : ''}
       <button class="btn-sm btn-approve" onclick="saveConfig('${esc(b.id)}', false)">Guardar configuración</button>
-      <button class="btn-sm btn-approve" onclick="saveConfig('${esc(b.id)}', true)">Guardar y activar</button>
+      <button class="btn-sm btn-approve" onclick="saveConfig('${esc(b.id)}', true)">Guardar y publicar</button>
     </div>`;
   document.getElementById('modal-overlay').classList.add('show');
 }
@@ -679,6 +766,8 @@ function showDetail(id) {
 function saveConfig(id, activate) {
   var cfg = {
     slug: document.getElementById('cfg-slug').value.trim(),
+    category: document.getElementById('cfg-category').value,
+    position: Number(document.getElementById('cfg-position').value || 999),
     description: document.getElementById('cfg-description').value.trim(),
     lat: document.getElementById('cfg-lat').value.trim(),
     lng: document.getElementById('cfg-lng').value.trim(),
@@ -699,13 +788,17 @@ function saveConfig(id, activate) {
     }
   };
   var fields = {
+    nombre: document.getElementById('cfg-name').value.trim(),
+    tipo: document.getElementById('cfg-tipo').value,
+    direccion: document.getElementById('cfg-address').value.trim(),
+    barrio: document.getElementById('cfg-neighborhood').value.trim(),
+    telefono: document.getElementById('cfg-phone').value.trim(),
     status: activate ? 'active' : document.getElementById('cfg-status').value,
     plan: document.getElementById('cfg-plan').value,
-    position: Number(document.getElementById('cfg-position').value || 999),
-    admin_notes: JSON.stringify(cfg, null, 2)
+    mensaje: JSON.stringify(cfg)
   };
-  patch(id, fields, activate ? 'Configuración guardada y local activado' : 'Configuración guardada')
-    .then(function(){ closeModal(); });
+  patch(id, fields, activate ? 'Configuración guardada y local publicado' : 'Configuración guardada')
+    .then(function(ok){ if (ok) closeModal(); });
 }
 
 function closeModal() {

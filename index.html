@@ -254,7 +254,10 @@
       padding:2px 5px!important;
     }
     .leaflet-control-attribution a{color:#4B5563!important;text-decoration:none!important}
-    @media(max-width:600px){#map{height:380px;border-radius:12px}}
+    @media(max-width:600px){
+      #map{height:380px;border-radius:12px}
+      .leaflet-control-attribution{display:none!important}
+    }
     /* Pulse ring for 100% GF markers */
     @keyframes ggPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.55}50%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
     .gg-pulse-ring{position:absolute;top:19px;left:19px;width:42px;height:42px;border-radius:50%;border:2.5px solid rgba(22,101,52,.5);animation:ggPulse 2.2s ease-out infinite;pointer-events:none;transform:translate(-50%,-50%)}
@@ -833,7 +836,7 @@
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
   <script src="/data.js?v=2.1"></script>
-  <script src="/app.js?v=2.2"></script>
+  <script src="/app.js?v=2.3"></script>
   <script src="/auth.js?v=2.1"></script>
   <script src="/business-cta.js?v=1.3"></script>
 
