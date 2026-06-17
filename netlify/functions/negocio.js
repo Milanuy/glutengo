@@ -3,7 +3,7 @@
  * POST /api/negocio { nombre, tipo, direccion, barrio, email, telefono, plan, mensaje }
  *
  * 1. Guarda el registro en Supabase (tabla businesses)
- * 2. Envía notificación a Andy (anmaurano@gmail.com)
+ * 2. Envía notificación al administrador
  * 3. Envía auto-reply al negocio
  */
 
@@ -17,7 +17,7 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const SEND_BUSINESS_EMAILS = process.env.ENABLE_BUSINESS_EMAILS === 'true';
 
 const FROM_EMAIL = 'GlutenGo <onboarding@resend.dev>';
-const ADMIN_EMAIL = 'anmaurano@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hola@monvi.com.uy';
 const BASE_URL = 'https://glutengo.netlify.app';
 
 // Links de pago de MercadoPago. El verificado usa un plan de suscripción real.

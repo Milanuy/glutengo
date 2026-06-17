@@ -903,7 +903,7 @@
           Recibimos la información de tu local. Te contactamos en las próximas <strong>48–72 horas</strong> para activar tu ficha.
         </p>
         <p style="color:var(--gray);font-size:.87rem;margin-bottom:1.75rem">
-          ¿Urgente? Escribinos a <a href="mailto:anmaurano@gmail.com" style="color:var(--green);font-weight:700">anmaurano@gmail.com</a>
+          ¿Urgente? Escribinos a <a href="mailto:hola@monvi.com.uy" style="color:var(--green);font-weight:700">hola@monvi.com.uy</a>
         </p>
         <a href="/" style="display:inline-block;background:var(--green);color:#fff;text-decoration:none;padding:.85rem 1.75rem;border-radius:12px;font-weight:700">Ver el directorio →</a>
       </div>
@@ -915,29 +915,22 @@
         </div>
         <h2 style="font-family:'Fraunces',Georgia,serif;font-size:1.7rem;color:var(--green-deep);margin-bottom:.5rem">¡Un paso más para activar tu ficha!</h2>
         <p id="pago-plan-label" style="color:var(--green);font-weight:700;font-size:1rem;margin-bottom:.75rem"></p>
-        <p style="color:var(--gray);line-height:1.7;margin-bottom:1.25rem;max-width:420px;margin-left:auto;margin-right:auto">
-          Escaneá el QR con la app de MercadoPago o hacé clic en el botón para activar la suscripción mensual.
+        <p style="color:var(--gray);line-height:1.7;margin-bottom:1.5rem;max-width:430px;margin-left:auto;margin-right:auto">
+          Activá la suscripción mensual en Mercado Pago desde el botón.
           Después revisamos la ficha y la activamos desde el panel de administración.
         </p>
-
-        <!-- QR container -->
-        <div id="mp-qr-wrap" style="display:inline-flex;flex-direction:column;align-items:center;gap:.75rem;margin-bottom:1.5rem">
-          <div id="qr-canvas-wrap" style="background:#fff;border:2px solid var(--border);border-radius:16px;padding:1rem;box-shadow:0 4px 20px rgba(0,0,0,.08)">
-            <canvas id="qr-canvas"></canvas>
-          </div>
-          <span style="font-size:.78rem;color:var(--gray)">Escanear para abrir la suscripción en Mercado Pago</span>
-        </div>
 
         <div>
           <a id="mp-link-btn" href="#" target="_blank" rel="noopener"
              style="display:inline-block;background:#009EE3;color:#fff;text-decoration:none;
-                    padding:.85rem 2rem;border-radius:12px;font-weight:700;font-size:1rem;
-                    margin-bottom:.75rem">
+                    padding:1rem 2.1rem;border-radius:14px;font-weight:700;font-size:1rem;
+                    margin-bottom:.85rem;box-shadow:0 8px 24px rgba(0,158,227,.22)">
             Activar suscripción en Mercado Pago →
           </a>
         </div>
-        <p style="color:var(--gray);font-size:.82rem;margin-top:.5rem">
-          Ante cualquier consulta escribinos a <a href="mailto:anmaurano@gmail.com" style="color:var(--green);font-weight:700">anmaurano@gmail.com</a>
+        <p style="color:var(--gray);font-size:.82rem;margin:.25rem auto 0;max-width:430px;line-height:1.55">
+          Mercado Pago gestiona el cobro mensual. La publicación queda pendiente hasta confirmar pago y datos del local.
+          Consultas: <a href="mailto:hola@monvi.com.uy" style="color:var(--green);font-weight:700">hola@monvi.com.uy</a>
         </p>
       </div>
 
@@ -1004,7 +997,7 @@
       GlutenGo organiza información pública, datos aportados por locales y señales de la comunidad. La publicación de una ficha no implica certificación sanitaria ni garantía permanente de protocolo; los badges pagos se activan manualmente según el plan y la revisión correspondiente.
     </p>
     <p>
-      <a href="mailto:anmaurano@gmail.com">Contacto</a>
+      <a href="mailto:hola@monvi.com.uy">Contacto</a>
       &nbsp;·&nbsp;
       <a href="/">Ver el directorio</a>
       &nbsp;·&nbsp;
@@ -1088,25 +1081,6 @@
     document.getElementById('pago-plan-label').textContent = PLAN_LABELS[plan] || plan;
     document.getElementById('mp-link-btn').href = mpLink;
     scrollToForm();
-    // Generar QR con qrcode.js (cargamos dinámicamente si no está ya)
-    function renderQR() {
-      var canvas = document.getElementById('qr-canvas');
-      if (!canvas) return;
-      var size = Math.min(200, window.innerWidth - 80);
-      canvas.width = size; canvas.height = size;
-      /* eslint-disable no-undef */
-      QRCode.toCanvas(canvas, mpLink, { width: size, margin: 2, errorCorrectionLevel: 'M' }, function(err) {
-        if (err) document.getElementById('qr-canvas-wrap').style.display = 'none';
-      });
-    }
-    if (typeof QRCode === 'undefined') {
-      var s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js';
-      s.onload = renderQR;
-      document.head.appendChild(s);
-    } else {
-      renderQR();
-    }
   }
 
   function scrollToForm() {
