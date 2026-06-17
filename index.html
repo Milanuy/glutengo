@@ -226,6 +226,7 @@
       padding:0 1.25rem 1rem;
       justify-content:center;
     }
+    .map-controls-secondary{padding-bottom:1.15rem}
     .map-chip{
       padding:.4rem 1rem;border-radius:50px;
       border:1.5px solid var(--border);
@@ -244,6 +245,15 @@
       height:500px;width:100%;border-radius:16px;overflow:hidden;
       box-shadow:0 4px 28px rgba(0,0,0,.12);
     }
+    .leaflet-control-attribution{
+      font-size:10px!important;
+      line-height:1.25!important;
+      color:#6B7280!important;
+      background:rgba(255,255,255,.72)!important;
+      border-radius:8px 0 0 0!important;
+      padding:2px 5px!important;
+    }
+    .leaflet-control-attribution a{color:#4B5563!important;text-decoration:none!important}
     @media(max-width:600px){#map{height:380px;border-radius:12px}}
     /* Pulse ring for 100% GF markers */
     @keyframes ggPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.55}50%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
@@ -313,6 +323,14 @@
       display:flex;gap:.5rem;flex-wrap:wrap;
       margin-bottom:1.5rem;justify-content:center;
     }
+    .filter-block{max-width:940px;margin:0 auto 1rem}
+    .filter-block:last-of-type{margin-bottom:1.5rem}
+    .filter-label{
+      display:block;text-align:center;
+      font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--gray);margin-bottom:.55rem;
+    }
+    .filter-block .filter-row{margin-bottom:0}
     .chip{
       padding:.4rem 1rem;border-radius:50px;
       border:1.5px solid var(--border);
@@ -582,10 +600,19 @@
       <button class="map-chip active" data-filter="todos" onclick="setMapFilter(this,'todos')">Todos</button>
       <button class="map-chip" data-filter="exclusivo" onclick="setMapFilter(this,'exclusivo')"><span class="chip-icon sg" aria-hidden="true"></span>Solo 100% GF</button>
       <button class="map-chip" data-filter="mixto" onclick="setMapFilter(this,'mixto')"><span class="chip-icon mix" aria-hidden="true"></span>Con opciones</button>
+      <button class="map-chip" data-filter="cat:panaderia" onclick="setMapFilter(this,'cat:panaderia')">Panaderías</button>
+      <button class="map-chip" data-filter="cat:restaurante" onclick="setMapFilter(this,'cat:restaurante')">Restaurantes</button>
+      <button class="map-chip" data-filter="cat:cafeteria" onclick="setMapFilter(this,'cat:cafeteria')">Cafés</button>
       <button class="map-chip map-chip-geo" onclick="geolocateMe()">
         <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
         Cerca de mí
       </button>
+    </div>
+    <div class="map-controls map-controls-secondary" aria-label="Filtros por momento">
+      <button class="map-chip" data-filter="moment:desayuno" onclick="setMapFilter(this,'moment:desayuno')">Desayuno o merienda</button>
+      <button class="map-chip" data-filter="moment:almuerzo" onclick="setMapFilter(this,'moment:almuerzo')">Almuerzo o cena</button>
+      <button class="map-chip" data-filter="moment:postre" onclick="setMapFilter(this,'moment:postre')">Postre / helado</button>
+      <button class="map-chip" data-filter="moment:llevar" onclick="setMapFilter(this,'moment:llevar')">Para llevar</button>
     </div>
 
     <div id="map"></div>
@@ -619,22 +646,47 @@
       <p class="section-sub">Filtrate por tipo o barrio y encontrá dónde comer. Confirmá siempre con el local antes de ir.</p>
     </div>
 
-    <div class="filter-row" data-aos="fade-up" data-aos-delay="50">
-      <button class="chip active" data-filter="todos" onclick="setDirFilter(this,'todos')">Todos</button>
-      <button class="chip" data-filter="exclusivo" onclick="setDirFilter(this,'exclusivo')"><span class="chip-icon sg" aria-hidden="true"></span>100% GF</button>
-      <button class="chip" data-filter="mixto" onclick="setDirFilter(this,'mixto')"><span class="chip-icon mix" aria-hidden="true"></span>Mixtos</button>
-      <button class="chip" data-filter="Centro" onclick="setDirFilter(this,'Centro')">Centro</button>
-      <button class="chip" data-filter="Ciudad Vieja" onclick="setDirFilter(this,'Ciudad Vieja')">Ciudad Vieja</button>
-      <button class="chip" data-filter="Pocitos" onclick="setDirFilter(this,'Pocitos')">Pocitos</button>
-      <button class="chip" data-filter="Punta Carretas" onclick="setDirFilter(this,'Punta Carretas')">P. Carretas</button>
-      <button class="chip" data-filter="Cordón" onclick="setDirFilter(this,'Cordón')">Cordón</button>
-      <button class="chip" data-filter="La Comercial" onclick="setDirFilter(this,'La Comercial')">La Comercial</button>
-      <button class="chip" data-filter="Palermo" onclick="setDirFilter(this,'Palermo')">Palermo</button>
-      <button class="chip" data-filter="Carrasco" onclick="setDirFilter(this,'Carrasco')">Carrasco</button>
-      <button class="chip" data-filter="Ciudad de la Costa" onclick="setDirFilter(this,'Ciudad de la Costa')">Ciudad de la Costa</button>
-      <button class="chip" data-filter="El Pinar" onclick="setDirFilter(this,'El Pinar')">El Pinar</button>
-      <button class="chip" data-filter="Piriápolis" onclick="setDirFilter(this,'Piriápolis')">Piriápolis</button>
-      <button class="chip" data-filter="Online" onclick="setDirFilter(this,'Online')">Online</button>
+    <div class="filter-block" data-aos="fade-up" data-aos-delay="50">
+      <span class="filter-label">Tipo de experiencia</span>
+      <div class="filter-row">
+        <button class="chip active" data-filter="todos" onclick="setDirFilter(this,'todos')">Todos</button>
+        <button class="chip" data-filter="exclusivo" onclick="setDirFilter(this,'exclusivo')"><span class="chip-icon sg" aria-hidden="true"></span>100% GF</button>
+        <button class="chip" data-filter="mixto" onclick="setDirFilter(this,'mixto')"><span class="chip-icon mix" aria-hidden="true"></span>Con opciones</button>
+        <button class="chip" data-filter="cat:panaderia" onclick="setDirFilter(this,'cat:panaderia')">Panaderías</button>
+        <button class="chip" data-filter="cat:restaurante" onclick="setDirFilter(this,'cat:restaurante')">Restaurantes</button>
+        <button class="chip" data-filter="cat:cafeteria" onclick="setDirFilter(this,'cat:cafeteria')">Cafés</button>
+        <button class="chip" data-filter="cat:heladeria" onclick="setDirFilter(this,'cat:heladeria')">Heladerías</button>
+        <button class="chip" data-filter="cat:almacen" onclick="setDirFilter(this,'cat:almacen')">Almacenes</button>
+      </div>
+    </div>
+
+    <div class="filter-block" data-aos="fade-up" data-aos-delay="80">
+      <span class="filter-label">Elegí por momento</span>
+      <div class="filter-row">
+        <button class="chip" data-filter="moment:desayuno" onclick="setDirFilter(this,'moment:desayuno')">Desayuno o merienda</button>
+        <button class="chip" data-filter="moment:almuerzo" onclick="setDirFilter(this,'moment:almuerzo')">Almuerzo o cena</button>
+        <button class="chip" data-filter="moment:postre" onclick="setDirFilter(this,'moment:postre')">Postre / helado</button>
+        <button class="chip" data-filter="moment:llevar" onclick="setDirFilter(this,'moment:llevar')">Para llevar</button>
+        <button class="chip" data-filter="moment:compras" onclick="setDirFilter(this,'moment:compras')">Compras SG</button>
+      </div>
+    </div>
+
+    <div class="filter-block" data-aos="fade-up" data-aos-delay="110">
+      <span class="filter-label">Zona</span>
+      <div class="filter-row">
+        <button class="chip" data-filter="Centro" onclick="setDirFilter(this,'Centro')">Centro</button>
+        <button class="chip" data-filter="Ciudad Vieja" onclick="setDirFilter(this,'Ciudad Vieja')">Ciudad Vieja</button>
+        <button class="chip" data-filter="Pocitos" onclick="setDirFilter(this,'Pocitos')">Pocitos</button>
+        <button class="chip" data-filter="Punta Carretas" onclick="setDirFilter(this,'Punta Carretas')">P. Carretas</button>
+        <button class="chip" data-filter="Cordón" onclick="setDirFilter(this,'Cordón')">Cordón</button>
+        <button class="chip" data-filter="La Comercial" onclick="setDirFilter(this,'La Comercial')">La Comercial</button>
+        <button class="chip" data-filter="Palermo" onclick="setDirFilter(this,'Palermo')">Palermo</button>
+        <button class="chip" data-filter="Carrasco" onclick="setDirFilter(this,'Carrasco')">Carrasco</button>
+        <button class="chip" data-filter="Ciudad de la Costa" onclick="setDirFilter(this,'Ciudad de la Costa')">Ciudad de la Costa</button>
+        <button class="chip" data-filter="El Pinar" onclick="setDirFilter(this,'El Pinar')">El Pinar</button>
+        <button class="chip" data-filter="Piriápolis" onclick="setDirFilter(this,'Piriápolis')">Piriápolis</button>
+        <button class="chip" data-filter="Online" onclick="setDirFilter(this,'Online')">Online</button>
+      </div>
     </div>
 
     <div class="dir-grid" id="dir-grid"></div>
@@ -781,7 +833,7 @@
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
   <script src="/data.js?v=2.1"></script>
-  <script src="/app.js?v=2.1"></script>
+  <script src="/app.js?v=2.2"></script>
   <script src="/auth.js?v=2.1"></script>
   <script src="/business-cta.js?v=1.2"></script>
 

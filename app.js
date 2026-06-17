@@ -55,6 +55,40 @@ function getCatSVG(category, color) {
   return color ? svg.replace('stroke="currentColor"', 'stroke="' + color + '"') : svg;
 }
 
+var CATEGORY_LABELS = {
+  restaurante: 'Restaurante',
+  cafeteria: 'Cafetería',
+  panaderia: 'Panadería',
+  heladeria: 'Heladería',
+  rotiseria: 'Para llevar',
+  almacen: 'Almacén',
+  hotel: 'Hotel',
+  otro: 'Otro',
+};
+
+var MOMENT_FILTERS = {
+  'moment:desayuno': ['cafeteria', 'panaderia'],
+  'moment:almuerzo': ['restaurante', 'rotiseria'],
+  'moment:postre': ['heladeria', 'cafeteria', 'panaderia'],
+  'moment:llevar': ['rotiseria', 'panaderia', 'almacen'],
+  'moment:compras': ['almacen'],
+};
+
+function formatCategory(category) {
+  return CATEGORY_LABELS[category] || category || 'Otro';
+}
+
+function matchesFilter(lugar, filter) {
+  if (!lugar || filter === 'todos') return true;
+  if (filter === 'exclusivo' || filter === 'mixto') return lugar.tipo === filter;
+  if (filter && filter.indexOf('cat:') === 0) return lugar.category === filter.replace('cat:', '');
+  if (filter && filter.indexOf('moment:') === 0) {
+    return (MOMENT_FILTERS[filter] || []).indexOf(lugar.category) !== -1;
+  }
+  if (filter === 'Online') return lugar.neighborhood.indexOf('Online') === 0;
+  return lugar.neighborhood === filter;
+}
+
 function escapeHtml(value) {
   return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
     return {
@@ -138,6 +172,7 @@ function initMap(){
     maxZoom: 19,
     attribution: '&copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OSM</a>'
   }).addTo(map);
+  map.attributionControl.setPrefix(false);
 
   L.control.zoom({ position: 'bottomright' }).addTo(map);
 
@@ -193,6 +228,7 @@ function initMap(){
 
     marker._lugartipo = l.tipo;
     marker._slug      = l.slug;
+    marker._lugar     = l;
     markers.push(marker);
 
     marker.on('popupopen', function(){
@@ -243,7 +279,7 @@ function setMapFilter(btn, filter){
   btn.classList.add('active');
   mapFilter = filter;
   markers.forEach(function(m){
-    if(filter === 'todos' || m._lugartipo === filter){
+    if(matchesFilter(m._lugar, filter)){
       if(!map.hasLayer(m)) m.addTo(map);
     } else {
       if(map.hasLayer(m)) map.removeLayer(m);
@@ -312,15 +348,12 @@ function scrollRail(direction){
 function buildDir(filter, q){
   var grid = document.getElementById('dir-grid');
   var filtered = lugares.filter(function(l){
-    var matchFilter =
-      filter === 'todos' ||
-      l.tipo === filter ||
-      l.neighborhood === filter ||
-      (filter === 'Online' && l.neighborhood.indexOf('Online') === 0);
+    var matchFilter = matchesFilter(l, filter);
     var matchQ = !q ||
       l.name.toLowerCase().indexOf(q) !== -1 ||
       l.neighborhood.toLowerCase().indexOf(q) !== -1 ||
-      l.desc.toLowerCase().indexOf(q) !== -1;
+      l.desc.toLowerCase().indexOf(q) !== -1 ||
+      formatCategory(l.category).toLowerCase().indexOf(q) !== -1;
     return matchFilter && matchQ;
   });
 
@@ -341,7 +374,7 @@ function buildDir(filter, q){
         '</span>' +
         '<span class="dc-badge '+escapeHtml(l.tipo)+'">'+(l.tipo==='exclusivo'?'100% GF':'Mixto')+'</span>' +
       '</div>' +
-      '<div class="dc-meta"><span>'+escapeHtml(l.neighborhood)+'</span><span class="dc-sep">·</span><span>'+escapeHtml(l.category)+'</span></div>' +
+      '<div class="dc-meta"><span>'+escapeHtml(l.neighborhood)+'</span><span class="dc-sep">·</span><span>'+escapeHtml(formatCategory(l.category))+'</span></div>' +
       '<p class="dc-desc">'+escapeHtml(l.desc)+'</p>' +
       '<span class="dc-cta">Ver ficha <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>' +
     '</a>';
