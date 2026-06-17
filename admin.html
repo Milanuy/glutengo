@@ -245,14 +245,13 @@
             <th>Local</th>
             <th>Plan</th>
             <th>Estado</th>
-            <th>Posición</th>
             <th>Barrio</th>
             <th>Registro</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody id="biz-tbody">
-          <tr><td colspan="7" class="empty">Cargando…</td></tr>
+          <tr><td colspan="6" class="empty">Cargando…</td></tr>
         </tbody>
       </table>
     </div>
@@ -317,7 +316,7 @@ if (savedPass) {
 // ── LOAD DATA ──────────────────────────────────────────────────────────────
 function loadBusinesses() {
   document.getElementById('biz-tbody').innerHTML =
-    '<tr><td colspan="7" class="empty">Cargando…</td></tr>';
+    '<tr><td colspan="6" class="empty">Cargando…</td></tr>';
   fetch(API, { headers: { 'x-admin-token': adminToken } })
     .then(function(r) { return r.json(); })
     .then(function(data) { processData(data); })
@@ -378,7 +377,7 @@ function renderTable() {
 
   var tbody = document.getElementById('biz-tbody');
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">No hay negocios que coincidan.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">No hay negocios que coincidan.</td></tr>';
     return;
   }
 
@@ -389,13 +388,6 @@ function renderTable() {
       (PLAN_LABELS_ES[b.plan] || b.plan) + '</span>';
     var fecha = b.created_at ? b.created_at.slice(0, 10) : '—';
     var actions = buildActions(b);
-    var pos = b.position || 999;
-    var posHtml =
-      '<div class="pos-wrap">' +
-        '<input type="number" class="pos-input" value="' + pos + '" min="1" max="999" ' +
-          'id="pos-' + b.id + '" title="Posición en el directorio (1 = primero)" />' +
-        '<button class="btn-save-pos" onclick="savePosition(\'' + b.id + '\')">✓</button>' +
-      '</div>';
 
     return '<tr>' +
       '<td><strong style="cursor:pointer;color:var(--green-deep)" onclick="showDetail(\'' + b.id + '\')">' + (b.nombre || '—') + '</strong>' +
@@ -403,7 +395,6 @@ function renderTable() {
       '</td>' +
       '<td>' + planPill + '</td>' +
       '<td>' + statusBadge + '</td>' +
-      '<td>' + posHtml + '</td>' +
       '<td style="color:var(--gray);font-size:.83rem">' + (b.barrio || '—') + '</td>' +
       '<td style="color:var(--gray);font-size:.8rem">' + fecha + '</td>' +
       '<td>' + actions + '</td>' +
@@ -451,14 +442,6 @@ function approve(id) { patch(id, { status: 'active' }, '✅ Negocio activado'); 
 function reject(id)  { patch(id, { status: 'rejected' }, '🚫 Negocio rechazado'); }
 function expire(id)  { patch(id, { status: 'expired' }, 'Negocio suspendido'); }
 
-function savePosition(id) {
-  var inp = document.getElementById('pos-' + id);
-  if (!inp) return;
-  var pos = parseInt(inp.value, 10);
-  if (isNaN(pos) || pos < 1) { showToast('Posición inválida'); return; }
-  patch(id, { position: pos }, '📍 Posición ' + pos + ' guardada');
-}
-
 // ── DETAIL MODAL ───────────────────────────────────────────────────────────
 function showDetail(id) {
   var b = allBiz.find(function(x) { return x.id === id; });
@@ -473,27 +456,13 @@ function showDetail(id) {
     '<p><strong>Teléfono:</strong> ' + (b.telefono || '—') + '</p>' +
     '<p><strong>Dirección:</strong> ' + (b.direccion || '—') + ', ' + (b.barrio || '—') + '</p>' +
     '<p><strong>Tipo:</strong> ' + (b.tipo === 'exclusivo' ? '100% sin gluten' : 'Con opciones SG') + '</p>' +
-    '<p><strong>Categoría:</strong> ' + (b.categoria || '—') + '</p>' +
     '<p><strong>Registrado:</strong> ' + (b.created_at ? b.created_at.slice(0, 10) : '—') + '</p>' +
-    (b.activated_at ? '<p><strong>Activado:</strong> ' + b.activated_at.slice(0, 10) + '</p>' : '') +
-    (b.expires_at   ? '<p><strong>Vence:</strong> '    + b.expires_at.slice(0, 10)   + '</p>' : '') +
-    (b.mp_payment_id ? '<p><strong>MP Payment ID:</strong> ' + b.mp_payment_id + '</p>' : '') +
     (b.mensaje ? '<p style="margin-top:.75rem;padding:.75rem;background:var(--bg);border-radius:8px;font-size:.88rem"><em>"' + b.mensaje + '"</em></p>' : '') +
-    '<div class="modal-field" style="margin-top:1rem">' +
-      '<label>Notas internas</label>' +
-      '<textarea id="modal-notes" placeholder="Notas privadas sobre este negocio…">' + (b.admin_notes || '') + '</textarea>' +
-    '</div>' +
     '<div class="modal-actions">' +
       '<button class="btn-sm" style="background:#F3F4F6;color:#374151" onclick="closeModal()">Cerrar</button>' +
-      '<button class="btn-sm btn-approve" onclick="saveNotes(\'' + id + '\');closeModal()">Guardar notas</button>' +
       (b.email ? '<a href="mailto:' + b.email + '" class="btn-sm" style="background:var(--green-light);color:var(--green);text-decoration:none">✉ Email</a>' : '') +
     '</div>';
   document.getElementById('modal-overlay').classList.add('show');
-}
-
-function saveNotes(id) {
-  var notes = (document.getElementById('modal-notes') || {}).value || '';
-  patch(id, { notes: notes }, 'Notas guardadas ✓');
 }
 
 function closeModal() {

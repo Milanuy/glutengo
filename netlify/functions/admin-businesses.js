@@ -1,10 +1,11 @@
 /**
  * GlutenGo — Netlify Function: admin-businesses
  * GET  /api/admin-businesses          → lista todos los negocios
- * PATCH /api/admin-businesses         → actualiza status y/o position
+ * PATCH /api/admin-businesses         → actualiza status
  *
  * Autenticación: header x-admin-token debe coincidir con ADMIN_PASSWORD env var.
  * Si Netlify todavía no tiene la variable, mantiene el token histórico del MVP.
+ * La tabla businesses actual no tiene position/admin_notes/activated_at/expires_at.
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -55,7 +56,7 @@ exports.handler = async function (event) {
     try {
       const res = await fetch(
         SUPABASE_URL + '/rest/v1/businesses' +
-        '?select=*&order=position.asc,created_at.desc',
+        '?select=*&order=created_at.desc',
         { headers: sbHeaders() }
       );
       if (!res.ok) {
@@ -69,28 +70,18 @@ exports.handler = async function (event) {
     }
   }
 
-  // ─── PATCH: actualizar status y/o position ─────────────────────────────────
+  // ─── PATCH: actualizar status ──────────────────────────────────────────────
   if (event.httpMethod === 'PATCH') {
     let body;
     try { body = JSON.parse(event.body || '{}'); } catch (_) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON inválido' }) };
     }
 
-    const { id, status, position, notes } = body;
+    const { id, status } = body;
     if (!id) return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'id requerido' }) };
 
     const patch = {};
-    if (status   !== undefined) patch.status   = status;
-    if (position !== undefined) patch.position  = parseInt(position, 10);
-    if (notes    !== undefined) patch.admin_notes = notes;
-
-    // Si se activa, registrar fecha de activación y vencimiento (30 días)
-    if (status === 'active') {
-      patch.activated_at = new Date().toISOString();
-      const exp = new Date();
-      exp.setDate(exp.getDate() + 30);
-      patch.expires_at = exp.toISOString();
-    }
+    if (status !== undefined) patch.status = status;
 
     try {
       const res = await fetch(

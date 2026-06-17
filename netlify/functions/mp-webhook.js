@@ -131,17 +131,9 @@ exports.handler = async function (event) {
   // ── 2. Buscar el negocio en Supabase por email del pagador ─────────────────
   let negocio = null;
   try {
-    // Buscar primero por mp_payment_id (si ya lo guardamos al registrar)
-    let res = await fetch(
-      SUPABASE_URL + '/rest/v1/businesses?mp_payment_id=eq.' + encodeURIComponent(paymentId) +
-      '&select=*&limit=1',
-      { headers: sbHeaders() }
-    );
-    let rows = res.ok ? await res.json() : [];
-
-    // Si no encontramos por payment_id, buscar por email del pagador
-    if (!rows.length && payerEmail) {
-      res = await fetch(
+    let rows = [];
+    if (payerEmail) {
+      const res = await fetch(
         SUPABASE_URL + '/rest/v1/businesses?email=eq.' + encodeURIComponent(payerEmail) +
         '&order=created_at.desc&select=*&limit=1',
         { headers: sbHeaders() }
@@ -172,10 +164,6 @@ exports.handler = async function (event) {
   }
 
   // ── 3. Activar el negocio ──────────────────────────────────────────────────
-  const now = new Date();
-  const exp = new Date(now);
-  exp.setDate(exp.getDate() + 30);
-
   try {
     await fetch(
       SUPABASE_URL + '/rest/v1/businesses?id=eq.' + negocio.id,
@@ -183,11 +171,8 @@ exports.handler = async function (event) {
         method: 'PATCH',
         headers: sbHeaders({ Prefer: 'return=minimal' }),
         body: JSON.stringify({
-          status:        'active',
-          plan:          plan,
-          mp_payment_id: paymentId,
-          activated_at:  now.toISOString(),
-          expires_at:    exp.toISOString(),
+          status: 'active',
+          plan:   plan,
         }),
       }
     );

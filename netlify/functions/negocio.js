@@ -169,7 +169,7 @@ exports.handler = async function (event) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON inválido' }) };
   }
 
-  const { nombre, tipo, categoria, direccion, barrio, email, telefono, plan, mensaje } = data;
+  const { nombre, tipo, direccion, barrio, email, telefono, plan, mensaje } = data;
 
   if (!nombre || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'nombre y email son requeridos' }) };
@@ -190,7 +190,6 @@ exports.handler = async function (event) {
       body: JSON.stringify({
         nombre:    nombre.trim(),
         tipo:      tipo || 'mixto',
-        categoria: categoria || 'restaurante',
         direccion: (direccion || '').trim(),
         barrio:    (barrio || '').trim(),
         email:     email.toLowerCase().trim(),
@@ -198,7 +197,6 @@ exports.handler = async function (event) {
         plan:      plan || 'basico',
         mensaje:   (mensaje || '').trim().slice(0, 1000),
         status:    plan === 'basico' ? 'pending' : 'pending_payment',
-        position:  999,
       }),
     });
     results.saved = sbRes.ok;

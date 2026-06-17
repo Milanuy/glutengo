@@ -190,21 +190,9 @@ exports.handler = async function (event) {
 
   const results = { saved: false, emailed: false, token: null };
 
-  // ── 1. Upsert en Supabase: insert o ignora duplicado
+  // ── 1. Guardar en Supabase sin duplicar emails
   try {
-    await fetch(SUPABASE_URL + '/rest/v1/waitlist', {
-      method: 'POST',
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        Prefer: 'resolution=ignore-duplicates',
-      },
-      body: JSON.stringify({ email }),
-    });
-
-    // Obtener el token (sea nuevo o existente)
-    const getRes = await fetch(
+    let getRes = await fetch(
       SUPABASE_URL + '/rest/v1/waitlist?email=eq.' + encodeURIComponent(email) + '&select=token',
       {
         headers: {
@@ -214,12 +202,35 @@ exports.handler = async function (event) {
       }
     );
 
-    if (getRes.ok) {
-      const rows = await getRes.json();
-      if (rows && rows.length > 0 && rows[0].token) {
-        results.token = rows[0].token;
-        results.saved = true;
-      }
+    let rows = getRes.ok ? await getRes.json() : [];
+
+    if (!rows.length) {
+      await fetch(SUPABASE_URL + '/rest/v1/waitlist', {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: 'Bearer ' + SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      getRes = await fetch(
+        SUPABASE_URL + '/rest/v1/waitlist?email=eq.' + encodeURIComponent(email) + '&select=token',
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: 'Bearer ' + SUPABASE_KEY,
+          },
+        }
+      );
+      rows = getRes.ok ? await getRes.json() : [];
+    }
+
+    if (rows && rows.length > 0 && rows[0].token) {
+      results.token = rows[0].token;
+      results.saved = true;
     }
   } catch (err) {
     console.error('Supabase error:', err.message);
