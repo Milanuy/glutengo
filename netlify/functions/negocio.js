@@ -20,10 +20,19 @@ const FROM_EMAIL = 'GlutenGo <onboarding@resend.dev>';
 const ADMIN_EMAIL = 'anmaurano@gmail.com';
 const BASE_URL = 'https://glutengo.netlify.app';
 
-// Links de pago de MercadoPago (configurar en Netlify env vars)
+// Links de pago de MercadoPago. El verificado usa un plan de suscripción real.
+const DEFAULT_MP_LINK_VERIFICADO =
+  'https://www.mercadopago.com.uy/subscriptions/checkout?preapproval_plan_id=1195963a38ba4d48822d0c4907468a50';
+
+function configuredSubscriptionLink(value, fallback) {
+  if (!value || /VERIFICADO|CERTIFICADO/.test(value)) return fallback;
+  if (!/mercadopago\.com\.uy\/subscriptions\/checkout\?preapproval_plan_id=/.test(value)) return fallback;
+  return value;
+}
+
 const MP_LINKS = {
-  verificado:  process.env.MP_LINK_VERIFICADO  || 'https://mpago.la/VERIFICADO',
-  certificado: process.env.MP_LINK_CERTIFICADO || 'https://mpago.la/CERTIFICADO',
+  verificado: configuredSubscriptionLink(process.env.MP_LINK_VERIFICADO, DEFAULT_MP_LINK_VERIFICADO),
+  certificado: configuredSubscriptionLink(process.env.MP_LINK_CERTIFICADO, null),
 };
 
 const PLANES = {
