@@ -54,17 +54,17 @@ async function buildWelcomeEmail(negocio) {
     <h1 style="margin:0;font-size:2rem;font-weight:900;color:#fff">Gluten<span style="color:#E8A93C">Go</span></h1>
   </td></tr>
   <tr><td style="padding:2rem 2.5rem">
-    <h2 style="color:#0E3D22;text-align:center">¡Tu local ya está activo! 🎉</h2>
+    <h2 style="color:#0E3D22;text-align:center">Tu local ya está activo</h2>
     <p style="color:#374151;line-height:1.65">
       Hola, el pago fue confirmado y <strong>${negocio.nombre}</strong> ya aparece en el directorio de GlutenGo
       con el plan <strong>${PLAN_LABELS[negocio.plan] || negocio.plan}</strong>.
     </p>
     <div style="background:#F0FDF4;border-radius:12px;padding:1.25rem;margin:1.25rem 0">
       <p style="font-weight:700;color:#0E3D22;margin:0 0 .5rem">¿Qué sigue?</p>
-      <p style="color:#374151;font-size:.88rem;margin:.3rem 0">✅ Tu ficha ya está visible en el mapa y el directorio.</p>
-      ${negocio.plan === 'verificado' ? '<p style="color:#374151;font-size:.88rem;margin:.3rem 0">🏅 Te contactaremos para coordinar el badge de verificación.</p>' : ''}
-      ${negocio.plan === 'certificado' ? '<p style="color:#374151;font-size:.88rem;margin:.3rem 0">🔍 Coordinamos la auditoría presencial en los próximos 5 días hábiles.</p>' : ''}
-      <p style="color:#374151;font-size:.88rem;margin:.3rem 0">📞 Ante cualquier consulta escribinos a <a href="mailto:${ADMIN_EMAIL}" style="color:#166534">${ADMIN_EMAIL}</a></p>
+      <p style="color:#374151;font-size:.88rem;margin:.3rem 0">Tu ficha ya está visible en el mapa y el directorio.</p>
+      ${negocio.plan === 'verificado' ? '<p style="color:#374151;font-size:.88rem;margin:.3rem 0">Te contactaremos para coordinar el badge de verificación.</p>' : ''}
+      ${negocio.plan === 'certificado' ? '<p style="color:#374151;font-size:.88rem;margin:.3rem 0">Coordinamos la auditoría presencial en los próximos 5 días hábiles.</p>' : ''}
+      <p style="color:#374151;font-size:.88rem;margin:.3rem 0">Ante cualquier consulta escribinos a <a href="mailto:${ADMIN_EMAIL}" style="color:#166534">${ADMIN_EMAIL}</a></p>
     </div>
     <div style="text-align:center;margin-top:1.5rem">
       <a href="${BASE_URL}" style="display:inline-block;background:#166534;color:#fff;text-decoration:none;padding:.75rem 1.75rem;border-radius:12px;font-weight:700">
@@ -157,7 +157,7 @@ exports.handler = async function (event) {
         headers: { Authorization: 'Bearer ' + RESEND_KEY, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: FROM_EMAIL, to: [ADMIN_EMAIL],
-          subject: '⚠️ Pago MP sin negocio asociado — ID ' + paymentId,
+          subject: 'Pago MP sin negocio asociado — ID ' + paymentId,
           html: '<p>Pago aprobado <strong>' + paymentId + '</strong> de <strong>' + payerEmail + '</strong> ($' + payment.transaction_amount + ' UYU) pero no encontramos el negocio en Supabase. Activarlo manualmente.</p>',
         }),
       }).catch(() => {});
@@ -199,7 +199,7 @@ exports.handler = async function (event) {
           from: FROM_EMAIL,
           reply_to: ADMIN_EMAIL,
           to: [negocio.email],
-          subject: '¡' + negocio.nombre + ' ya está activo en GlutenGo! 🎉',
+          subject: negocio.nombre + ' ya está activo en GlutenGo',
           html,
         }),
       });
@@ -209,7 +209,7 @@ exports.handler = async function (event) {
         headers: { Authorization: 'Bearer ' + RESEND_KEY, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           from: FROM_EMAIL, to: [ADMIN_EMAIL],
-          subject: '✅ Pago confirmado: ' + negocio.nombre + ' (' + (PLAN_LABELS[plan] || plan) + ')',
+          subject: 'Pago confirmado: ' + negocio.nombre + ' (' + (PLAN_LABELS[plan] || plan) + ')',
           html: '<p><strong>' + negocio.nombre + '</strong> pagó y fue activado automáticamente. Plan: <strong>' + (PLAN_LABELS[plan] || plan) + '</strong>. Payment ID: ' + paymentId + '</p>',
         }),
       });

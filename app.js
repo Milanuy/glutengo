@@ -55,6 +55,16 @@ function getCatSVG(category, color) {
   return color ? svg.replace('stroke="currentColor"', 'stroke="' + color + '"') : svg;
 }
 
+function emptyStateSvg(color) {
+  var stroke = color || '#9CA3AF';
+  return '<svg width="42" height="42" fill="none" stroke="' + stroke + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">' +
+    '<circle cx="11" cy="11" r="7"/>' +
+    '<path d="M20 20l-3.5-3.5"/>' +
+    '<path d="M8.5 9.5h.01M13.5 9.5h.01"/>' +
+    '<path d="M8.8 13.8c1.5 1.1 3 1.1 4.4 0"/>' +
+  '</svg>';
+}
+
 var dirFilter  = 'todos';
 var searchTerm = '';
 
@@ -281,7 +291,7 @@ function buildDir(filter, q){
   });
 
   if(!filtered.length){
-    grid.innerHTML = '<div id="dir-empty"><p style="font-size:2rem">🤷</p><p>Ningún lugar encontrado para ese filtro.</p></div>';
+    grid.innerHTML = '<div id="dir-empty">' + emptyStateSvg() + '<p>Ningún lugar encontrado para ese filtro.</p></div>';
     return;
   }
 
@@ -334,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function(){
   } else {
     console.error('data.js no cargó o lugares está vacío');
     document.getElementById('dir-grid').innerHTML =
-      '<div id="dir-empty"><p style="font-size:2rem">⚠️</p><p>No se pudieron cargar los lugares. Recargá la página.</p></div>';
+      '<div id="dir-empty">' + emptyStateSvg('#D97706') + '<p>No se pudieron cargar los lugares. Recargá la página.</p></div>';
   }
 });
 

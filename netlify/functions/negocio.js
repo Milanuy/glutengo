@@ -39,10 +39,10 @@ function buildAdminEmail(data) {
 <head><meta charset="UTF-8"/></head>
 <body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:2rem">
   <div style="background:#fff;max-width:560px;margin:0 auto;border-radius:12px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.1)">
-    <h2 style="color:#0E3D22;margin-top:0">🏪 Nuevo negocio registrado en GlutenGo</h2>
+    <h2 style="color:#0E3D22;margin-top:0">Nuevo negocio registrado en GlutenGo</h2>
     <table style="width:100%;border-collapse:collapse">
       <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151;width:40%">Local</td><td style="padding:.5rem">${data.nombre}</td></tr>
-      <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Tipo</td><td style="padding:.5rem">${data.tipo === 'exclusivo' ? '🌟 100% sin gluten' : '⚡ Con opciones SG'}</td></tr>
+      <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Tipo</td><td style="padding:.5rem">${data.tipo === 'exclusivo' ? '100% sin gluten' : 'Con opciones SG'}</td></tr>
       <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Dirección</td><td style="padding:.5rem">${data.direccion}${data.barrio ? ', ' + data.barrio : ''}</td></tr>
       <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Email</td><td style="padding:.5rem"><a href="mailto:${data.email}">${data.email}</a></td></tr>
       <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Teléfono</td><td style="padding:.5rem">${data.telefono || '—'}</td></tr>
@@ -80,7 +80,6 @@ function buildAutoReply(data) {
 
         <tr>
           <td style="padding:2rem 2.5rem">
-            <div style="font-size:2.5rem;text-align:center;margin-bottom:1rem">🏪</div>
             <h2 style="color:#0E3D22;margin:0 0 .75rem;text-align:center;font-size:1.4rem">
               ¡Recibimos tu solicitud!
             </h2>
@@ -97,15 +96,15 @@ function buildAutoReply(data) {
               <p style="font-weight:700;color:#0E3D22;margin:0 0 .5rem;font-size:.9rem">Lo que sigue:</p>
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr><td style="padding:.3rem 0;color:#374151;font-size:.88rem">
-                  📋 Revisamos la información de tu local
+                  Revisamos la información de tu local
                 </td></tr>
                 <tr><td style="padding:.3rem 0;color:#374151;font-size:.88rem">
-                  📞 Te llamamos o escribimos para completar la ficha
+                  Te llamamos o escribimos para completar la ficha
                 </td></tr>
                 <tr><td style="padding:.3rem 0;color:#374151;font-size:.88rem">
-                  ✅ Tu local aparece en el directorio de GlutenGo
+                  Tu local aparece en el directorio de GlutenGo
                 </td></tr>
-                ${data.plan === 'certificado' ? '<tr><td style="padding:.3rem 0;color:#374151;font-size:.88rem">🏅 Coordinamos la auditoría presencial</td></tr>' : ''}
+                ${data.plan === 'certificado' ? '<tr><td style="padding:.3rem 0;color:#374151;font-size:.88rem">Coordinamos la auditoría presencial</td></tr>' : ''}
               </table>
             </div>
 
@@ -215,7 +214,7 @@ exports.handler = async function (event) {
         body: JSON.stringify({
           from: FROM_EMAIL,
           to: [ADMIN_EMAIL],
-          subject: '🏪 Nuevo negocio en GlutenGo: ' + nombre,
+          subject: 'Nuevo negocio en GlutenGo: ' + nombre,
           html: buildAdminEmail({ nombre, tipo, direccion, barrio, email, telefono, plan: plan || 'basico', mensaje }),
         }),
       });
@@ -229,7 +228,7 @@ exports.handler = async function (event) {
           from: FROM_EMAIL,
           reply_to: ADMIN_EMAIL,
           to: [email.toLowerCase().trim()],
-          subject: '¡Recibimos tu solicitud para GlutenGo! 🌾',
+          subject: 'Recibimos tu solicitud para GlutenGo',
           html: buildAutoReply({ nombre, tipo, plan: plan || 'basico', mensaje }),
         }),
       });

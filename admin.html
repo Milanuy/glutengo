@@ -438,7 +438,7 @@ function patch(id, fields, successMsg) {
   .catch(function(err) { showToast('Error: ' + err.message); });
 }
 
-function approve(id) { patch(id, { status: 'active' }, '✅ Negocio activado'); }
+function approve(id) { patch(id, { status: 'active' }, 'Negocio activado'); }
 function reject(id)  { patch(id, { status: 'rejected' }, '🚫 Negocio rechazado'); }
 function expire(id)  { patch(id, { status: 'expired' }, 'Negocio suspendido'); }
 

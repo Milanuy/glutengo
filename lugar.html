@@ -289,8 +289,8 @@
     <div class="loading">Cargando…</div>
   </div>
 
-  <script src="/data.js?v=1.4"></script>
-  <script src="/auth.js?v=1.4"></script>
+  <script src="/data.js?v=1.6"></script>
+  <script src="/auth.js?v=1.6"></script>
   <script>
   (function(){
     // ── Leer slug de la URL
@@ -303,7 +303,9 @@
     if (!lugar) {
       app.innerHTML = `
         <div class="not-found">
-          <div style="font-size:3rem;margin-bottom:1rem">🤷‍♀️</div>
+          <div style="width:58px;height:58px;border-radius:18px;background:#F3F4F6;color:#6B7280;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+            <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/><path d="M8.5 9.5h.01M13.5 9.5h.01"/><path d="M8.8 13.8c1.5 1.1 3 1.1 4.4 0"/></svg>
+          </div>
           <h2>Lugar no encontrado</h2>
           <p style="color:#6B7280;margin-bottom:1.5rem">El slug "<strong>${slug||''}</strong>" no existe en nuestro directorio.</p>
           <a href="/" style="display:inline-block;background:var(--green);color:#fff;padding:.75rem 1.5rem;border-radius:12px;text-decoration:none;font-weight:700">Ver todos los lugares</a>
@@ -328,10 +330,10 @@
           : scorePct >= 60 ? 'band-consulta-antes'
           : 'band-requiere-validacion',
         bandLabel: scorePct === null ? 'Aún sin valoraciones'
-          : scorePct >= 95 ? '✅ Come tranquilo'
-          : scorePct >= 80 ? '👍 Muy recomendado'
-          : scorePct >= 60 ? '⚠️ Consultá antes'
-          : '🔴 Requiere validación',
+          : scorePct >= 95 ? 'Come tranquilo'
+          : scorePct >= 80 ? 'Muy recomendado'
+          : scorePct >= 60 ? 'Consultá antes'
+          : 'Requiere validación',
         dash: scorePct !== null ? circ * (1 - scorePct/100) : circ,
         ringColor: scorePct === null ? '#d1d5db'
           : scorePct >= 80 ? '#166534'
@@ -381,7 +383,7 @@
     // ── Render completo
     app.innerHTML = `
       <div class="lugar-hero">
-        <span class="tipo-badge ${lugar.tipo}">${lugar.tipo === 'exclusivo' ? '🌟 100% Sin Gluten' : '⚡ Con Opciones SG'}</span>
+        <span class="tipo-badge ${lugar.tipo}">${lugar.tipo === 'exclusivo' ? '100% Sin Gluten' : 'Con Opciones SG'}</span>
         <h1 class="lugar-name">${lugar.name}</h1>
         <div class="lugar-meta">
           <span>
@@ -520,7 +522,7 @@
       navigator.clipboard.writeText(location.href).then(function(){
         var btn = document.querySelectorAll('.share-btn')[1];
         var prev = btn.innerHTML;
-        btn.innerHTML = '✅ ¡Copiado!';
+        btn.innerHTML = 'Copiado';
         setTimeout(function(){btn.innerHTML=prev;},2000);
       });
     };
@@ -603,13 +605,13 @@
 
     // ── Star rating
     var selectedStars = 0;
-    var STAR_LABELS = ['','😬 Peligroso — contaminación cruzada','😕 Mala experiencia','😐 Regular — pedir con cuidado','😊 Buena experiencia','🤩 ¡Excelente! Come tranquilo'];
+    var STAR_LABELS = ['','Peligroso: contaminación cruzada','Mala experiencia','Regular: pedir con cuidado','Buena experiencia','Excelente: come tranquilo'];
 
     function renderStars() {
       var h = '';
       for (var i = 1; i <= 5; i++) {
         h += '<button type="button" class="star-btn' + (i <= selectedStars ? ' selected' : '') +
-          '" data-val="' + i + '" onclick="selectStar(' + i + ')" onmouseenter="hoverStar(' + i + ')" onmouseleave="unhoverStar()">⭐</button>';
+          '" data-val="' + i + '" onclick="selectStar(' + i + ')" onmouseenter="hoverStar(' + i + ')" onmouseleave="unhoverStar()">★</button>';
       }
       document.getElementById('stars-row').innerHTML = h;
       document.getElementById('star-label').textContent = selectedStars ? STAR_LABELS[selectedStars] : 'Tocá una estrella para calificar';
@@ -647,11 +649,11 @@
         .then(function(res){ return res.json(); })
         .then(function(data){
           if (data.ok) {
-            showToast('¡Gracias! Tu valoración fue guardada 🌾');
+            showToast('¡Gracias! Tu valoración fue guardada');
             updateScoreUI(data.score, data.count);
             var sec = document.getElementById('rating-section');
             if (sec) {
-              sec.innerHTML = '<div style="background:var(--green-light);border-radius:var(--radius);padding:1rem 1.25rem;text-align:center;margin-bottom:1rem;font-weight:700;color:var(--green-deep)">✅ ¡Gracias por valorar este lugar! Tu voto ya está contado.</div>';
+              sec.innerHTML = '<div style="background:var(--green-light);border-radius:var(--radius);padding:1rem 1.25rem;text-align:center;margin-bottom:1rem;font-weight:700;color:var(--green-deep)">¡Gracias por valorar este lugar! Tu voto ya está contado.</div>';
             }
             // Refrescar reseñas
             fetch('/api/rating?slug=' + encodeURIComponent(slug))
@@ -690,7 +692,7 @@
         } else {
           section.innerHTML =
             '<div class="rating-auth">' +
-              '<p>Iniciá sesión con Google para valorar este lugar y ayudar a otros celíacos a comer seguros 🌾</p>' +
+              '<p>Iniciá sesión con Google para valorar este lugar y ayudar a otros celíacos a comer seguros</p>' +
               '<button class="btn-auth" onclick="GlutenAuth.signInWithGoogle()" style="border:none;cursor:pointer">Continuar con Google →</button>' +
             '</div>';
         }

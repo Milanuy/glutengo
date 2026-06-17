@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GlutenGo — Dónde comer sin gluten en Uruguay</title>
-  <meta name="description" content="Encontrá restaurantes, cafeterías y panaderías 100% libres de gluten o con opciones seguras en Montevideo. Validado por la comunidad celíaca." />
+  <meta name="description" content="Encontrá restaurantes, cafeterías, panaderías y servicios sin gluten en Uruguay. Directorio con mapa, filtros por zona y valoraciones de la comunidad celíaca." />
   <meta name="keywords" content="celíaco uruguay, sin gluten montevideo, restaurantes sin gluten, opciones gf uruguay, glutengo" />
 
   <!-- PWA -->
@@ -16,7 +16,7 @@
 
   <!-- OG / Twitter -->
   <meta property="og:title" content="GlutenGo — Dónde comer sin gluten en Uruguay" />
-  <meta property="og:description" content="Directorio validado por celíacos. 23 lugares en Montevideo, curados con amor." />
+  <meta property="og:description" content="Directorio con mapa de lugares 100% sin gluten y opciones SG en Uruguay, mantenido por la comunidad." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://glutengo.netlify.app" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -136,6 +136,27 @@
       color:var(--gray);pointer-events:none;
     }
     .hero-search input::placeholder{color:#9ca3af}
+    .inline-icon{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:1.1em;height:1.1em;vertical-align:-.16em;
+    }
+    .inline-icon svg{width:100%;height:100%;display:block}
+    .eyebrow-mark{
+      width:18px;height:18px;margin-right:.35rem;
+      display:inline-flex;vertical-align:-.24rem;
+    }
+    .eyebrow-mark svg{width:18px;height:18px;display:block}
+    .chip-icon{
+      width:.62rem;height:.62rem;border-radius:999px;
+      display:inline-block;margin-right:.42rem;vertical-align:.02rem;
+      box-shadow:0 0 0 3px rgba(22,101,52,.08);
+    }
+    .chip-icon.sg{background:var(--green)}
+    .chip-icon.mix{background:var(--amber);box-shadow:0 0 0 3px rgba(232,169,60,.16)}
+    .chip.active .chip-icon,.chip:hover .chip-icon,
+    .map-chip.active .chip-icon,.map-chip:hover .chip-icon{
+      box-shadow:0 0 0 3px rgba(255,255,255,.18);
+    }
 
     /* ─── STATS STRIP ────────────────────────────────────────── */
     .stats-strip{
@@ -333,6 +354,7 @@
       width:80px;height:80px;border-radius:50%;
       background:var(--amber);
       display:flex;align-items:center;justify-content:center;
+      color:var(--green-deep);
       font-size:2rem;flex-shrink:0;
       box-shadow:0 0 0 4px rgba(232,169,60,.3);
     }
@@ -367,7 +389,13 @@
       background:#fff;border-radius:var(--radius);
       padding:2.5rem;box-shadow:var(--shadow);
     }
-    .cta-icon{font-size:2.5rem;margin-bottom:.75rem}
+    .cta-icon{
+      width:48px;height:48px;border-radius:15px;
+      display:flex;align-items:center;justify-content:center;
+      margin:0 auto .9rem;
+      background:var(--green-light);color:var(--green);
+    }
+    .cta-icon svg{width:26px;height:26px}
     .cta-box h2{
       font-family:'Fraunces',Georgia,serif;
       font-size:1.7rem;font-weight:900;margin-bottom:.5rem;
@@ -453,11 +481,16 @@
 
   <!-- ── HERO ────────────────────────────────────────────────── -->
   <section class="hero">
-    <p class="hero-eyebrow">🌾 Uruguay · Comunidad Celíaca</p>
+    <p class="hero-eyebrow">
+      <span class="eyebrow-mark" aria-hidden="true">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 21c0-6 2.5-10.5 7.5-13.5"/><path d="M12 21C8 16.5 7 11.5 9 6"/><path d="M19.5 7.5C16 6.8 13.2 8 11 11"/><path d="M9 6c-2.8 1.4-4.2 3.7-4.2 6.9 3.5.4 6.1-.7 7.7-3.4"/></svg>
+      </span>
+      Uruguay · Comunidad Celíaca
+    </p>
     <h1>Comé sin miedo,<br><em>comé con confianza</em></h1>
     <p class="hero-sub">
-      23 lugares en Montevideo validados por celíacos reales.
-      Sin guías desactualizadas. Sin depender del mesero de turno.
+      Lugares 100% sin gluten, opciones SG y servicios por encargo en Uruguay.
+      Menos guías sueltas, más mapa útil para decidir dónde comer.
     </p>
     <div class="hero-search">
       <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -469,7 +502,7 @@
   <div class="stats-strip">
     <div class="stat">
       <strong id="stat-total">—</strong>
-      <span>lugares cargados</span>
+      <span>lugares y servicios</span>
     </div>
     <div class="stat">
       <strong id="stat-exclusivos">—</strong>
@@ -491,8 +524,8 @@
 
     <div class="map-controls">
       <button class="map-chip active" data-filter="todos" onclick="setMapFilter(this,'todos')">Todos</button>
-      <button class="map-chip" data-filter="exclusivo" onclick="setMapFilter(this,'exclusivo')">🌟 Solo 100% GF</button>
-      <button class="map-chip" data-filter="mixto" onclick="setMapFilter(this,'mixto')">⚡ Con opciones</button>
+      <button class="map-chip" data-filter="exclusivo" onclick="setMapFilter(this,'exclusivo')"><span class="chip-icon sg" aria-hidden="true"></span>Solo 100% GF</button>
+      <button class="map-chip" data-filter="mixto" onclick="setMapFilter(this,'mixto')"><span class="chip-icon mix" aria-hidden="true"></span>Con opciones</button>
       <button class="map-chip map-chip-geo" onclick="geolocateMe()">
         <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
         Cerca de mí
@@ -522,15 +555,19 @@
 
     <div class="filter-row" data-aos="fade-up" data-aos-delay="50">
       <button class="chip active" data-filter="todos" onclick="setDirFilter(this,'todos')">Todos</button>
-      <button class="chip" data-filter="exclusivo" onclick="setDirFilter(this,'exclusivo')">🌟 100% GF</button>
-      <button class="chip" data-filter="mixto" onclick="setDirFilter(this,'mixto')">⚡ Mixtos</button>
+      <button class="chip" data-filter="exclusivo" onclick="setDirFilter(this,'exclusivo')"><span class="chip-icon sg" aria-hidden="true"></span>100% GF</button>
+      <button class="chip" data-filter="mixto" onclick="setDirFilter(this,'mixto')"><span class="chip-icon mix" aria-hidden="true"></span>Mixtos</button>
       <button class="chip" data-filter="Centro" onclick="setDirFilter(this,'Centro')">Centro</button>
       <button class="chip" data-filter="Ciudad Vieja" onclick="setDirFilter(this,'Ciudad Vieja')">Ciudad Vieja</button>
       <button class="chip" data-filter="Pocitos" onclick="setDirFilter(this,'Pocitos')">Pocitos</button>
       <button class="chip" data-filter="Punta Carretas" onclick="setDirFilter(this,'Punta Carretas')">P. Carretas</button>
       <button class="chip" data-filter="Cordón" onclick="setDirFilter(this,'Cordón')">Cordón</button>
+      <button class="chip" data-filter="Bella Vista" onclick="setDirFilter(this,'Bella Vista')">Bella Vista</button>
       <button class="chip" data-filter="Palermo" onclick="setDirFilter(this,'Palermo')">Palermo</button>
       <button class="chip" data-filter="Carrasco" onclick="setDirFilter(this,'Carrasco')">Carrasco</button>
+      <button class="chip" data-filter="Ciudad de la Costa" onclick="setDirFilter(this,'Ciudad de la Costa')">Ciudad de la Costa</button>
+      <button class="chip" data-filter="El Pinar" onclick="setDirFilter(this,'El Pinar')">El Pinar</button>
+      <button class="chip" data-filter="Piriápolis" onclick="setDirFilter(this,'Piriápolis')">Piriápolis</button>
       <button class="chip" data-filter="Online" onclick="setDirFilter(this,'Online')">Online</button>
     </div>
 
@@ -565,7 +602,9 @@
   <!-- ── FOUNDER STORY ─────────────────────────────────────────── -->
   <section class="story-section" id="por-que">
     <div class="story-inner" data-aos="fade-up">
-      <div class="story-avatar">👨‍🍳</div>
+      <div class="story-avatar" aria-hidden="true">
+        <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 21V8"/><path d="M7 8c0-2.8 2.2-5 5-5s5 2.2 5 5"/><path d="M5 11c2.2.4 4-.2 5.4-1.8"/><path d="M19 11c-2.2.4-4-.2-5.4-1.8"/></svg>
+      </div>
       <div>
         <p class="story-label">Por qué existimos</p>
         <blockquote class="story-quote">
@@ -601,7 +640,9 @@
   <!-- ── CTA AUTH ─────────────────────────────────────────────── -->
   <section class="cta-section" id="cuenta">
     <div class="cta-box" data-aos="fade-up">
-      <div class="cta-icon">🌾</div>
+      <div class="cta-icon" aria-hidden="true">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 21c0-6 2.5-10.5 7.5-13.5"/><path d="M12 21C8 16.5 7 11.5 9 6"/><path d="M19.5 7.5C16 6.8 13.2 8 11 11"/><path d="M9 6c-2.8 1.4-4.2 3.7-4.2 6.9 3.5.4 6.1-.7 7.7-3.4"/></svg>
+      </div>
 
       <!-- Estado: NO logueado -->
       <div data-auth="logged-out">
@@ -624,9 +665,9 @@
       <!-- Estado: logueado -->
       <div data-auth="logged-in" class="auth-logged-in" style="display:none">
         <img data-auth-avatar src="" alt="Avatar" class="auth-avatar" style="display:none" />
-        <p class="auth-welcome">¡Hola, <span data-auth-name></span>! 👋</p>
+        <p class="auth-welcome">¡Hola, <span data-auth-name></span>!</p>
         <p class="auth-sub">Ya podés votar y calificar los lugares que visitaste.</p>
-        <a href="#directorio" class="auth-action-btn">Empezar a votar ⭐</a><br>
+        <a href="#directorio" class="auth-action-btn">Empezar a votar</a><br>
         <button class="auth-signout" onclick="GlutenAuth.signOut()">Cerrar sesión</button>
       </div>
 
@@ -636,7 +677,9 @@
   <!-- ── CTA NEGOCIOS ─────────────────────────────────────────── -->
   <section style="background:var(--green-deep);padding:3rem 1.25rem;text-align:center">
     <div style="max-width:560px;margin:0 auto">
-      <div style="font-size:2rem;margin-bottom:.75rem">🏪</div>
+      <div class="cta-icon" style="background:rgba(232,169,60,.16);color:var(--amber)" aria-hidden="true">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 10h16"/><path d="M5 10l1-6h12l1 6"/><path d="M6 10v10h12V10"/><path d="M9 20v-6h6v6"/></svg>
+      </div>
       <h2 style="font-family:'Fraunces',Georgia,serif;font-size:1.75rem;font-weight:900;color:#fff;margin-bottom:.75rem;line-height:1.2">
         ¿Tenés un local con opciones sin gluten?
       </h2>
@@ -656,7 +699,7 @@
   <!-- ── FOOTER ────────────────────────────────────────────────── -->
   <footer>
     <div class="footer-logo">Gluten<span>Go</span></div>
-    <p>Hecho con 💚 en Montevideo · Todos los listings son gratuitos y sin publicidad</p>
+    <p>Hecho en Montevideo · Todos los listings son gratuitos y sin publicidad</p>
     <p style="margin-top:.5rem">
       <a href="mailto:anmaurano@gmail.com">Contacto</a>
       &nbsp;·&nbsp;
@@ -668,9 +711,9 @@
   </footer>
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
-  <script src="/data.js?v=1.4"></script>
-  <script src="/app.js?v=1.4"></script>
-  <script src="/auth.js?v=1.4"></script>
+  <script src="/data.js?v=1.6"></script>
+  <script src="/app.js?v=1.6"></script>
+  <script src="/auth.js?v=1.6"></script>
 
 </body>
 </html>
