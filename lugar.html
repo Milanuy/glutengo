@@ -297,8 +297,8 @@
     <div class="loading">Cargando…</div>
   </div>
 
-  <script src="/data.js?v=1.7"></script>
-  <script src="/auth.js?v=1.7"></script>
+  <script src="/data.js?v=1.8"></script>
+  <script src="/auth.js?v=1.8"></script>
   <script>
   (function(){
     function escapeHtml(value) {
@@ -311,6 +311,11 @@
           "'": '&#39;'
         }[ch];
       });
+    }
+
+    function hasDirectContact(lugar) {
+      const plan = String((lugar && lugar.plan) || 'basico').toLowerCase();
+      return plan === 'verificado' || plan === 'certificado';
     }
 
     // ── Leer slug de la URL
@@ -379,9 +384,10 @@
         </div>`).join('');
     }
 
-    // ── Contacto
-    const phone = lugar.phone || null;
-    const instagram = lugar.instagram || null;
+    // ── Contacto directo: beneficio de planes Verificado y Certificado.
+    const showDirectContact = hasDirectContact(lugar);
+    const phone = showDirectContact ? (lugar.phone || null) : null;
+    const instagram = showDirectContact ? (lugar.instagram || null) : null;
     let contactHtml = '';
     if(phone){
       const wp = 'https://wa.me/'+phone.replace(/\D/g,'');
@@ -399,9 +405,15 @@
           ${instagram}
         </a>`;
     }
-    if(!contactHtml){
-      contactHtml = '<p style="color:#6B7280;font-size:.88rem">Sin datos de contacto aún.</p>';
-    }
+    const contactSectionHtml = contactHtml ? `
+        <!-- CONTACTO -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            Contacto
+          </h2>
+          <div class="contact-links">${contactHtml}</div>
+        </div>` : '';
 
     // ── Render completo
     app.innerHTML = `
@@ -481,14 +493,7 @@
           </a>
         </div>
 
-        <!-- CONTACTO -->
-        <div class="card">
-          <h2>
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            Contacto
-          </h2>
-          <div class="contact-links">${contactHtml}</div>
-        </div>
+        ${contactSectionHtml}
 
         <!-- COMPARTIR -->
         <div class="card">
