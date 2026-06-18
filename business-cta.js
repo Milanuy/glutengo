@@ -1,6 +1,6 @@
 (function(){
-  var DISMISS_KEY = 'glutengo_business_cta_dismissed_until_v2';
-  var SESSION_KEY = 'glutengo_business_cta_seen_v2';
+  var DISMISS_KEY = 'glutengo_business_cta_dismissed_until_v3';
+  var SESSION_KEY = 'glutengo_business_cta_seen_v3';
   var now = Date.now();
 
   if (location.pathname.indexOf('negocios.html') !== -1) return;
@@ -36,12 +36,12 @@
     '<button type="button" class="gg-biz-close" aria-label="Cerrar invitación">' +
       '<svg fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>' +
     '</button>' +
-    '<span class="gg-biz-kicker">Espacio banner disponible</span>' +
+    '<span class="gg-biz-kicker">Para negocios</span>' +
     '<h2 class="gg-biz-title">¿Tu local tiene opciones sin gluten?</h2>' +
-    '<p class="gg-biz-copy">Este espacio puede mostrar tu local a personas que ya están buscando dónde comer sin gluten.</p>' +
+    '<p class="gg-biz-copy">Registrá tu ficha gratis y aparecé donde la comunidad celíaca busca lugares para comer.</p>' +
     '<div class="gg-biz-actions">' +
-      '<a class="gg-biz-link" href="/negocios.html?ref=banner-disponible#visibilidad">Aparecer acá</a>' +
-      '<span class="gg-biz-muted">Desde $590/semana</span>' +
+      '<a class="gg-biz-link" href="/negocios.html?ref=registro-flotante#form-registro">Registrar mi local</a>' +
+      '<span class="gg-biz-muted">Básico gratis</span>' +
     '</div>';
 
   function dismiss(days) {

@@ -54,6 +54,7 @@ Los avisos no bloquean la publicacion: sirven para recordar casos como falta de 
 - Mega banner: no vender mas de uno activo por zona o periodo. Si todo esta destacado, nada esta destacado; y la confianza de la guia baja.
 - Para sponsor, cargar seccion objetivo, texto visible, fecha de inicio, fecha de fin y pago confirmado. En la web aparece solo cuando el usuario entra a ese filtro/seccion.
 - Si un cupo de banner o sponsor no esta vendido, GlutenGo puede usar ese espacio como autopromocion comercial con "Tu local puede aparecer aca" y link a la seccion de extras.
+- El CTA flotante de la web publica debe priorizar "Registrar mi local" y llevar al formulario, no a un extra pago. Los extras se muestran como espacios propios dentro de la web publica y en la seccion de visibilidad.
 
 ## Metodo recomendado para ingresos automaticos
 
