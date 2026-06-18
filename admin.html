@@ -962,8 +962,8 @@ function showDetail(id) {
         <select id="cfg-featured">
           <option value="none"${selected(cfg.featuredPlacement, 'none')}>Sin destaque extra</option>
           <option value="home"${selected(cfg.featuredPlacement, 'home')}>Destacado en home</option>
-          <option value="side"${selected(cfg.featuredPlacement, 'side')}>Extra: banner lateral/flotante</option>
-          <option value="mega"${selected(cfg.featuredPlacement, 'mega')}>Extra: mega banner semanal</option>
+          <option value="side"${selected(cfg.featuredPlacement, 'side')}>Adicional: banner lateral/flotante semanal</option>
+          <option value="mega"${selected(cfg.featuredPlacement, 'mega')}>Adicional: mega banner semanal</option>
         </select>
         <div class="config-help">El destaque se guarda para campañas con cupo y fecha. No conviene usarlo en todos los locales.</div>
       </div>
@@ -983,8 +983,8 @@ function showDetail(id) {
         <label class="check-item"><input id="benefit-logo" type="checkbox"${checked(cfg.benefits.logo)}> Logo visible</label>
         <label class="check-item"><input id="benefit-priority" type="checkbox"${checked(cfg.benefits.priority)}> Prioridad en listados</label>
         <label class="check-item"><input id="benefit-homeFeature" type="checkbox"${checked(cfg.benefits.homeFeature)}> Home destacado</label>
-        <label class="check-item"><input id="benefit-sideBanner" type="checkbox"${checked(cfg.benefits.sideBanner)}> Extra banner lateral/flotante activo</label>
-        <label class="check-item"><input id="benefit-megaBanner" type="checkbox"${checked(cfg.benefits.megaBanner)}> Extra mega banner activo</label>
+        <label class="check-item"><input id="benefit-sideBanner" type="checkbox"${checked(cfg.benefits.sideBanner)}> Adicional banner lateral/flotante activo</label>
+        <label class="check-item"><input id="benefit-megaBanner" type="checkbox"${checked(cfg.benefits.megaBanner)}> Adicional mega banner activo</label>
       </div>
       <div class="config-help">Este checklist es tu control de activación. Datos confirmados no equivale a auditoría; Protocolo certificado sí requiere revisión específica.</div>
     </div>

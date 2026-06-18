@@ -38,16 +38,17 @@ Los avisos no bloquean la publicacion: sirven para recordar casos como falta de 
 - `Logo visible`: usar logo real del negocio.
 - `Prioridad en listados`: ordenar antes que fichas basicas.
 - `Home destacado`: cupo de destaque dentro de la home.
-- `Banner lateral/flotante`: extra comercial semanal, visible pero discreto.
-- `Mega banner`: extra comercial premium semanal, recomendado para campañas puntuales.
+- `Banner lateral/flotante`: adicional comercial semanal, visible pero discreto.
+- `Mega banner`: adicional comercial premium semanal, recomendado para campañas puntuales.
 
 ## Criterio comercial para banners
 
 - Basico: sin banners ni prioridad.
 - Verificado / Datos confirmados: acceso preferente a extras de visibilidad si hay cupo.
 - Certificado / Protocolo certificado: prioridad para home, banner lateral/flotante y mega banner.
-- Banner lateral/flotante: sugerencia comercial inicial de $199 UYU por semana.
-- Mega banner: precio lanzamiento de $299 UYU por semana, siempre con fecha de inicio y fin.
+- Banner lateral/flotante: $590 UYU por semana.
+- Mega banner: desde $590 UYU por semana, siempre con fecha de inicio y fin.
+- Los banners y mega banners no estan incluidos en la suscripcion mensual; son adicionales de posicionamiento dentro de la web.
 - Mega banner: no vender mas de uno activo por zona o periodo. Si todo esta destacado, nada esta destacado; y la confianza de la guia baja.
 
 ## Notas tecnicas
