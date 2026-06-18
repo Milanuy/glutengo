@@ -1,4 +1,4 @@
-// GlutenGo — app.js v1.1
+// GlutenGo — app.js v1.2
 // Script principal de la home. Separado del HTML para evitar bloqueo de extensiones.
 
 // ────────────────────────────────────────────────────
@@ -76,6 +76,33 @@ var MOMENT_FILTERS = {
 
 function formatCategory(category) {
   return CATEGORY_LABELS[category] || category || 'Otro';
+}
+
+function formatSponsorTarget(filter) {
+  var labels = {
+    todos: 'la home de GlutenGo',
+    exclusivo: 'locales 100% GF',
+    mixto: 'locales con opciones SG',
+    'cat:panaderia': 'Panaderías',
+    'cat:restaurante': 'Restaurantes',
+    'cat:cafeteria': 'Cafés',
+    'cat:heladeria': 'Heladerías',
+    'cat:almacen': 'Almacenes',
+    'moment:desayuno': 'Desayuno o merienda',
+    'moment:almuerzo': 'Almuerzo o cena',
+    'moment:postre': 'Postre / helado',
+    'moment:llevar': 'Para llevar',
+    'moment:compras': 'Compras SG'
+  };
+  if (labels[filter]) return labels[filter];
+  return filter || 'esta sección';
+}
+
+function sponsorSlotParam(filter) {
+  return String(filter || 'todos')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'todos';
 }
 
 function matchesFilter(lugar, filter) {
@@ -214,13 +241,26 @@ function sponsorCardHtml(lugar, filter) {
   var sponsor = lugar.sponsor || {};
   var label = sponsor.label || 'Sponsor de esta sección';
   var section = filter === 'todos' ? 'GlutenGo' : label;
-  return '<a href="/lugar.html?slug=' + encodeURIComponent(lugar.slug) + '" class="sponsor-card">' +
+  return '<a href="/lugar.html?slug=' + encodeURIComponent(lugar.slug) + '" class="sponsor-card sponsor-card-live">' +
     '<div>' +
       '<span class="sponsor-kicker">Presentado por</span>' +
       '<div class="sponsor-title">' + escapeHtml(section) + '</div>' +
       '<div class="sponsor-meta">' + escapeHtml(lugar.name) + ' acompaña esta búsqueda en GlutenGo. Confirmá siempre datos y disponibilidad con el local.</div>' +
     '</div>' +
     '<span class="sponsor-cta">Ver ficha</span>' +
+  '</a>';
+}
+
+function availableSponsorCardHtml(filter) {
+  var target = formatSponsorTarget(filter);
+  var href = '/negocios.html?ref=sponsor-disponible&slot=' + encodeURIComponent(sponsorSlotParam(filter)) + '#visibilidad';
+  return '<a href="' + href + '" class="sponsor-card sponsor-card-available">' +
+    '<div>' +
+      '<span class="sponsor-kicker">Espacio disponible</span>' +
+      '<div class="sponsor-title">Tu local puede aparecer acá</div>' +
+      '<div class="sponsor-meta">Sponsor de ' + escapeHtml(target) + ': una ubicación mensual para llegar a personas que ya están buscando opciones sin gluten.</div>' +
+    '</div>' +
+    '<span class="sponsor-cta">Aparecer acá</span>' +
   '</a>';
 }
 
@@ -479,7 +519,7 @@ function buildDir(filter, q){
 
   filtered = sortPlacesForDisplay(filtered);
   var sponsor = findSponsorForFilter(filter);
-  var sponsorHtml = sponsorCardHtml(sponsor, filter);
+  var sponsorHtml = sponsorCardHtml(sponsor, filter) || (!q ? availableSponsorCardHtml(filter) : '');
 
   grid.innerHTML = sponsorHtml + filtered.map(function(l){
     var iconColor = l.tipo === 'exclusivo' ? '#166534' : '#D97706';
