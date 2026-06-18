@@ -350,6 +350,17 @@
     }
     .visibility-card h3{font-size:1.05rem;color:var(--green-deep);margin-bottom:.45rem}
     .visibility-card p{font-size:.86rem;color:var(--gray);line-height:1.6}
+    .visibility-price{
+      display:flex;align-items:baseline;gap:.35rem;margin:.75rem 0 .55rem;
+      color:var(--green-deep);font-weight:900;
+    }
+    .visibility-price strong{font-family:'Fraunces',Georgia,serif;font-size:1.7rem;letter-spacing:0}
+    .visibility-price span{font-size:.78rem;color:var(--gray);font-weight:700;text-transform:none;letter-spacing:0}
+    .visibility-chip{
+      display:inline-flex;align-items:center;border-radius:999px;
+      background:var(--green-light);color:var(--green);font-size:.7rem;font-weight:900;
+      padding:.25rem .55rem;margin-top:.75rem;text-transform:uppercase;letter-spacing:.04em;
+    }
     .visibility-note{
       margin-top:1rem;color:var(--gray);font-size:.8rem;line-height:1.55;
       background:#fff;border:1px solid var(--border);border-radius:12px;
@@ -730,8 +741,8 @@
             <li><span class="check">✓</span>Botones destacados a WhatsApp e Instagram</li>
             <li><span class="check">✓</span>Insignia "Datos confirmados"</li>
             <li><span class="check">✓</span>Posición prioritaria en directorio y búsquedas</li>
-            <li><span class="check">✓</span>Destacado en la home cuando haya cupo de zona</li>
-            <li><span class="check">✓</span>Opción a banner lateral/flotante con cupo limitado</li>
+            <li><span class="check">✓</span>Acceso preferente a destacados de home según cupo</li>
+            <li><span class="check">✓</span>Puede contratar campañas de visibilidad semanales</li>
             <li><span class="check">✓</span>Acompañamiento para ordenar tu ficha SG sin prometer auditoría</li>
           </ul>
           <button type="button" class="plan-cta primary" onclick="selectPlan('verificado')">Quiero ser Verificado →</button>
@@ -753,7 +764,7 @@
             <li><span class="check">✓</span>Insignia premium "Protocolo certificado"</li>
             <li><span class="check">✓</span>Informe de protocolo para mostrar a clientes</li>
             <li><span class="check">✓</span>Primer lugar en búsquedas de tu zona</li>
-            <li><span class="check">✓</span>Cupo preferente para banner lateral, home y mega banner</li>
+            <li><span class="check">✓</span>Prioridad para cupos de home, banner y mega banner</li>
             <li><span class="check">✓</span>Contenido destacado en redes de GlutenGo</li>
             <li><span class="check">✓</span>Recomendaciones para mejorar tu protocolo SG</li>
           </ul>
@@ -768,29 +779,35 @@
   <section class="visibility-section">
     <div class="visibility-inner">
       <div class="section-header">
-        <span class="section-label">Banners y destacados</span>
-        <h2 class="section-title">Más visibilidad, sin romper la confianza del usuario</h2>
-        <p class="section-desc">Los espacios destacados son limitados y se activan manualmente. La prioridad es que GlutenGo siga pareciendo una guía útil, no una página llena de anuncios.</p>
+        <span class="section-label">Extras de visibilidad</span>
+        <h2 class="section-title">Campañas semanales para aparecer más, sin invadir al usuario</h2>
+        <p class="section-desc">Los planes pagos habilitan prioridad y acceso a cupos. Los banners se contratan aparte como campañas con inicio y fin, para que la guía siga siendo útil y confiable.</p>
       </div>
       <div class="visibility-grid">
         <div class="visibility-card">
-          <strong>Verificado con cupo</strong>
+          <strong>Extra semanal</strong>
           <h3>Banner lateral/flotante</h3>
+          <div class="visibility-price"><strong>$199</strong><span>UYU / semana</span></div>
           <p>Aparece como recomendación discreta en zonas o categorías relevantes. Ideal para empujar consultas sin tapar el mapa ni la ficha.</p>
+          <span class="visibility-chip">Cupo limitado</span>
         </div>
         <div class="visibility-card">
-          <strong>Datos confirmados</strong>
+          <strong>Prioridad para planes pagos</strong>
           <h3>Destacado en home</h3>
-          <p>Tarjeta prioritaria dentro de la página principal cuando el usuario está explorando lugares 100% SG o por zona.</p>
+          <div class="visibility-price"><strong>Según cupo</strong><span>rotación editorial</span></div>
+          <p>Tarjeta prioritaria dentro de la página principal cuando el usuario está explorando lugares 100% SG, por momento o por zona.</p>
+          <span class="visibility-chip">No invasivo</span>
         </div>
         <div class="visibility-card">
-          <strong>Protocolo certificado</strong>
+          <strong>Precio lanzamiento</strong>
           <h3>Mega banner</h3>
-          <p>Espacio premium por campaña, zona o temporada. Lo reservaría para certificados, lanzamientos o acuerdos puntuales, no para cualquier alta básica.</p>
+          <div class="visibility-price"><strong>$299</strong><span>UYU / semana</span></div>
+          <p>Espacio premium por campaña, zona o temporada. Ideal para lanzamientos, fechas fuertes o locales que quieren máxima visibilidad por pocos días.</p>
+          <span class="visibility-chip">1 por período</span>
         </div>
       </div>
       <p class="visibility-note">
-        Recomendación comercial: no vender más de un mega banner activo por zona o período. Si todo está destacado, nada está destacado; y la confianza del celíaco es el activo principal.
+        Importante: los banners no quedan incluidos de forma permanente en ningún plan. Verificado y Certificado tienen acceso preferente; cada campaña se confirma manualmente según cupo, zona y fechas. Si todo está destacado, nada está destacado; y la confianza del celíaco es el activo principal.
       </p>
     </div>
   </section>
@@ -820,9 +837,9 @@
           <tr><td>Puntaje GlutenGo visible</td><td class="center">Cuando tenga datos</td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Insignia "Datos confirmados"</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Posición prioritaria en búsquedas</td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td><td class="center"><span class="yes">✓</span></td></tr>
-          <tr><td>Destacado en la home</td><td class="center"><span class="no">—</span></td><td class="center">Según cupo</td><td class="center"><span class="yes">✓</span></td></tr>
-          <tr><td>Banner lateral/flotante</td><td class="center"><span class="no">—</span></td><td class="center">Con cupo</td><td class="center"><span class="yes">✓</span></td></tr>
-          <tr><td>Mega banner</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center">Campaña premium</td></tr>
+          <tr><td>Destacado en la home</td><td class="center"><span class="no">—</span></td><td class="center">Acceso según cupo</td><td class="center">Prioridad</td></tr>
+          <tr><td>Banner lateral/flotante</td><td class="center"><span class="no">—</span></td><td class="center">Extra semanal</td><td class="center">Extra con prioridad</td></tr>
+          <tr><td>Mega banner</td><td class="center"><span class="no">—</span></td><td class="center">Extra con aprobación</td><td class="center">Extra premium prioritario</td></tr>
           <tr><td>Menciones editoriales o newsletter</td><td class="center"><span class="no">—</span></td><td class="center">Ocasional</td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Auditoría presencial protocolo SG</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
           <tr><td>Insignia "Protocolo certificado"</td><td class="center"><span class="no">—</span></td><td class="center"><span class="no">—</span></td><td class="center"><span class="yes">✓</span></td></tr>
@@ -1061,7 +1078,7 @@
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿Qué son los banners flotantes y mega banners?</div>
-      <div class="faq-answer">Son espacios de visibilidad limitada que GlutenGo puede activar manualmente desde administración. El banner lateral/flotante es una recomendación discreta para Verificado o Certificado. El mega banner es premium y lo reservaríamos para Certificado, sponsor o campañas puntuales, porque ocupa mucha atención y debe usarse con cuidado.</div>
+      <div class="faq-answer">Son extras de campaña, no beneficios permanentes incluidos. El banner lateral/flotante se puede contratar por semana como recomendación discreta. El mega banner tiene precio lanzamiento de $299 UYU por semana y se activa con cupo limitado, idealmente uno por zona o período. Verificado y Certificado tienen acceso preferente; Certificado tiene prioridad.</div>
     </div>
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-question">¿En qué consiste la auditoría del plan Certificado?</div>
