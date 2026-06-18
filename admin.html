@@ -107,6 +107,15 @@
     .badge.active{background:var(--green-light);color:var(--green)}
     .badge.rejected{background:var(--red-light);color:var(--red)}
     .badge.expired{background:#F3F4F6;color:#6B7280}
+    .readiness-pill{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:.24rem .58rem;border-radius:999px;font-size:.72rem;font-weight:800;
+      line-height:1.25;text-align:center;
+    }
+    .readiness-pill.ready{background:var(--green-light);color:var(--green)}
+    .readiness-pill.warn{background:#FEF3C7;color:#92400E}
+    .readiness-pill.missing{background:var(--red-light);color:var(--red)}
+    .readiness-pill.published{background:#E0F2FE;color:#0369A1}
 
     .plan-pill{
       display:inline-block;padding:.2rem .55rem;
@@ -175,6 +184,48 @@
       font-size:.84rem;line-height:1.5;
     }
     .publish-note strong{display:block;margin-bottom:.2rem;color:var(--green-deep)}
+    .readiness-box{
+      border:1px solid var(--border);border-radius:14px;padding:.9rem 1rem;
+      background:#fff;margin:0 0 1rem;
+    }
+    .readiness-box.missing{border-color:#FECACA;background:#FEF2F2}
+    .readiness-box.warn{border-color:#FDE68A;background:#FFFBEB}
+    .readiness-box.ready{border-color:#BBF7D0;background:#F0FDF4}
+    .readiness-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.55rem}
+    .readiness-head strong{font-size:.88rem;color:var(--green-deep)}
+    .readiness-list{display:grid;gap:.35rem;margin-top:.45rem}
+    .readiness-item{font-size:.8rem;line-height:1.45;color:#374151}
+    .readiness-item::before{content:'• ';font-weight:900;color:var(--amber)}
+    .admin-preview{
+      border:1px solid var(--border);border-radius:16px;padding:1rem;
+      background:linear-gradient(180deg,#fff,#F9FAFB);box-shadow:0 8px 22px rgba(0,0,0,.04);
+    }
+    .preview-card{
+      border:1px solid var(--border);border-radius:14px;background:#fff;
+      padding:1rem;display:grid;gap:.55rem;
+    }
+    .preview-top{display:flex;align-items:flex-start;gap:.8rem}
+    .preview-logo{
+      width:48px;height:48px;border-radius:12px;background:var(--green-light);
+      color:var(--green);display:flex;align-items:center;justify-content:center;
+      font-weight:900;flex-shrink:0;overflow:hidden;
+    }
+    .preview-logo img{width:100%;height:100%;object-fit:cover}
+    .preview-title{font-size:1rem;font-weight:900;color:#111;line-height:1.2}
+    .preview-meta{font-size:.78rem;color:var(--gray);margin-top:.15rem}
+    .preview-desc{font-size:.82rem;line-height:1.5;color:#374151}
+    .preview-tags{display:flex;gap:.4rem;flex-wrap:wrap}
+    .preview-tag{
+      display:inline-flex;align-items:center;border-radius:999px;
+      background:var(--green-light);color:var(--green);font-size:.7rem;font-weight:900;
+      padding:.22rem .52rem;text-transform:uppercase;letter-spacing:.03em;
+    }
+    .preview-tag.warn{background:#FEF3C7;color:#92400E}
+    .preview-links{display:flex;gap:.45rem;flex-wrap:wrap}
+    .preview-link{
+      background:#F3F4F6;color:#374151;border-radius:999px;padding:.28rem .58rem;
+      font-size:.74rem;font-weight:800;
+    }
     .modal-section-title{
       display:flex;align-items:center;gap:.5rem;
       font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
@@ -298,7 +349,7 @@
     <div class="stats" id="stats-row">
       <div class="stat-card"><div class="stat-val" id="s-total">—</div><div class="stat-lbl">Total solicitudes</div></div>
       <div class="stat-card"><div class="stat-val" style="color:#92400E" id="s-pending">—</div><div class="stat-lbl">Pendientes</div></div>
-      <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="s-active">—</div><div class="stat-lbl">Activos</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="s-active">—</div><div class="stat-lbl">Publicados</div></div>
       <div class="stat-card"><div class="stat-val" style="color:var(--amber)" id="s-revenue">—</div><div class="stat-lbl">Ingresos estimados / mes</div></div>
     </div>
 
@@ -307,7 +358,7 @@
       <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
       <button class="filter-btn" onclick="setFilter('pending',this)">Pendientes</button>
       <button class="filter-btn" onclick="setFilter('pending_payment',this)">Aguardando pago</button>
-      <button class="filter-btn" onclick="setFilter('active',this)">Activos</button>
+      <button class="filter-btn" onclick="setFilter('active',this)">Publicados</button>
       <button class="filter-btn" onclick="setFilter('rejected',this)">Rechazados</button>
       <button class="filter-btn" onclick="setFilter('expired',this)">Vencidos</button>
       <input type="search" class="search-input" placeholder="Buscar por nombre, barrio…" oninput="onSearch(this.value)" />
@@ -323,13 +374,14 @@
             <th>Plan</th>
             <th>Prioridad</th>
             <th>Estado</th>
+            <th>Preparación</th>
             <th>Barrio</th>
             <th>Registro</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody id="biz-tbody">
-          <tr><td colspan="7" class="empty">Cargando…</td></tr>
+          <tr><td colspan="8" class="empty">Cargando…</td></tr>
         </tbody>
       </table>
     </div>
@@ -394,7 +446,7 @@ if (savedPass) {
 // ── LOAD DATA ──────────────────────────────────────────────────────────────
 function loadBusinesses() {
   document.getElementById('biz-tbody').innerHTML =
-    '<tr><td colspan="7" class="empty">Cargando…</td></tr>';
+    '<tr><td colspan="8" class="empty">Cargando…</td></tr>';
   fetch(API, { headers: { 'x-admin-token': adminToken } })
     .then(function(r) { return r.json(); })
     .then(function(data) { processData(data); })
@@ -514,6 +566,187 @@ function readConfig(b) {
   return cfg;
 }
 
+function hasText(value) {
+  return String(value == null ? '' : value).trim().length > 0;
+}
+
+function hasCoords(cfg) {
+  var lat = Number(String(cfg.lat || '').replace(',', '.'));
+  var lng = Number(String(cfg.lng || '').replace(',', '.'));
+  return Number.isFinite(lat) && Number.isFinite(lng);
+}
+
+function getReadiness(b, cfg) {
+  var missing = [];
+  var warnings = [];
+  var benefits = cfg.benefits || {};
+  var plan = b.plan || 'basico';
+
+  if (!hasText(b.nombre)) missing.push('Nombre público');
+  if (!hasText(b.tipo)) missing.push('Tipo de oferta');
+  if (!hasText(cfg.category)) missing.push('Categoría');
+  if (!hasText(b.direccion)) missing.push('Dirección');
+  if (!hasText(b.barrio)) missing.push('Barrio o ciudad');
+  if (!hasText(cfg.slug)) missing.push('Slug público');
+
+  if (!hasText(cfg.description)) warnings.push('Falta descripción pública; se usará un texto automático.');
+  if (!hasCoords(cfg)) warnings.push('Sin coordenadas: aparece en directorio y ficha, pero no en el mapa.');
+  if (benefits.directContact && !hasText(b.telefono) && !hasText(cfg.instagram)) {
+    missing.push('Contacto directo habilitado, pero falta WhatsApp o Instagram');
+  }
+  if (benefits.logo && !hasText(cfg.logoUrl)) warnings.push('Logo habilitado, pero falta URL de logo.');
+  if (plan !== 'certificado' && benefits.certifiedBadge) warnings.push('Insignia de protocolo marcada sin plan Certificado.');
+  if (plan === 'basico' && (benefits.directContact || benefits.logo || benefits.priority || cfg.featuredPlacement !== 'none')) {
+    warnings.push('Plan Básico con beneficios pagos marcados.');
+  }
+  if ((plan === 'verificado' || plan === 'certificado') && b.status === 'pending_payment') {
+    warnings.push('Confirmá el pago antes de publicar.');
+  }
+
+  if (b.status === 'active') return { tone: 'published', label: 'Publicado', missing: missing, warnings: warnings };
+  if (missing.length) return { tone: 'missing', label: 'Faltan datos', missing: missing, warnings: warnings };
+  if (warnings.length) return { tone: 'warn', label: 'Publicable con avisos', missing: missing, warnings: warnings };
+  return { tone: 'ready', label: 'Listo para publicar', missing: missing, warnings: warnings };
+}
+
+function readinessPillHtml(readiness) {
+  return '<span class="readiness-pill ' + esc(readiness.tone) + '">' + esc(readiness.label) + '</span>';
+}
+
+function readinessPanelHtml(readiness) {
+  var items = [];
+  readiness.missing.forEach(function(item) { items.push('Falta: ' + item); });
+  readiness.warnings.forEach(function(item) { items.push(item); });
+  var title = readiness.tone === 'published' ? 'Publicado en GlutenGo'
+    : readiness.tone === 'ready' ? 'Listo para publicar'
+    : readiness.tone === 'warn' ? 'Se puede publicar, revisando avisos'
+    : 'Antes de publicar';
+  var body = items.length
+    ? '<div class="readiness-list">' + items.map(function(item) {
+        return '<div class="readiness-item">' + esc(item) + '</div>';
+      }).join('') + '</div>'
+    : '<div class="readiness-item">La ficha tiene los datos mínimos para publicarse.</div>';
+  return '<div class="readiness-box ' + esc(readiness.tone === 'published' ? 'ready' : readiness.tone) + '">' +
+    '<div class="readiness-head"><strong>' + esc(title) + '</strong>' + readinessPillHtml(readiness) + '</div>' +
+    body +
+  '</div>';
+}
+
+function planLabel(plan) {
+  return PLAN_LABELS_ES[plan] || plan || 'Básico';
+}
+
+function previewHtml(b, cfg) {
+  var benefits = cfg.benefits || {};
+  var isExclusive = b.tipo === 'exclusivo';
+  var contactItems = [];
+  if (benefits.directContact && hasText(b.telefono)) contactItems.push('WhatsApp visible');
+  if (benefits.directContact && hasText(cfg.instagram)) contactItems.push('Instagram visible');
+  if (!contactItems.length) contactItems.push('Sin contacto directo');
+  var logo = benefits.logo && hasText(cfg.logoUrl)
+    ? '<img src="' + esc(cfg.logoUrl) + '" alt="">'
+    : esc((b.nombre || 'G').trim().charAt(0).toUpperCase() || 'G');
+  return '<div class="preview-card">' +
+    '<div class="preview-top">' +
+      '<div class="preview-logo">' + logo + '</div>' +
+      '<div>' +
+        '<div class="preview-title">' + esc(b.nombre || 'Nombre del local') + '</div>' +
+        '<div class="preview-meta">' + esc(CATEGORY_LABELS_ES[cfg.category] || cfg.category || 'Categoría') + ' · ' + esc(b.barrio || 'Zona a confirmar') + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="preview-tags">' +
+      '<span class="preview-tag' + (isExclusive ? '' : ' warn') + '">' + (isExclusive ? '100% sin gluten' : 'Con opciones SG') + '</span>' +
+      '<span class="preview-tag">' + esc(planLabel(b.plan)) + '</span>' +
+      (hasCoords(cfg) ? '<span class="preview-tag">Con mapa</span>' : '<span class="preview-tag warn">Sin mapa</span>') +
+    '</div>' +
+    '<div class="preview-desc">' + esc(cfg.description || 'Si no cargás descripción, GlutenGo mostrará un texto automático y más genérico.') + '</div>' +
+    '<div class="preview-links">' + contactItems.map(function(item) {
+      return '<span class="preview-link">' + esc(item) + '</span>';
+    }).join('') + '</div>' +
+  '</div>';
+}
+
+function collectModalState() {
+  var cfg = {
+    slug: document.getElementById('cfg-slug').value.trim(),
+    category: document.getElementById('cfg-category').value,
+    position: Number(document.getElementById('cfg-position').value || 999),
+    description: document.getElementById('cfg-description').value.trim(),
+    lat: document.getElementById('cfg-lat').value.trim(),
+    lng: document.getElementById('cfg-lng').value.trim(),
+    instagram: document.getElementById('cfg-instagram').value.trim(),
+    logoUrl: document.getElementById('cfg-logo').value.trim(),
+    photoUrls: document.getElementById('cfg-photos').value.trim(),
+    featuredPlacement: document.getElementById('cfg-featured').value,
+    internal: document.getElementById('cfg-internal').value.trim(),
+    benefits: {
+      verifiedBadge: document.getElementById('benefit-verifiedBadge').checked,
+      certifiedBadge: document.getElementById('benefit-certifiedBadge').checked,
+      directContact: document.getElementById('benefit-directContact').checked,
+      logo: document.getElementById('benefit-logo').checked,
+      priority: document.getElementById('benefit-priority').checked,
+      homeFeature: document.getElementById('benefit-homeFeature').checked,
+      sideBanner: document.getElementById('benefit-sideBanner').checked,
+      megaBanner: document.getElementById('benefit-megaBanner').checked
+    }
+  };
+  return {
+    b: {
+      nombre: document.getElementById('cfg-name').value.trim(),
+      tipo: document.getElementById('cfg-tipo').value,
+      direccion: document.getElementById('cfg-address').value.trim(),
+      barrio: document.getElementById('cfg-neighborhood').value.trim(),
+      telefono: document.getElementById('cfg-phone').value.trim(),
+      status: document.getElementById('cfg-status').value,
+      plan: document.getElementById('cfg-plan').value
+    },
+    cfg: cfg
+  };
+}
+
+function refreshConfigPreview() {
+  var state = collectModalState();
+  var readiness = getReadiness(state.b, state.cfg);
+  var readinessEl = document.getElementById('cfg-readiness-live');
+  var previewEl = document.getElementById('admin-preview');
+  if (readinessEl) readinessEl.innerHTML = readinessPanelHtml(readiness);
+  if (previewEl) previewEl.innerHTML = previewHtml(state.b, state.cfg);
+}
+
+function bindConfigPreview() {
+  var ids = [
+    'cfg-status','cfg-plan','cfg-position','cfg-name','cfg-tipo','cfg-category','cfg-phone',
+    'cfg-address','cfg-neighborhood','cfg-slug','cfg-description','cfg-lat','cfg-lng',
+    'cfg-instagram','cfg-logo','cfg-photos','cfg-featured','cfg-internal',
+    'benefit-verifiedBadge','benefit-certifiedBadge','benefit-directContact','benefit-logo',
+    'benefit-priority','benefit-homeFeature','benefit-sideBanner','benefit-megaBanner'
+  ];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', refreshConfigPreview);
+      el.addEventListener('change', refreshConfigPreview);
+    }
+  });
+}
+
+function applyPlanBenefits() {
+  var plan = document.getElementById('cfg-plan').value;
+  var paid = plan === 'verificado' || plan === 'certificado';
+  document.getElementById('benefit-verifiedBadge').checked = paid;
+  document.getElementById('benefit-certifiedBadge').checked = plan === 'certificado';
+  document.getElementById('benefit-directContact').checked = paid;
+  document.getElementById('benefit-logo').checked = paid;
+  document.getElementById('benefit-priority').checked = paid;
+  if (!paid) {
+    document.getElementById('benefit-homeFeature').checked = false;
+    document.getElementById('benefit-sideBanner').checked = false;
+    document.getElementById('benefit-megaBanner').checked = false;
+    document.getElementById('cfg-featured').value = 'none';
+  }
+  refreshConfigPreview();
+}
+
 function renderTable() {
   var filtered = allBiz.filter(function(b) {
     if (curFilter !== 'todos' && b.status !== curFilter) return false;
@@ -527,12 +760,13 @@ function renderTable() {
 
   var tbody = document.getElementById('biz-tbody');
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">No hay negocios que coincidan.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">No hay negocios que coincidan.</td></tr>';
     return;
   }
 
   tbody.innerHTML = filtered.map(function(b) {
     var cfg = readConfig(b);
+    var readiness = getReadiness(b, cfg);
     var statusBadge = '<span class="badge ' + (b.status || 'pending') + '">' +
       esc(STATUS_LABELS[b.status] || b.status || 'Pendiente') + '</span>';
     var planPill = '<span class="plan-pill plan-' + (b.plan || 'basico') + '">' +
@@ -548,6 +782,7 @@ function renderTable() {
       '<td data-label="Plan">' + planPill + '</td>' +
       '<td data-label="Prioridad" style="font-weight:800;color:var(--green-deep)">' + esc(cfg.position || 999) + '</td>' +
       '<td data-label="Estado">' + statusBadge + '</td>' +
+      '<td data-label="Preparación">' + readinessPillHtml(readiness) + '</td>' +
       '<td data-label="Barrio" style="color:var(--gray);font-size:.83rem">' + esc(b.barrio || '—') + '</td>' +
       '<td data-label="Registro" style="color:var(--gray);font-size:.8rem">' + fecha + '</td>' +
       '<td data-label="Acciones">' + actions + '</td>' +
@@ -559,14 +794,12 @@ function buildActions(b) {
   var btns = '';
   if (b.status === 'pending' || b.status === 'pending_payment') {
     btns += '<button class="btn-sm btn-approve" onclick="showDetail(\'' + b.id + '\')">Configurar</button>';
-    btns += '<button class="btn-sm btn-approve" onclick="approve(\'' + b.id + '\')">Publicar</button>';
     btns += '<button class="btn-sm btn-reject" onclick="reject(\'' + b.id + '\')">Rechazar</button>';
   } else if (b.status === 'active') {
     btns += '<button class="btn-sm btn-approve" onclick="showDetail(\'' + b.id + '\')">Editar</button>';
     btns += '<button class="btn-sm btn-expire" onclick="expire(\'' + b.id + '\')">Suspender</button>';
   } else if (b.status === 'rejected' || b.status === 'expired') {
     btns += '<button class="btn-sm btn-approve" onclick="showDetail(\'' + b.id + '\')">Revisar</button>';
-    btns += '<button class="btn-sm btn-approve" onclick="approve(\'' + b.id + '\')">Republicar</button>';
   }
   return '<div class="actions">' + btns + '</div>';
 }
@@ -619,6 +852,7 @@ function showDetail(id) {
       <strong>Cómo se publica</strong>
       Si el estado queda en Publicado, este local aparece en GlutenGo. Con latitud y longitud aparece también en el mapa; sin coordenadas queda visible en el directorio y en su ficha hasta completar ubicación.
     </div>
+    <div id="cfg-readiness-live">${readinessPanelHtml(getReadiness(b, cfg))}</div>
 
     <div class="modal-section-title"><span>1</span> Estado y plan</div>
     <div class="modal-grid">
@@ -731,6 +965,12 @@ function showDetail(id) {
           <option value="side"${selected(cfg.featuredPlacement, 'side')}>Banner lateral/flotante</option>
           <option value="mega"${selected(cfg.featuredPlacement, 'mega')}>Mega banner</option>
         </select>
+        <div class="config-help">El destaque se guarda para cupos comerciales; no conviene usarlo en todos los locales.</div>
+      </div>
+      <div class="modal-field">
+        <label>Atajo de beneficios</label>
+        <button class="btn-sm btn-expire" style="width:100%;padding:.65rem .75rem" onclick="applyPlanBenefits()">Aplicar beneficios sugeridos del plan</button>
+        <div class="config-help">Útil al pasar de Básico a Verificado o Certificado.</div>
       </div>
     </div>
 
@@ -754,6 +994,10 @@ function showDetail(id) {
       <textarea id="cfg-internal">${esc(cfg.internal)}</textarea>
     </div>
 
+    <div class="modal-section-title"><span>4</span> Vista previa y publicación</div>
+    <div class="admin-preview" id="admin-preview">${previewHtml(b, cfg)}</div>
+    <div class="config-help">Esta vista previa resume lo que verá el usuario. Para publicar, usá el botón final; si faltan coordenadas, el local no tendrá pin en el mapa.</div>
+
     <div class="modal-actions">
       <button class="btn-sm" style="background:#F3F4F6;color:#374151" onclick="closeModal()">Cerrar</button>
       ${b.email ? `<a href="mailto:${esc(b.email)}" class="btn-sm" style="background:#F3F4F6;color:#374151;text-decoration:none">Email</a>` : ''}
@@ -761,40 +1005,32 @@ function showDetail(id) {
       <button class="btn-sm btn-approve" onclick="saveConfig('${esc(b.id)}', true)">Guardar y publicar</button>
     </div>`;
   document.getElementById('modal-overlay').classList.add('show');
+  bindConfigPreview();
+  refreshConfigPreview();
 }
 
 function saveConfig(id, activate) {
-  var cfg = {
-    slug: document.getElementById('cfg-slug').value.trim(),
-    category: document.getElementById('cfg-category').value,
-    position: Number(document.getElementById('cfg-position').value || 999),
-    description: document.getElementById('cfg-description').value.trim(),
-    lat: document.getElementById('cfg-lat').value.trim(),
-    lng: document.getElementById('cfg-lng').value.trim(),
-    instagram: document.getElementById('cfg-instagram').value.trim(),
-    logoUrl: document.getElementById('cfg-logo').value.trim(),
-    photoUrls: document.getElementById('cfg-photos').value.trim(),
-    featuredPlacement: document.getElementById('cfg-featured').value,
-    internal: document.getElementById('cfg-internal').value.trim(),
-    benefits: {
-      verifiedBadge: document.getElementById('benefit-verifiedBadge').checked,
-      certifiedBadge: document.getElementById('benefit-certifiedBadge').checked,
-      directContact: document.getElementById('benefit-directContact').checked,
-      logo: document.getElementById('benefit-logo').checked,
-      priority: document.getElementById('benefit-priority').checked,
-      homeFeature: document.getElementById('benefit-homeFeature').checked,
-      sideBanner: document.getElementById('benefit-sideBanner').checked,
-      megaBanner: document.getElementById('benefit-megaBanner').checked
-    }
-  };
+  var state = collectModalState();
+  var cfg = state.cfg;
+  var modalBiz = state.b;
+  if (!cfg.slug) {
+    cfg.slug = slugify(modalBiz.nombre);
+    document.getElementById('cfg-slug').value = cfg.slug;
+  }
+  var readiness = getReadiness(Object.assign({}, modalBiz, { status: activate ? 'pending' : modalBiz.status }), cfg);
+  if (activate && readiness.missing.length) {
+    refreshConfigPreview();
+    showToast('Faltan datos antes de publicar');
+    return;
+  }
   var fields = {
-    nombre: document.getElementById('cfg-name').value.trim(),
-    tipo: document.getElementById('cfg-tipo').value,
-    direccion: document.getElementById('cfg-address').value.trim(),
-    barrio: document.getElementById('cfg-neighborhood').value.trim(),
-    telefono: document.getElementById('cfg-phone').value.trim(),
-    status: activate ? 'active' : document.getElementById('cfg-status').value,
-    plan: document.getElementById('cfg-plan').value,
+    nombre: modalBiz.nombre,
+    tipo: modalBiz.tipo,
+    direccion: modalBiz.direccion,
+    barrio: modalBiz.barrio,
+    telefono: modalBiz.telefono,
+    status: activate ? 'active' : modalBiz.status,
+    plan: modalBiz.plan,
     mensaje: JSON.stringify(cfg)
   };
   patch(id, fields, activate ? 'Configuración guardada y local publicado' : 'Configuración guardada')

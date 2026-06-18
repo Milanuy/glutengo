@@ -21,10 +21,14 @@ Estados principales:
 4. Definir plan, estado y prioridad.
 5. Completar la configuracion editorial: slug, descripcion, coordenadas, logo, fotos y destaque.
 6. Marcar el checklist de beneficios habilitados.
-7. Guardar o usar `Guardar y publicar`.
+7. Revisar la preparacion y la vista previa.
+8. Guardar o usar `Guardar y publicar`.
 
 Cuando el estado queda en `active`, el local se publica automaticamente en GlutenGo mediante `/api/public-businesses`.
 Si tiene latitud y longitud validas aparece tambien en el mapa. Si todavia no tiene coordenadas, queda visible en el directorio y en su ficha publica, pero sin pin de mapa hasta completar la ubicacion.
+
+El admin evita publicar cuando faltan datos criticos, como nombre, tipo de oferta, categoria, direccion, zona, slug o contacto directo si ese beneficio esta marcado.
+Los avisos no bloquean la publicacion: sirven para recordar casos como falta de coordenadas, falta de descripcion, logo habilitado sin URL o beneficios pagos marcados en un plan basico.
 
 ## Checklist de beneficios
 
