@@ -40,6 +40,7 @@ Los avisos no bloquean la publicacion: sirven para recordar casos como falta de 
 - `Home destacado`: cupo de destaque dentro de la home.
 - `Banner lateral/flotante`: adicional comercial semanal, visible pero discreto.
 - `Mega banner`: adicional comercial premium semanal, recomendado para campañas puntuales.
+- `Sponsor de categoria o zona`: adicional mensual recurrente para patrocinar una busqueda concreta.
 
 ## Criterio comercial para banners
 
@@ -47,9 +48,17 @@ Los avisos no bloquean la publicacion: sirven para recordar casos como falta de 
 - Verificado / Datos confirmados: acceso preferente a extras de visibilidad si hay cupo.
 - Certificado / Protocolo certificado: prioridad para home, banner lateral/flotante y mega banner.
 - Banner lateral/flotante: $590 UYU por semana.
-- Mega banner: desde $590 UYU por semana, siempre con fecha de inicio y fin.
-- Los banners y mega banners no estan incluidos en la suscripcion mensual; son adicionales de posicionamiento dentro de la web.
+- Mega banner: $990 UYU por semana, siempre con fecha de inicio y fin.
+- Sponsor de categoria o zona: desde $2.490 UYU por mes, idealmente con cobro recurrente.
+- Los banners, mega banners y sponsors no estan incluidos en la suscripcion mensual; son adicionales de posicionamiento dentro de la web.
 - Mega banner: no vender mas de uno activo por zona o periodo. Si todo esta destacado, nada esta destacado; y la confianza de la guia baja.
+
+## Metodo recomendado para ingresos automaticos
+
+- Mantener las membresias mensuales como suscripciones recurrentes.
+- Vender sponsors de categoria o zona como suscripciones mensuales recurrentes, con cupos limitados.
+- Dejar banners y mega banners como boosts semanales que se puedan comprar desde un link de pago.
+- A futuro, usar webhooks de pago para activar/desactivar automaticamente el destaque por fechas.
 
 ## Notas tecnicas
 
