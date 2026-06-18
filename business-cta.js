@@ -1,6 +1,6 @@
 (function(){
-  var DISMISS_KEY = 'glutengo_business_cta_dismissed_until';
-  var SESSION_KEY = 'glutengo_business_cta_seen';
+  var DISMISS_KEY = 'glutengo_business_cta_dismissed_until_v2';
+  var SESSION_KEY = 'glutengo_business_cta_seen_v2';
   var now = Date.now();
 
   if (location.pathname.indexOf('negocios.html') !== -1) return;
@@ -68,11 +68,13 @@
 
   var hasSeen = false;
   try { hasSeen = sessionStorage.getItem(SESSION_KEY) === '1'; } catch (_) {}
-  var delay = hasSeen ? 7500 : 4200;
+  var isCompact = false;
+  try { isCompact = window.matchMedia('(max-width: 640px)').matches; } catch (_) {}
+  var delay = isCompact ? (hasSeen ? 2400 : 1200) : (hasSeen ? 7500 : 4200);
   var timer = setTimeout(show, delay);
 
   function onScroll() {
-    if (window.scrollY > 520) {
+    if (window.scrollY > (isCompact ? 220 : 520)) {
       clearTimeout(timer);
       show();
       window.removeEventListener('scroll', onScroll);
