@@ -536,6 +536,11 @@ function defaultConfig(b) {
     logoUrl: '',
     photoUrls: '',
     featuredPlacement: 'none',
+    sponsorTarget: '',
+    sponsorLabel: '',
+    sponsorStart: '',
+    sponsorEnd: '',
+    sponsorPaid: false,
     internal: '',
     benefits: {
       verifiedBadge: paid,
@@ -598,6 +603,11 @@ function getReadiness(b, cfg) {
   if (plan !== 'certificado' && benefits.certifiedBadge) warnings.push('Insignia de protocolo marcada sin plan Certificado.');
   if (plan === 'basico' && (benefits.directContact || benefits.logo || benefits.priority || cfg.featuredPlacement !== 'none')) {
     warnings.push('Plan Básico con beneficios pagos marcados.');
+  }
+  if (cfg.featuredPlacement === 'sponsor') {
+    if (!cfg.sponsorPaid) warnings.push('Sponsor marcado, pero falta confirmar pago.');
+    if (!hasText(cfg.sponsorTarget)) missing.push('Sección del sponsor');
+    if (!hasText(cfg.sponsorStart) || !hasText(cfg.sponsorEnd)) missing.push('Fechas del sponsor');
   }
   if ((plan === 'verificado' || plan === 'certificado') && b.status === 'pending_payment') {
     warnings.push('Confirmá el pago antes de publicar.');
@@ -678,6 +688,11 @@ function collectModalState() {
     logoUrl: document.getElementById('cfg-logo').value.trim(),
     photoUrls: document.getElementById('cfg-photos').value.trim(),
     featuredPlacement: document.getElementById('cfg-featured').value,
+    sponsorTarget: document.getElementById('cfg-sponsor-target').value,
+    sponsorLabel: document.getElementById('cfg-sponsor-label').value.trim(),
+    sponsorStart: document.getElementById('cfg-sponsor-start').value,
+    sponsorEnd: document.getElementById('cfg-sponsor-end').value,
+    sponsorPaid: document.getElementById('cfg-sponsor-paid').checked,
     internal: document.getElementById('cfg-internal').value.trim(),
     benefits: {
       verifiedBadge: document.getElementById('benefit-verifiedBadge').checked,
@@ -718,6 +733,7 @@ function bindConfigPreview() {
     'cfg-status','cfg-plan','cfg-position','cfg-name','cfg-tipo','cfg-category','cfg-phone',
     'cfg-address','cfg-neighborhood','cfg-slug','cfg-description','cfg-lat','cfg-lng',
     'cfg-instagram','cfg-logo','cfg-photos','cfg-featured','cfg-internal',
+    'cfg-sponsor-target','cfg-sponsor-label','cfg-sponsor-start','cfg-sponsor-end','cfg-sponsor-paid',
     'benefit-verifiedBadge','benefit-certifiedBadge','benefit-directContact','benefit-logo',
     'benefit-priority','benefit-homeFeature','benefit-sideBanner','benefit-megaBanner'
   ];
@@ -967,6 +983,47 @@ function showDetail(id) {
           <option value="sponsor"${selected(cfg.featuredPlacement, 'sponsor')}>Sponsor mensual de categoría/zona</option>
         </select>
         <div class="config-help">El destaque se guarda para campañas con cupo y fecha. No conviene usarlo en todos los locales.</div>
+      </div>
+      <div class="modal-field">
+        <label>Sección sponsor</label>
+        <select id="cfg-sponsor-target">
+          <option value=""${selected(cfg.sponsorTarget, '')}>Elegir sección</option>
+          <option value="home"${selected(cfg.sponsorTarget, 'home')}>Home / todos los lugares</option>
+          <option value="exclusivo"${selected(cfg.sponsorTarget, 'exclusivo')}>100% GF</option>
+          <option value="mixto"${selected(cfg.sponsorTarget, 'mixto')}>Con opciones</option>
+          <option value="cat:panaderia"${selected(cfg.sponsorTarget, 'cat:panaderia')}>Panaderías</option>
+          <option value="cat:restaurante"${selected(cfg.sponsorTarget, 'cat:restaurante')}>Restaurantes</option>
+          <option value="cat:cafeteria"${selected(cfg.sponsorTarget, 'cat:cafeteria')}>Cafés</option>
+          <option value="cat:heladeria"${selected(cfg.sponsorTarget, 'cat:heladeria')}>Heladerías</option>
+          <option value="cat:almacen"${selected(cfg.sponsorTarget, 'cat:almacen')}>Almacenes</option>
+          <option value="moment:desayuno"${selected(cfg.sponsorTarget, 'moment:desayuno')}>Desayuno o merienda</option>
+          <option value="moment:almuerzo"${selected(cfg.sponsorTarget, 'moment:almuerzo')}>Almuerzo o cena</option>
+          <option value="moment:postre"${selected(cfg.sponsorTarget, 'moment:postre')}>Postre / helado</option>
+          <option value="moment:llevar"${selected(cfg.sponsorTarget, 'moment:llevar')}>Para llevar</option>
+          <option value="moment:compras"${selected(cfg.sponsorTarget, 'moment:compras')}>Compras SG</option>
+          <option value="Pocitos"${selected(cfg.sponsorTarget, 'Pocitos')}>Zona Pocitos</option>
+          <option value="Punta Carretas"${selected(cfg.sponsorTarget, 'Punta Carretas')}>Zona Punta Carretas</option>
+          <option value="Ciudad de la Costa"${selected(cfg.sponsorTarget, 'Ciudad de la Costa')}>Zona Ciudad de la Costa</option>
+          <option value="Carrasco"${selected(cfg.sponsorTarget, 'Carrasco')}>Zona Carrasco</option>
+          <option value="Online"${selected(cfg.sponsorTarget, 'Online')}>Online</option>
+        </select>
+        <div class="config-help">El sponsor solo aparece cuando el usuario entra a esta sección/filtro.</div>
+      </div>
+      <div class="modal-field">
+        <label>Texto sponsor</label>
+        <input id="cfg-sponsor-label" value="${esc(cfg.sponsorLabel)}" placeholder="Sponsor de Panaderías SG" />
+      </div>
+      <div class="modal-field">
+        <label>Inicio sponsor</label>
+        <input id="cfg-sponsor-start" type="date" value="${esc(cfg.sponsorStart)}" />
+      </div>
+      <div class="modal-field">
+        <label>Fin sponsor</label>
+        <input id="cfg-sponsor-end" type="date" value="${esc(cfg.sponsorEnd)}" />
+      </div>
+      <div class="modal-field">
+        <label>Pago sponsor</label>
+        <label class="check-item" style="margin-top:.15rem"><input id="cfg-sponsor-paid" type="checkbox"${checked(cfg.sponsorPaid)}> Pago confirmado</label>
       </div>
       <div class="modal-field">
         <label>Atajo de beneficios</label>

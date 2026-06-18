@@ -125,6 +125,13 @@ function toPublicPlace(row) {
     logoUrl: benefits.logo ? cleanUrl(cfg.logoUrl) : '',
     photoUrls: parsePhotos(cfg.photoUrls),
     featuredPlacement: String(cfg.featuredPlacement || 'none'),
+    sponsor: {
+      active: cfg.featuredPlacement === 'sponsor' && Boolean(cfg.sponsorPaid),
+      target: String(cfg.sponsorTarget || ''),
+      label: String(cfg.sponsorLabel || ''),
+      start: String(cfg.sponsorStart || ''),
+      end: String(cfg.sponsorEnd || ''),
+    },
     benefits,
     source: 'admin',
   };

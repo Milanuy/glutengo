@@ -359,6 +359,29 @@
     .dir-card.exclusivo{border-left-color:var(--green)}
     .dir-card.mixto{border-left-color:var(--amber)}
     .dir-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.1)}
+    .sponsor-card{
+      grid-column:1/-1;
+      background:linear-gradient(135deg,var(--green-deep),#15542d);
+      color:#fff;border-radius:16px;padding:1.1rem 1.2rem;
+      box-shadow:0 10px 28px rgba(14,61,34,.2);
+      display:flex;align-items:center;justify-content:space-between;gap:1rem;
+      text-decoration:none;
+    }
+    .sponsor-kicker{
+      display:inline-flex;align-items:center;
+      color:var(--amber);font-size:.7rem;font-weight:900;
+      letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem;
+    }
+    .sponsor-title{font-family:'Fraunces',Georgia,serif;font-size:1.25rem;font-weight:900;line-height:1.15}
+    .sponsor-meta{font-size:.84rem;opacity:.78;margin-top:.25rem;line-height:1.45}
+    .sponsor-cta{
+      flex-shrink:0;background:var(--amber);color:var(--green-deep);
+      border-radius:999px;padding:.55rem .85rem;font-size:.82rem;font-weight:900;
+    }
+    @media(max-width:620px){
+      .sponsor-card{align-items:flex-start;flex-direction:column}
+      .sponsor-cta{width:100%;text-align:center}
+    }
     .dc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
     .dc-name{font-weight:700;font-size:1rem}
     .dc-category-icon{display:inline-flex;flex-shrink:0;align-items:center}
@@ -836,7 +859,7 @@
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
   <script src="/data.js?v=2.1"></script>
-  <script src="/app.js?v=2.3"></script>
+  <script src="/app.js?v=2.4"></script>
   <script src="/auth.js?v=2.1"></script>
   <script src="/business-cta.js?v=1.3"></script>
 

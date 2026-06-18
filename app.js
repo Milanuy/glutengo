@@ -1,4 +1,4 @@
-// GlutenGo — app.js v1.0
+// GlutenGo — app.js v1.1
 // Script principal de la home. Separado del HTML para evitar bloqueo de extensiones.
 
 // ────────────────────────────────────────────────────
@@ -147,6 +147,7 @@ function normalizePublicPlace(place) {
     logoUrl: place.logoUrl || '',
     photoUrls: Array.isArray(place.photoUrls) ? place.photoUrls : [],
     featuredPlacement: place.featuredPlacement || 'none',
+    sponsor: place.sponsor || {},
     benefits: place.benefits || {},
     source: place.source || 'admin',
   };
@@ -176,6 +177,51 @@ function loadPublicPlaces() {
     .then(function(r) { return r.ok ? r.json() : []; })
     .then(function(list) { mergePublicPlaces(list); })
     .catch(function(err) { console.warn('No se pudieron cargar negocios activos:', err.message); });
+}
+
+function parseSponsorDate(value) {
+  if (!value) return null;
+  var parts = String(value).split('-');
+  if (parts.length !== 3) return null;
+  return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+}
+
+function isSponsorLive(sponsor) {
+  if (!sponsor || !sponsor.active || !sponsor.target) return false;
+  if (!sponsor.start || !sponsor.end) return false;
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+  var start = parseSponsorDate(sponsor.start);
+  var end = parseSponsorDate(sponsor.end);
+  if (start && today < start) return false;
+  if (end && today > end) return false;
+  return true;
+}
+
+function sponsorMatchesFilter(lugar, filter) {
+  var sponsor = lugar && lugar.sponsor;
+  if (!isSponsorLive(sponsor)) return false;
+  return sponsor.target === filter || (filter === 'todos' && sponsor.target === 'home');
+}
+
+function findSponsorForFilter(filter) {
+  var matches = lugares.filter(function(l) { return sponsorMatchesFilter(l, filter); });
+  return sortPlacesForDisplay(matches)[0] || null;
+}
+
+function sponsorCardHtml(lugar, filter) {
+  if (!lugar) return '';
+  var sponsor = lugar.sponsor || {};
+  var label = sponsor.label || 'Sponsor de esta sección';
+  var section = filter === 'todos' ? 'GlutenGo' : label;
+  return '<a href="/lugar.html?slug=' + encodeURIComponent(lugar.slug) + '" class="sponsor-card">' +
+    '<div>' +
+      '<span class="sponsor-kicker">Presentado por</span>' +
+      '<div class="sponsor-title">' + escapeHtml(section) + '</div>' +
+      '<div class="sponsor-meta">' + escapeHtml(lugar.name) + ' acompaña esta búsqueda en GlutenGo. Confirmá siempre datos y disponibilidad con el local.</div>' +
+    '</div>' +
+    '<span class="sponsor-cta">Ver ficha</span>' +
+  '</a>';
 }
 
 function emptyStateSvg(color) {
@@ -432,8 +478,10 @@ function buildDir(filter, q){
   }
 
   filtered = sortPlacesForDisplay(filtered);
+  var sponsor = findSponsorForFilter(filter);
+  var sponsorHtml = sponsorCardHtml(sponsor, filter);
 
-  grid.innerHTML = filtered.map(function(l){
+  grid.innerHTML = sponsorHtml + filtered.map(function(l){
     var iconColor = l.tipo === 'exclusivo' ? '#166534' : '#D97706';
     var iconSvg   = getCatSVG(l.category, iconColor);
     var visual = placeLogoHtml(l, 'dc-brand-logo') ||
