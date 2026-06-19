@@ -158,12 +158,10 @@
       width:16px;height:16px;color:var(--green);flex:0 0 auto;
     }
     .category-filter-icon svg{width:16px;height:16px;display:block}
-    .chip.active .chip-icon,.chip:hover .chip-icon,
-    .map-chip.active .chip-icon,.map-chip:hover .chip-icon{
+    .chip.active .chip-icon,.chip:hover .chip-icon{
       box-shadow:0 0 0 3px rgba(255,255,255,.18);
     }
-    .chip.active .category-filter-icon,.chip:hover .category-filter-icon,
-    .map-chip.active .category-filter-icon,.map-chip:hover .category-filter-icon{
+    .chip.active .category-filter-icon,.chip:hover .category-filter-icon{
       color:#fff;
     }
 
@@ -230,49 +228,14 @@
       padding:3rem 0 0;
     }
     .map-section .section-header{padding:0 1.25rem}
-    .map-filter-panel{
-      padding:0 0 1.15rem;
-    }
-    .map-filter-group{
-      max-width:940px;margin:0 auto .9rem;
-    }
-    .map-filter-group:last-child{margin-bottom:0}
-    .map-filter-label{
-      display:block;text-align:center;
-      font-size:.68rem;font-weight:900;letter-spacing:.09em;text-transform:uppercase;
-      color:var(--gray);margin-bottom:.45rem;
-    }
-    .map-controls{
-      display:flex;gap:.5rem;flex-wrap:wrap;
-      padding:0 1.25rem;
-      justify-content:center;
-    }
-    .map-chip{
-      padding:.4rem 1rem;border-radius:50px;
-      border:1.5px solid var(--border);
-      background:#fff;font-size:.82rem;font-weight:600;
-      cursor:pointer;transition:all .15s;white-space:nowrap;
-      display:inline-flex;align-items:center;justify-content:center;gap:.38rem;
-    }
-    .map-chip.active,.map-chip:hover{
-      background:var(--green);color:#fff;border-color:var(--green);
-    }
-    .map-chip-geo{
-      background:var(--green-deep);color:#fff;border-color:var(--green-deep);
-      display:flex;align-items:center;gap:.35rem;
-    }
-    .map-chip-geo:hover{background:var(--green);border-color:var(--green)}
-    .filter-row-scroll,
-    .map-controls-scroll{
+    .filter-row-scroll{
       flex-wrap:nowrap;justify-content:flex-start;
       overflow-x:auto;overflow-y:hidden;
       scrollbar-width:none;-webkit-overflow-scrolling:touch;
       padding-bottom:.25rem;
     }
-    .filter-row-scroll::-webkit-scrollbar,
-    .map-controls-scroll::-webkit-scrollbar{display:none}
-    .filter-row-scroll .chip,
-    .map-controls-scroll .map-chip{flex:0 0 auto}
+    .filter-row-scroll::-webkit-scrollbar{display:none}
+    .filter-row-scroll .chip{flex:0 0 auto}
     #map{
       height:500px;width:100%;border-radius:16px;overflow:hidden;
       box-shadow:0 4px 28px rgba(0,0,0,.12);
@@ -427,7 +390,7 @@
     .filter-row.filter-row-scroll::-webkit-scrollbar{display:none}
     .filter-row.filter-row-scroll .chip{flex:0 0 auto}
     @media(min-width:760px){
-      .filter-row.filter-row-scroll,.map-controls-scroll{
+      .filter-row.filter-row-scroll{
         flex-wrap:wrap;justify-content:center;overflow:visible;padding-bottom:0;
       }
     }
@@ -720,40 +683,6 @@
       <p class="source-note">
         <strong>Información pública y comunitaria.</strong> GlutenGo ordena datos disponibles y aportes de usuarios para ayudarte a decidir; no reemplaza la confirmación directa con cada local sobre menú, horarios, protocolos o riesgo de contaminación cruzada.
       </p>
-    </div>
-
-    <div class="map-filter-panel">
-      <div class="map-filter-group">
-        <span class="map-filter-label">Oferta</span>
-        <div class="map-controls">
-          <button class="map-chip active" data-filter="todos" onclick="setMapFilter(this,'todos')">Todos</button>
-          <button class="map-chip" data-filter="exclusivo" onclick="setMapFilter(this,'exclusivo')"><span class="chip-icon sg" aria-hidden="true"></span>100% GF</button>
-          <button class="map-chip" data-filter="mixto" onclick="setMapFilter(this,'mixto')"><span class="chip-icon mix" aria-hidden="true"></span>Opciones SG</button>
-          <button class="map-chip map-chip-geo" onclick="geolocateMe()">
-            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-            Cerca de mí
-          </button>
-        </div>
-      </div>
-      <div class="map-filter-group">
-        <span class="map-filter-label">Categoría</span>
-        <div class="map-controls map-controls-scroll">
-          <button class="map-chip" data-filter="cat:panaderia" onclick="setMapFilter(this,'cat:panaderia')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 8C17 11 13 13 12 14C11 13 7 11 7 8a5 5 0 0110 0z"/><path d="M9 14v7h6v-7"/><line x1="9" y1="17.5" x2="15" y2="17.5"/></svg></span>Panaderías</button>
-          <button class="map-chip" data-filter="cat:restaurante" onclick="setMapFilter(this,'cat:restaurante')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></span>Restaurantes</button>
-          <button class="map-chip" data-filter="cat:cafeteria" onclick="setMapFilter(this,'cat:cafeteria')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>Cafés</button>
-          <button class="map-chip" data-filter="cat:heladeria" onclick="setMapFilter(this,'cat:heladeria')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M9.5 14l2.5 7 2.5-7"/></svg></span>Heladerías</button>
-          <button class="map-chip" data-filter="cat:almacen" onclick="setMapFilter(this,'cat:almacen')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>Almacenes</button>
-        </div>
-      </div>
-      <div class="map-filter-group">
-        <span class="map-filter-label">Momento</span>
-        <div class="map-controls map-controls-scroll" aria-label="Filtros por momento">
-          <button class="map-chip" data-filter="moment:desayuno" onclick="setMapFilter(this,'moment:desayuno')">Desayuno o merienda</button>
-          <button class="map-chip" data-filter="moment:almuerzo" onclick="setMapFilter(this,'moment:almuerzo')">Almuerzo o cena</button>
-          <button class="map-chip" data-filter="moment:postre" onclick="setMapFilter(this,'moment:postre')">Postre / helado</button>
-          <button class="map-chip" data-filter="moment:llevar" onclick="setMapFilter(this,'moment:llevar')">Para llevar</button>
-        </div>
-      </div>
     </div>
 
     <div id="map"></div>
