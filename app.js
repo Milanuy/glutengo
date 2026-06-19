@@ -137,10 +137,17 @@ function placeLogoHtml(lugar, className) {
   '</span>';
 }
 
+function parseCoord(value) {
+  var raw = String(value == null ? '' : value).trim();
+  if (!raw) return null;
+  var n = Number(raw.replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+}
+
 function hasValidCoords(lugar) {
   return lugar &&
-    Number.isFinite(Number(lugar.lat)) &&
-    Number.isFinite(Number(lugar.lng));
+    parseCoord(lugar.lat) !== null &&
+    parseCoord(lugar.lng) !== null;
 }
 
 function getPlacePosition(lugar) {
@@ -156,6 +163,8 @@ function sortPlacesForDisplay(list) {
 
 function normalizePublicPlace(place) {
   if (!place || !place.slug || !place.name) return null;
+  var lat = parseCoord(place.lat);
+  var lng = parseCoord(place.lng);
   return {
     slug: String(place.slug),
     name: String(place.name),
@@ -166,8 +175,8 @@ function normalizePublicPlace(place) {
     phone: place.phone || '',
     desc: place.desc || 'Local registrado en GlutenGo. Confirmá información antes de ir.',
     hours: place.hours || null,
-    lat: place.lat,
-    lng: place.lng,
+    lat: lat,
+    lng: lng,
     instagram: place.instagram || '',
     plan: place.plan || 'basico',
     position: getPlacePosition(place),

@@ -41,12 +41,103 @@ const PLANES = {
   certificado:{ label: 'Certificado ($1.590/mes)', precio: '$1.590 UYU/mes' },
 };
 
+const PLAN_PRESETS = {
+  basico: {
+    visibilityLevel: 'base',
+    visibilityLabel: 'Presencia simple',
+    position: 999,
+    benefits: {
+      verifiedBadge: false,
+      certifiedBadge: false,
+      directContact: false,
+      logo: false,
+      priority: false,
+      homeFeature: false,
+      sideBanner: false,
+      megaBanner: false,
+    },
+    reviewChecklist: [
+      'Revisar que el local exista y tenga una propuesta sin gluten clara.',
+      'Completar barrio, categoria y coordenadas si se publica en mapa.',
+      'Mantener sin links directos ni logo salvo upgrade.'
+    ],
+  },
+  verificado: {
+    visibilityLevel: 'priority',
+    visibilityLabel: 'Prioridad media',
+    position: 300,
+    benefits: {
+      verifiedBadge: true,
+      certifiedBadge: false,
+      directContact: true,
+      logo: true,
+      priority: true,
+      homeFeature: false,
+      sideBanner: false,
+      megaBanner: false,
+    },
+    reviewChecklist: [
+      'Confirmar pago de la suscripcion mensual.',
+      'Confirmar datos comerciales, WhatsApp, Instagram y horarios.',
+      'Cargar logo y descripcion cuidada antes de publicar.'
+    ],
+  },
+  certificado: {
+    visibilityLevel: 'premium',
+    visibilityLabel: 'Prioridad alta',
+    position: 100,
+    benefits: {
+      verifiedBadge: true,
+      certifiedBadge: true,
+      directContact: true,
+      logo: true,
+      priority: true,
+      homeFeature: false,
+      sideBanner: false,
+      megaBanner: false,
+    },
+    reviewChecklist: [
+      'Confirmar pago de la suscripcion mensual.',
+      'Coordinar y aprobar revision de protocolo sin gluten.',
+      'Cargar logo, descripcion, fotos y evidencia de protocolo.'
+    ],
+  },
+};
+
 function slugify(value) {
   return String(value || '')
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase().replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80);
+}
+
+function buildInitialConfig(data) {
+  const plan = PLAN_PRESETS[data.plan] ? data.plan : 'basico';
+  const preset = PLAN_PRESETS[plan];
+  return {
+    packagePresetVersion: '2026-06-19',
+    slug: slugify(data.nombre),
+    category: data.categoria || 'restaurante',
+    visibilityLevel: preset.visibilityLevel,
+    visibilityLabel: preset.visibilityLabel,
+    position: preset.position,
+    description: '',
+    lat: '',
+    lng: '',
+    instagram: '',
+    logoUrl: '',
+    photoUrls: '',
+    featuredPlacement: 'none',
+    sponsorTarget: '',
+    sponsorLabel: '',
+    sponsorStart: '',
+    sponsorEnd: '',
+    sponsorPaid: false,
+    internal: (data.mensaje || '').trim().slice(0, 1000),
+    reviewChecklist: preset.reviewChecklist,
+    benefits: Object.assign({}, preset.benefits),
+  };
 }
 
 function buildAdminEmail(data) {
@@ -187,6 +278,7 @@ exports.handler = async function (event) {
   }
 
   const { nombre, tipo, categoria, direccion, barrio, email, telefono, plan, mensaje } = data;
+  const selectedPlan = PLANES[plan] ? plan : 'basico';
 
   if (!nombre || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'nombre y email son requeridos' }) };
@@ -211,22 +303,14 @@ exports.handler = async function (event) {
         barrio:    (barrio || '').trim(),
         email:     email.toLowerCase().trim(),
         telefono:  (telefono || '').trim(),
-        plan:      plan || 'basico',
-        status:    plan === 'basico' ? 'pending' : 'pending_payment',
-        mensaje: JSON.stringify({
-          slug: slugify(nombre),
-          category: categoria || 'restaurante',
-          position: 999,
-          description: '',
-          lat: '',
-          lng: '',
-          instagram: '',
-          logoUrl: '',
-          photoUrls: '',
-          featuredPlacement: 'none',
-          internal: (mensaje || '').trim().slice(0, 1000),
-          benefits: {},
-        }),
+        plan:      selectedPlan,
+        status:    selectedPlan === 'basico' ? 'pending' : 'pending_payment',
+        mensaje: JSON.stringify(buildInitialConfig({
+          nombre,
+          categoria,
+          mensaje,
+          plan: selectedPlan,
+        })),
       }),
     });
     results.saved = sbRes.ok;
@@ -245,7 +329,7 @@ exports.handler = async function (event) {
           from: FROM_EMAIL,
           to: [ADMIN_EMAIL],
           subject: 'Nuevo negocio en GlutenGo: ' + nombre,
-          html: buildAdminEmail({ nombre, tipo, direccion, barrio, email, telefono, plan: plan || 'basico', mensaje }),
+          html: buildAdminEmail({ nombre, tipo, direccion, barrio, email, telefono, plan: selectedPlan, mensaje }),
         }),
       });
       results.notified = adminRes.ok;
@@ -259,7 +343,7 @@ exports.handler = async function (event) {
           reply_to: ADMIN_EMAIL,
           to: [email.toLowerCase().trim()],
           subject: 'Recibimos tu solicitud para GlutenGo',
-          html: buildAutoReply({ nombre, tipo, plan: plan || 'basico', mensaje }),
+          html: buildAutoReply({ nombre, tipo, plan: selectedPlan, mensaje }),
         }),
       });
       results.replied = replyRes.ok;
@@ -269,13 +353,13 @@ exports.handler = async function (event) {
   }
 
   // Incluir link de pago MP para planes pagos
-  const mp_link = (plan === 'verificado' || plan === 'certificado')
-    ? MP_LINKS[plan]
+  const mp_link = (selectedPlan === 'verificado' || selectedPlan === 'certificado')
+    ? MP_LINKS[selectedPlan]
     : null;
 
   return {
     statusCode: 200,
     headers: corsHeaders,
-    body: JSON.stringify({ ok: true, plan: plan || 'basico', mp_link, ...results }),
+    body: JSON.stringify({ ok: true, plan: selectedPlan, mp_link, ...results }),
   };
 };

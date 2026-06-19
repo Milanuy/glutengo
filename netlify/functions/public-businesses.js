@@ -66,7 +66,9 @@ function parsePhotos(value) {
 }
 
 function parseNumber(value) {
-  const n = Number(String(value || '').replace(',', '.'));
+  const raw = String(value == null ? '' : value).trim();
+  if (!raw) return null;
+  const n = Number(raw.replace(',', '.'));
   return Number.isFinite(n) ? n : null;
 }
 
@@ -82,6 +84,12 @@ function defaultBenefits(plan) {
     sideBanner: false,
     megaBanner: false,
   };
+}
+
+function defaultVisibilityLevel(plan) {
+  if (plan === 'certificado') return 'premium';
+  if (plan === 'verificado') return 'priority';
+  return 'base';
 }
 
 function publicDescription(row, cfg) {
@@ -121,6 +129,7 @@ function toPublicPlace(row) {
     hasCoordinates: lat !== null && lng !== null,
     instagram: directContact ? String(cfg.instagram || '').trim() : '',
     plan,
+    visibilityLevel: String(cfg.visibilityLevel || defaultVisibilityLevel(plan)),
     position: Number.isInteger(parsedPosition) && parsedPosition >= 1 ? parsedPosition : 999,
     logoUrl: benefits.logo ? cleanUrl(cfg.logoUrl) : '',
     photoUrls: parsePhotos(cfg.photoUrls),

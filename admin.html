@@ -286,6 +286,18 @@
     .check-item input{margin-top:.15rem}
     .config-help{font-size:.78rem;color:var(--gray);line-height:1.45;margin-top:.35rem}
     .modal-divider{height:1px;background:var(--border);margin:1rem 0}
+    .automation-box{
+      border:1px solid #BBF7D0;background:#F0FDF4;border-radius:14px;
+      padding:.85rem 1rem;margin:.25rem 0 1rem;color:#14532D;font-size:.84rem;
+    }
+    .automation-box strong{display:block;color:var(--green-deep);margin-bottom:.25rem}
+    .preset-actions{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.45rem}
+    .preset-actions button{
+      border:1px solid var(--border);background:#fff;color:var(--green-deep);
+      border-radius:999px;padding:.38rem .62rem;font-size:.74rem;font-weight:800;
+      cursor:pointer;
+    }
+    .preset-actions button:hover{border-color:var(--green);background:var(--green-light)}
 
     @media(max-width:768px){
       .main{padding:1rem .75rem}
@@ -405,7 +417,7 @@
           <tr>
             <th>Local</th>
             <th>Plan</th>
-            <th>Prioridad</th>
+            <th>Visibilidad</th>
             <th>Estado</th>
             <th>Preparación</th>
             <th>Barrio</th>
@@ -570,6 +582,80 @@ var STATUS_LABELS = {
 };
 var PHOTO_STATUS_LABELS = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Oculta' };
 var PLAN_LABELS_ES = { basico: 'Básico', verificado: 'Verificado · datos confirmados', certificado: 'Certificado · protocolo SG' };
+var VISIBILITY_LABELS_ES = {
+  base: 'Presencia simple',
+  priority: 'Prioridad media',
+  premium: 'Prioridad alta',
+  campaign: 'Campaña contratada'
+};
+var PLAN_PRESETS = {
+  basico: {
+    visibilityLevel: 'base',
+    position: 999,
+    featuredPlacement: 'none',
+    benefits: {
+      verifiedBadge: false,
+      certifiedBadge: false,
+      directContact: false,
+      logo: false,
+      priority: false,
+      homeFeature: false,
+      sideBanner: false,
+      megaBanner: false
+    },
+    reviewChecklist: [
+      'Validar que el local exista y tenga oferta sin gluten.',
+      'Completar categoria, barrio y coordenadas si va al mapa.',
+      'Publicar sin logo, links directos ni prioridad comercial.'
+    ]
+  },
+  verificado: {
+    visibilityLevel: 'priority',
+    position: 300,
+    featuredPlacement: 'none',
+    benefits: {
+      verifiedBadge: true,
+      certifiedBadge: false,
+      directContact: true,
+      logo: true,
+      priority: true,
+      homeFeature: false,
+      sideBanner: false,
+      megaBanner: false
+    },
+    reviewChecklist: [
+      'Confirmar pago de la suscripcion mensual.',
+      'Confirmar WhatsApp, Instagram, horarios y datos comerciales.',
+      'Cargar logo y descripcion antes de publicar.'
+    ]
+  },
+  certificado: {
+    visibilityLevel: 'premium',
+    position: 100,
+    featuredPlacement: 'none',
+    benefits: {
+      verifiedBadge: true,
+      certifiedBadge: true,
+      directContact: true,
+      logo: true,
+      priority: true,
+      homeFeature: false,
+      sideBanner: false,
+      megaBanner: false
+    },
+    reviewChecklist: [
+      'Confirmar pago de la suscripcion mensual.',
+      'Aprobar revision de protocolo sin gluten antes de activar insignia.',
+      'Cargar logo, descripcion, fotos y evidencia de protocolo.'
+    ]
+  }
+};
+var VISIBILITY_PRESETS = {
+  base: { position: 999, featuredPlacement: 'none' },
+  priority: { position: 300, featuredPlacement: 'none' },
+  premium: { position: 100, featuredPlacement: 'none' },
+  campaign: { position: 25 }
+};
 var CATEGORY_LABELS_ES = {
   restaurante: 'Restaurante',
   cafeteria: 'Cafetería',
@@ -599,12 +685,21 @@ function sameId(a, b) {
   return String(a) === String(b);
 }
 
+function cloneBenefits(source) {
+  return Object.assign({}, source || {});
+}
+
+function presetForPlan(plan) {
+  return PLAN_PRESETS[plan] || PLAN_PRESETS.basico;
+}
+
 function defaultConfig(b) {
-  var paid = b.plan === 'verificado' || b.plan === 'certificado';
+  var preset = presetForPlan(b.plan || 'basico');
   return {
     slug: slugify(b.nombre),
     category: b.categoria || 'restaurante',
-    position: Number(b.position || 999),
+    visibilityLevel: preset.visibilityLevel,
+    position: Number(b.position || preset.position || 999),
     description: '',
     lat: '',
     lng: '',
@@ -618,16 +713,8 @@ function defaultConfig(b) {
     sponsorEnd: '',
     sponsorPaid: false,
     internal: '',
-    benefits: {
-      verifiedBadge: paid,
-      certifiedBadge: b.plan === 'certificado',
-      directContact: paid,
-      logo: paid,
-      priority: paid,
-      homeFeature: false,
-      sideBanner: false,
-      megaBanner: false
-    }
+    reviewChecklist: (preset.reviewChecklist || []).slice(),
+    benefits: cloneBenefits(preset.benefits)
   };
 }
 
@@ -652,8 +739,11 @@ function hasText(value) {
 }
 
 function hasCoords(cfg) {
-  var lat = Number(String(cfg.lat || '').replace(',', '.'));
-  var lng = Number(String(cfg.lng || '').replace(',', '.'));
+  var rawLat = String(cfg.lat == null ? '' : cfg.lat).trim();
+  var rawLng = String(cfg.lng == null ? '' : cfg.lng).trim();
+  if (!rawLat || !rawLng) return false;
+  var lat = Number(rawLat.replace(',', '.'));
+  var lng = Number(rawLng.replace(',', '.'));
   return Number.isFinite(lat) && Number.isFinite(lng);
 }
 
@@ -680,6 +770,13 @@ function getReadiness(b, cfg) {
   if (plan === 'basico' && (benefits.directContact || benefits.logo || benefits.priority || cfg.featuredPlacement !== 'none')) {
     warnings.push('Plan Básico con beneficios pagos marcados.');
   }
+  if (!hasText(cfg.visibilityLevel)) warnings.push('Falta nivel de visibilidad.');
+  if (cfg.visibilityLevel === 'campaign' && cfg.featuredPlacement === 'none') {
+    warnings.push('Visibilidad de campaña seleccionada, pero falta elegir banner, mega banner o sponsor.');
+  }
+  if (cfg.featuredPlacement === 'side' && !benefits.sideBanner) warnings.push('Banner lateral elegido, pero el beneficio no está activo.');
+  if (cfg.featuredPlacement === 'mega' && !benefits.megaBanner) warnings.push('Mega banner elegido, pero el beneficio no está activo.');
+  if (cfg.featuredPlacement === 'home' && !benefits.homeFeature) warnings.push('Destacado en home elegido, pero el beneficio no está activo.');
   if (cfg.featuredPlacement === 'sponsor') {
     if (!cfg.sponsorPaid) warnings.push('Sponsor marcado, pero falta confirmar pago.');
     if (!hasText(cfg.sponsorTarget)) missing.push('Sección del sponsor');
@@ -718,6 +815,17 @@ function readinessPanelHtml(readiness) {
   '</div>';
 }
 
+function reviewChecklistHtml(cfg) {
+  var items = Array.isArray(cfg.reviewChecklist) ? cfg.reviewChecklist.filter(hasText) : [];
+  if (!items.length) return '';
+  return '<div class="automation-box">' +
+    '<strong>Checklist sugerido para revisar rápido</strong>' +
+    '<div class="readiness-list">' + items.map(function(item) {
+      return '<div class="readiness-item">' + esc(item) + '</div>';
+    }).join('') + '</div>' +
+  '</div>';
+}
+
 function planLabel(plan) {
   return PLAN_LABELS_ES[plan] || plan || 'Básico';
 }
@@ -743,6 +851,7 @@ function previewHtml(b, cfg) {
     '<div class="preview-tags">' +
       '<span class="preview-tag' + (isExclusive ? '' : ' warn') + '">' + (isExclusive ? '100% sin gluten' : 'Opciones SG') + '</span>' +
       '<span class="preview-tag">' + esc(planLabel(b.plan)) + '</span>' +
+      '<span class="preview-tag">' + esc(VISIBILITY_LABELS_ES[cfg.visibilityLevel] || cfg.visibilityLevel || 'Sin visibilidad') + '</span>' +
       (hasCoords(cfg) ? '<span class="preview-tag">Con mapa</span>' : '<span class="preview-tag warn">Sin mapa</span>') +
     '</div>' +
     '<div class="preview-desc">' + esc(cfg.description || 'Si no cargás descripción, GlutenGo mostrará un texto automático y más genérico.') + '</div>' +
@@ -753,9 +862,11 @@ function previewHtml(b, cfg) {
 }
 
 function collectModalState() {
+  var checklistEl = document.getElementById('cfg-review-checklist');
   var cfg = {
     slug: document.getElementById('cfg-slug').value.trim(),
     category: document.getElementById('cfg-category').value,
+    visibilityLevel: document.getElementById('cfg-visibility-level').value,
     position: Number(document.getElementById('cfg-position').value || 999),
     description: document.getElementById('cfg-description').value.trim(),
     lat: document.getElementById('cfg-lat').value.trim(),
@@ -770,6 +881,10 @@ function collectModalState() {
     sponsorEnd: document.getElementById('cfg-sponsor-end').value,
     sponsorPaid: document.getElementById('cfg-sponsor-paid').checked,
     internal: document.getElementById('cfg-internal').value.trim(),
+    reviewChecklist: String(checklistEl ? checklistEl.value : '')
+      .split(/\r?\n/)
+      .map(function(item) { return item.trim(); })
+      .filter(Boolean),
     benefits: {
       verifiedBadge: document.getElementById('benefit-verifiedBadge').checked,
       certifiedBadge: document.getElementById('benefit-certifiedBadge').checked,
@@ -800,13 +915,15 @@ function refreshConfigPreview() {
   var readiness = getReadiness(state.b, state.cfg);
   var readinessEl = document.getElementById('cfg-readiness-live');
   var previewEl = document.getElementById('admin-preview');
+  var checklistEl = document.getElementById('cfg-checklist-live');
   if (readinessEl) readinessEl.innerHTML = readinessPanelHtml(readiness);
   if (previewEl) previewEl.innerHTML = previewHtml(state.b, state.cfg);
+  if (checklistEl) checklistEl.innerHTML = reviewChecklistHtml(state.cfg);
 }
 
 function bindConfigPreview() {
   var ids = [
-    'cfg-status','cfg-plan','cfg-position','cfg-name','cfg-tipo','cfg-category','cfg-phone',
+    'cfg-status','cfg-plan','cfg-visibility-level','cfg-position','cfg-name','cfg-tipo','cfg-category','cfg-phone',
     'cfg-address','cfg-neighborhood','cfg-slug','cfg-description','cfg-lat','cfg-lng',
     'cfg-instagram','cfg-logo','cfg-photos','cfg-featured','cfg-internal',
     'cfg-sponsor-target','cfg-sponsor-label','cfg-sponsor-start','cfg-sponsor-end','cfg-sponsor-paid',
@@ -820,23 +937,68 @@ function bindConfigPreview() {
       el.addEventListener('change', refreshConfigPreview);
     }
   });
+  var planEl = document.getElementById('cfg-plan');
+  if (planEl) planEl.addEventListener('change', applyPlanBenefits);
+  var visibilityEl = document.getElementById('cfg-visibility-level');
+  if (visibilityEl) visibilityEl.addEventListener('change', applyVisibilityPreset);
+  var featuredEl = document.getElementById('cfg-featured');
+  if (featuredEl) featuredEl.addEventListener('change', applyFeaturedPreset);
+}
+
+function setBenefitChecks(benefits) {
+  Object.keys(benefits || {}).forEach(function(key) {
+    var el = document.getElementById('benefit-' + key);
+    if (el) el.checked = Boolean(benefits[key]);
+  });
 }
 
 function applyPlanBenefits() {
   var plan = document.getElementById('cfg-plan').value;
-  var paid = plan === 'verificado' || plan === 'certificado';
-  document.getElementById('benefit-verifiedBadge').checked = paid;
-  document.getElementById('benefit-certifiedBadge').checked = plan === 'certificado';
-  document.getElementById('benefit-directContact').checked = paid;
-  document.getElementById('benefit-logo').checked = paid;
-  document.getElementById('benefit-priority').checked = paid;
-  if (!paid) {
+  var preset = presetForPlan(plan);
+  document.getElementById('cfg-visibility-level').value = preset.visibilityLevel;
+  document.getElementById('cfg-position').value = preset.position;
+  document.getElementById('cfg-featured').value = preset.featuredPlacement || 'none';
+  var checklistEl = document.getElementById('cfg-review-checklist');
+  if (checklistEl) checklistEl.value = (preset.reviewChecklist || []).join('\n');
+  setBenefitChecks(preset.benefits);
+  refreshConfigPreview();
+}
+
+function applyVisibilityPreset() {
+  var level = document.getElementById('cfg-visibility-level').value;
+  var preset = VISIBILITY_PRESETS[level] || VISIBILITY_PRESETS.base;
+  document.getElementById('cfg-position').value = preset.position;
+  if (preset.featuredPlacement) document.getElementById('cfg-featured').value = preset.featuredPlacement;
+  if (level === 'campaign') document.getElementById('benefit-priority').checked = true;
+  if (level !== 'campaign') {
     document.getElementById('benefit-homeFeature').checked = false;
     document.getElementById('benefit-sideBanner').checked = false;
     document.getElementById('benefit-megaBanner').checked = false;
-    document.getElementById('cfg-featured').value = 'none';
   }
   refreshConfigPreview();
+}
+
+function applyFeaturedPreset() {
+  var featured = document.getElementById('cfg-featured').value;
+  if (featured === 'none') {
+    refreshConfigPreview();
+    return;
+  }
+  document.getElementById('cfg-visibility-level').value = 'campaign';
+  if (Number(document.getElementById('cfg-position').value || 999) > 25) {
+    document.getElementById('cfg-position').value = 25;
+  }
+  document.getElementById('benefit-priority').checked = true;
+  document.getElementById('benefit-homeFeature').checked = featured === 'home';
+  document.getElementById('benefit-sideBanner').checked = featured === 'side';
+  document.getElementById('benefit-megaBanner').checked = featured === 'mega';
+  refreshConfigPreview();
+}
+
+function setPositionPreset(level) {
+  var visibilityEl = document.getElementById('cfg-visibility-level');
+  if (visibilityEl) visibilityEl.value = level;
+  applyVisibilityPreset();
 }
 
 function renderTable() {
@@ -872,7 +1034,8 @@ function renderTable() {
         '<br><span style="font-size:.72rem;color:var(--gray)">' + esc(CATEGORY_LABELS_ES[cfg.category] || cfg.category || 'Sin categoría') + '</span>' +
       '</td>' +
       '<td data-label="Plan">' + planPill + '</td>' +
-      '<td data-label="Prioridad" style="font-weight:800;color:var(--green-deep)">' + esc(cfg.position || 999) + '</td>' +
+      '<td data-label="Visibilidad" style="font-weight:800;color:var(--green-deep)">' + esc(cfg.position || 999) +
+        '<br><span style="font-size:.72rem;color:var(--gray);font-weight:700">' + esc(VISIBILITY_LABELS_ES[cfg.visibilityLevel] || cfg.visibilityLevel || 'Sin nivel') + '</span></td>' +
       '<td data-label="Estado">' + statusBadge + '</td>' +
       '<td data-label="Preparación">' + readinessPillHtml(readiness) + '</td>' +
       '<td data-label="Barrio" style="color:var(--gray);font-size:.83rem">' + esc(b.barrio || '—') + '</td>' +
@@ -1037,13 +1200,36 @@ function showDetail(id) {
           <option value="verificado"${selected(b.plan, 'verificado')}>Verificado · datos confirmados</option>
           <option value="certificado"${selected(b.plan, 'certificado')}>Certificado · protocolo SG</option>
         </select>
+        <div class="config-help">Al cambiar el plan se cargan beneficios y prioridad sugerida.</div>
       </div>
       <div class="modal-field">
-        <label>Prioridad / posición</label>
+        <label>Nivel de visibilidad</label>
+        <select id="cfg-visibility-level">
+          <option value="base"${selected(cfg.visibilityLevel, 'base')}>Presencia simple</option>
+          <option value="priority"${selected(cfg.visibilityLevel, 'priority')}>Prioridad media</option>
+          <option value="premium"${selected(cfg.visibilityLevel, 'premium')}>Prioridad alta</option>
+          <option value="campaign"${selected(cfg.visibilityLevel, 'campaign')}>Campaña contratada</option>
+        </select>
+        <div class="config-help">El nivel define posición sugerida. Las campañas son extras separados del plan mensual.</div>
+      </div>
+      <div class="modal-field">
+        <label>Posición dentro de la web</label>
         <input id="cfg-position" type="number" min="1" max="999" value="${esc(cfg.position || 999)}" />
         <div class="config-help">Menor número = aparece antes en listados destacados.</div>
+        <div class="preset-actions">
+          <button type="button" onclick="setPositionPreset('base')">Básico 999</button>
+          <button type="button" onclick="setPositionPreset('priority')">Verificado 300</button>
+          <button type="button" onclick="setPositionPreset('premium')">Certificado 100</button>
+          <button type="button" onclick="setPositionPreset('campaign')">Campaña 25</button>
+        </div>
       </div>
     </div>
+    <div class="automation-box">
+      <strong>Automatización del alta</strong>
+      La solicitud ya trae el preset del plan elegido: beneficios base, nivel de visibilidad, posición sugerida y checklist interno. Desde acá solo revisás datos, ajustás extras contratados y publicás.
+    </div>
+    <textarea id="cfg-review-checklist" style="display:none">${esc(Array.isArray(cfg.reviewChecklist) ? cfg.reviewChecklist.join('\n') : '')}</textarea>
+    <div id="cfg-checklist-live">${reviewChecklistHtml(cfg)}</div>
 
     <div class="modal-section-title"><span>2</span> Ficha pública</div>
     <div class="modal-grid">
@@ -1124,13 +1310,13 @@ function showDetail(id) {
       <div class="modal-field">
         <label>Destaque comercial</label>
         <select id="cfg-featured">
-          <option value="none"${selected(cfg.featuredPlacement, 'none')}>Sin destaque extra</option>
-          <option value="home"${selected(cfg.featuredPlacement, 'home')}>Destacado en home</option>
-          <option value="side"${selected(cfg.featuredPlacement, 'side')}>Adicional: banner lateral/flotante semanal</option>
-          <option value="mega"${selected(cfg.featuredPlacement, 'mega')}>Adicional: mega banner semanal</option>
-          <option value="sponsor"${selected(cfg.featuredPlacement, 'sponsor')}>Sponsor mensual de categoría/zona</option>
+          <option value="none"${selected(cfg.featuredPlacement, 'none')}>Sin campaña extra</option>
+          <option value="home"${selected(cfg.featuredPlacement, 'home')}>Prioridad editorial en home</option>
+          <option value="side"${selected(cfg.featuredPlacement, 'side')}>Extra: banner flotante semanal</option>
+          <option value="mega"${selected(cfg.featuredPlacement, 'mega')}>Extra: mega banner semanal</option>
+          <option value="sponsor"${selected(cfg.featuredPlacement, 'sponsor')}>Extra: sponsor mensual de categoría/zona</option>
         </select>
-        <div class="config-help">El destaque se guarda para campañas con cupo y fecha. No conviene usarlo en todos los locales.</div>
+        <div class="config-help">Los extras no vienen incluidos en la membresía mensual; se activan por campaña, cupo y fecha.</div>
       </div>
       <div class="modal-field">
         <label>Sección sponsor</label>
@@ -1175,8 +1361,8 @@ function showDetail(id) {
       </div>
       <div class="modal-field">
         <label>Atajo de beneficios</label>
-        <button class="btn-sm btn-expire" style="width:100%;padding:.65rem .75rem" onclick="applyPlanBenefits()">Aplicar beneficios sugeridos del plan</button>
-        <div class="config-help">Útil al pasar de Básico a Verificado o Certificado.</div>
+        <button class="btn-sm btn-expire" style="width:100%;padding:.65rem .75rem" onclick="applyPlanBenefits()">Reaplicar preset del plan</button>
+        <div class="config-help">Vuelve a cargar el paquete base del plan elegido. No activa banners ni sponsor.</div>
       </div>
     </div>
 
