@@ -161,17 +161,15 @@
     compactScrollY: 220
   });
 
-  if (!isCompact) {
-    wireCard({
-      create: createVisibilityCard,
-      dismissKey: VISIBILITY_DISMISS_KEY,
-      sessionKey: VISIBILITY_SESSION_KEY,
-      delay: 6200,
-      seenDelay: 9000,
-      compactDelay: 3400,
-      compactSeenDelay: 5200,
-      scrollY: 760,
-      compactScrollY: 420
-    });
-  }
+  wireCard({
+    create: createVisibilityCard,
+    dismissKey: VISIBILITY_DISMISS_KEY,
+    sessionKey: VISIBILITY_SESSION_KEY,
+    delay: 6200,
+    seenDelay: 9000,
+    compactDelay: 3400,
+    compactSeenDelay: 5200,
+    scrollY: 760,
+    compactScrollY: 420
+  });
 })();

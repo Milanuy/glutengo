@@ -182,6 +182,35 @@
     }
     .stat span{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green-deep);opacity:.75}
 
+    /* ─── ESPACIO HOME DISPONIBLE ───────────────────────────── */
+    .home-slot-section{
+      background:var(--cream);padding:1.15rem 1.25rem 0;
+    }
+    .home-slot-banner{
+      max-width:1120px;margin:0 auto;
+      display:flex;align-items:center;justify-content:space-between;gap:1rem;
+      background:#FFFDF5;border:1.5px dashed rgba(183,121,31,.5);
+      border-radius:18px;padding:1rem 1.15rem;
+      box-shadow:0 12px 32px rgba(14,61,34,.08);
+      color:var(--green-deep);text-decoration:none;
+    }
+    .home-slot-kicker{
+      display:block;font-size:.72rem;font-weight:900;text-transform:uppercase;
+      letter-spacing:.1em;color:#B7791F;margin-bottom:.22rem;
+    }
+    .home-slot-title{
+      font-family:'Fraunces',Georgia,serif;font-size:1.25rem;
+      font-weight:900;line-height:1.1;margin:0;
+    }
+    .home-slot-copy{
+      color:#5F6B7A;font-size:.9rem;line-height:1.45;margin:.25rem 0 0;
+    }
+    .home-slot-cta{
+      flex-shrink:0;background:var(--green-deep);color:#fff;
+      border-radius:999px;padding:.72rem 1.4rem;font-weight:900;
+      font-size:.9rem;text-align:center;min-width:150px;
+    }
+
     /* ─── SECCIÓN GENÉRICA ───────────────────────────────────── */
     .section{padding:3.5rem 1.25rem}
     .section-header{
@@ -620,6 +649,11 @@
       .nav-links .nav-link:not(.nav-cta){display:none}
       .stats-strip{gap:0}
       .stat strong{font-size:1.4rem}
+      .home-slot-section{padding:.85rem 1rem 0}
+      .home-slot-banner{align-items:flex-start;flex-direction:column;padding:1rem}
+      .home-slot-title{font-size:1.15rem}
+      .home-slot-copy{font-size:.86rem}
+      .home-slot-cta{width:100%;padding:.75rem 1rem}
     }
   </style>
 </head>
@@ -670,6 +704,18 @@
       <span>Opciones SG</span>
     </div>
   </div>
+
+  <!-- ── ESPACIO DISPONIBLE HOME ────────────────────────────── -->
+  <section class="home-slot-section" aria-label="Espacio disponible en GlutenGo">
+    <a href="/negocios.html?ref=espacio-home-disponible#visibilidad" class="home-slot-banner">
+      <div>
+        <span class="home-slot-kicker">Espacio disponible</span>
+        <h2 class="home-slot-title">Tu local puede aparecer acá</h2>
+        <p class="home-slot-copy">Un lugar visible dentro de GlutenGo para llegar a personas que ya buscan opciones sin gluten.</p>
+      </div>
+      <span class="home-slot-cta">Aparecer acá</span>
+    </a>
+  </section>
 
   <!-- ── MAPA ────────────────────────────────────────────────── -->
   <section class="map-section" id="mapa">
@@ -923,7 +969,7 @@
   <script src="/data.js?v=2.2"></script>
   <script src="/app.js?v=2.9"></script>
   <script src="/auth.js?v=2.1"></script>
-  <script src="/business-cta.js?v=2.1"></script>
+  <script src="/business-cta.js?v=2.2"></script>
 
 </body>
 </html>

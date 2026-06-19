@@ -777,6 +777,9 @@ function getReadiness(b, cfg) {
   if (cfg.featuredPlacement === 'side' && !benefits.sideBanner) warnings.push('Banner lateral elegido, pero el beneficio no está activo.');
   if (cfg.featuredPlacement === 'mega' && !benefits.megaBanner) warnings.push('Mega banner elegido, pero el beneficio no está activo.');
   if (cfg.featuredPlacement === 'home' && !benefits.homeFeature) warnings.push('Destacado en home elegido, pero el beneficio no está activo.');
+  if (cfg.featuredPlacement === 'side' || cfg.featuredPlacement === 'mega') {
+    if (!hasText(cfg.sponsorStart) || !hasText(cfg.sponsorEnd)) warnings.push('Campaña marcada, pero faltan fecha de inicio o fin.');
+  }
   if (cfg.featuredPlacement === 'sponsor') {
     if (!cfg.sponsorPaid) warnings.push('Sponsor marcado, pero falta confirmar pago.');
     if (!hasText(cfg.sponsorTarget)) missing.push('Sección del sponsor');
@@ -943,6 +946,8 @@ function bindConfigPreview() {
   if (visibilityEl) visibilityEl.addEventListener('change', applyVisibilityPreset);
   var featuredEl = document.getElementById('cfg-featured');
   if (featuredEl) featuredEl.addEventListener('change', applyFeaturedPreset);
+  var sponsorTargetEl = document.getElementById('cfg-sponsor-target');
+  if (sponsorTargetEl) sponsorTargetEl.addEventListener('change', fillSponsorLabelIfBlank);
 }
 
 function setBenefitChecks(benefits) {
@@ -955,9 +960,13 @@ function setBenefitChecks(benefits) {
 function applyPlanBenefits() {
   var plan = document.getElementById('cfg-plan').value;
   var preset = presetForPlan(plan);
+  var statusEl = document.getElementById('cfg-status');
   document.getElementById('cfg-visibility-level').value = preset.visibilityLevel;
   document.getElementById('cfg-position').value = preset.position;
   document.getElementById('cfg-featured').value = preset.featuredPlacement || 'none';
+  if (statusEl && statusEl.value !== 'active' && statusEl.value !== 'rejected' && statusEl.value !== 'expired') {
+    statusEl.value = plan === 'basico' ? 'pending' : 'pending_payment';
+  }
   var checklistEl = document.getElementById('cfg-review-checklist');
   if (checklistEl) checklistEl.value = (preset.reviewChecklist || []).join('\n');
   setBenefitChecks(preset.benefits);
@@ -992,7 +1001,68 @@ function applyFeaturedPreset() {
   document.getElementById('benefit-homeFeature').checked = featured === 'home';
   document.getElementById('benefit-sideBanner').checked = featured === 'side';
   document.getElementById('benefit-megaBanner').checked = featured === 'mega';
+  ensureCampaignDates(featured);
+  fillSponsorLabelIfBlank();
   refreshConfigPreview();
+}
+
+function formatDateInput(date) {
+  var yyyy = date.getFullYear();
+  var mm = String(date.getMonth() + 1).padStart(2, '0');
+  var dd = String(date.getDate()).padStart(2, '0');
+  return yyyy + '-' + mm + '-' + dd;
+}
+
+function addDays(date, days) {
+  var next = new Date(date.getTime());
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function ensureCampaignDates(featured) {
+  var startEl = document.getElementById('cfg-sponsor-start');
+  var endEl = document.getElementById('cfg-sponsor-end');
+  if (!startEl || !endEl) return;
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (!startEl.value) startEl.value = formatDateInput(today);
+  if (!endEl.value) {
+    var days = featured === 'sponsor' ? 30 : 7;
+    endEl.value = formatDateInput(addDays(today, days));
+  }
+}
+
+function sponsorTargetLabel(value) {
+  if (!value) return '';
+  if (value === 'home') return 'Home de GlutenGo';
+  if (value === 'exclusivo') return '100% GF';
+  if (value === 'mixto') return 'Opciones SG';
+  if (value.indexOf('cat:') === 0) return CATEGORY_LABELS_ES[value.slice(4)] || value.slice(4);
+  if (value.indexOf('moment:') === 0) {
+    return ({
+      desayuno: 'Desayuno o merienda',
+      almuerzo: 'Almuerzo o cena',
+      postre: 'Postre / helado',
+      llevar: 'Para llevar',
+      compras: 'Compras SG'
+    })[value.slice(7)] || value.slice(7);
+  }
+  return value;
+}
+
+function fillSponsorLabelIfBlank() {
+  var featuredEl = document.getElementById('cfg-featured');
+  var targetEl = document.getElementById('cfg-sponsor-target');
+  var labelEl = document.getElementById('cfg-sponsor-label');
+  if (!featuredEl || !targetEl || !labelEl || labelEl.value.trim()) return;
+  var label = sponsorTargetLabel(targetEl.value);
+  if (featuredEl.value === 'sponsor' && label) {
+    labelEl.value = 'Sponsor de ' + label;
+  } else if (featuredEl.value === 'side') {
+    labelEl.value = 'Banner semanal';
+  } else if (featuredEl.value === 'mega') {
+    labelEl.value = 'Mega banner semanal';
+  }
 }
 
 function setPositionPreset(level) {
@@ -1319,7 +1389,7 @@ function showDetail(id) {
         <div class="config-help">Los extras no vienen incluidos en la membresía mensual; se activan por campaña, cupo y fecha.</div>
       </div>
       <div class="modal-field">
-        <label>Sección sponsor</label>
+        <label>Sección sponsor / campaña</label>
         <select id="cfg-sponsor-target">
           <option value=""${selected(cfg.sponsorTarget, '')}>Elegir sección</option>
           <option value="home"${selected(cfg.sponsorTarget, 'home')}>Home / todos los lugares</option>
@@ -1344,19 +1414,19 @@ function showDetail(id) {
         <div class="config-help">El sponsor solo aparece cuando el usuario entra a esta sección/filtro.</div>
       </div>
       <div class="modal-field">
-        <label>Texto sponsor</label>
+        <label>Texto de campaña</label>
         <input id="cfg-sponsor-label" value="${esc(cfg.sponsorLabel)}" placeholder="Sponsor de Panaderías SG" />
       </div>
       <div class="modal-field">
-        <label>Inicio sponsor</label>
+        <label>Inicio campaña</label>
         <input id="cfg-sponsor-start" type="date" value="${esc(cfg.sponsorStart)}" />
       </div>
       <div class="modal-field">
-        <label>Fin sponsor</label>
+        <label>Fin campaña</label>
         <input id="cfg-sponsor-end" type="date" value="${esc(cfg.sponsorEnd)}" />
       </div>
       <div class="modal-field">
-        <label>Pago sponsor</label>
+        <label>Pago campaña</label>
         <label class="check-item" style="margin-top:.15rem"><input id="cfg-sponsor-paid" type="checkbox"${checked(cfg.sponsorPaid)}> Pago confirmado</label>
       </div>
       <div class="modal-field">
