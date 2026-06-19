@@ -875,7 +875,10 @@
         .then(function(res){ return res.json(); })
         .then(function(data){
           if (data.ok) {
-            showToast(data.photoWarning || '¡Gracias! Tu valoración fue guardada', Boolean(data.photoWarning));
+            var okMessage = data.photoStatus === 'pending'
+              ? '¡Gracias! Tu valoración fue guardada. La foto queda en revisión.'
+              : '¡Gracias! Tu valoración fue guardada';
+            showToast(data.photoWarning || okMessage, Boolean(data.photoWarning));
             updateScoreUI(data.score, data.count);
             var sec = document.getElementById('rating-section');
             if (sec) {

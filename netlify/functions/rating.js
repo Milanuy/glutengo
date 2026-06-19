@@ -93,7 +93,7 @@ async function uploadRatingPhoto(photo, slug, userKey) {
 
 async function ratingPhotoColumnsReady() {
   const res = await fetch(
-    SUPABASE_URL + '/rest/v1/ratings?select=photo_url,photo_path&limit=1',
+    SUPABASE_URL + '/rest/v1/ratings?select=photo_url,photo_path,photo_status&limit=1',
     { headers: serviceHeaders() }
   );
   return res.ok;
@@ -113,10 +113,19 @@ exports.handler = async function (event) {
     try {
       let res = await fetch(
         SUPABASE_URL + '/rest/v1/ratings?slug=eq.' + encodeURIComponent(slug) +
-        '&select=score,comentario,created_at,photo_url&order=created_at.desc',
+        '&select=score,comentario,created_at,photo_url,photo_status&order=created_at.desc',
         { headers: serviceHeaders() }
       );
       let hasPhotoColumn = true;
+      let hasPhotoStatus = true;
+      if (!res.ok) {
+        hasPhotoStatus = false;
+        res = await fetch(
+          SUPABASE_URL + '/rest/v1/ratings?slug=eq.' + encodeURIComponent(slug) +
+          '&select=score,comentario,created_at,photo_url&order=created_at.desc',
+          { headers: serviceHeaders() }
+        );
+      }
       if (!res.ok) {
         hasPhotoColumn = false;
         res = await fetch(
@@ -141,7 +150,7 @@ exports.handler = async function (event) {
         return {
           score:      r.score,
           comentario: r.comentario,
-          photoUrl:    hasPhotoColumn ? (r.photo_url || '') : '',
+          photoUrl:    hasPhotoColumn && (!hasPhotoStatus || r.photo_status === 'approved') ? (r.photo_url || '') : '',
           fecha:      r.created_at ? r.created_at.slice(0, 10) : null,
           autor:      'Miembro GlutenGo',
         };
@@ -234,6 +243,7 @@ exports.handler = async function (event) {
       if (uploadedPhoto) {
         values.photo_url = uploadedPhoto.url;
         values.photo_path = uploadedPhoto.path;
+        values.photo_status = 'pending';
       }
 
       if (existingId) {
@@ -303,10 +313,10 @@ exports.handler = async function (event) {
       const newScore = count > 0 ? Math.round((avg - 1) * 25) : null;
 
       return { statusCode: 200, headers: corsHeaders,
-        body: JSON.stringify({ ok: true, count, avg: +avg.toFixed(2), score: newScore, photoWarning }) };
+        body: JSON.stringify({ ok: true, count, avg: +avg.toFixed(2), score: newScore, photoWarning, photoStatus: uploadedPhoto ? 'pending' : '' }) };
     } catch (_) {
       return { statusCode: 200, headers: corsHeaders,
-        body: JSON.stringify({ ok: true, count: 1, avg: scoreNum, score: Math.round((scoreNum - 1) * 25), photoWarning }) };
+        body: JSON.stringify({ ok: true, count: 1, avg: scoreNum, score: Math.round((scoreNum - 1) * 25), photoWarning, photoStatus: uploadedPhoto ? 'pending' : '' }) };
     }
   }
 

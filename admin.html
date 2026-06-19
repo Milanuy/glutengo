@@ -105,6 +105,7 @@
     .badge.pending{background:#FEF3C7;color:#92400E}
     .badge.pending_payment{background:#FEF3C7;color:#92400E}
     .badge.active{background:var(--green-light);color:var(--green)}
+    .badge.approved{background:var(--green-light);color:var(--green)}
     .badge.rejected{background:var(--red-light);color:var(--red)}
     .badge.expired{background:#F3F4F6;color:#6B7280}
     .readiness-pill{
@@ -152,6 +153,34 @@
       cursor:pointer;font-family:inherit;
     }
     .btn-save-pos:hover{background:var(--green-deep)}
+
+    /* ── PHOTO MODERATION ── */
+    .admin-section{margin-top:1.5rem}
+    .section-head{
+      display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;
+      margin-bottom:.85rem;
+    }
+    .section-kicker{
+      font-size:.75rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+      color:var(--amber);margin-bottom:.2rem;
+    }
+    .section-title{font-size:1.15rem;font-weight:900;color:var(--green-deep)}
+    .section-sub{font-size:.84rem;color:var(--gray);margin-top:.18rem;line-height:1.45}
+    .rating-photo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+    .rating-photo-card{
+      background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;
+      box-shadow:0 3px 14px rgba(0,0,0,.04);
+    }
+    .rating-photo-thumb{
+      display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#F3F4F6;
+      border-bottom:1px solid var(--border);
+    }
+    .rating-photo-body{padding:1rem;display:grid;gap:.55rem}
+    .rating-photo-meta{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+    .rating-photo-local{font-weight:900;color:#111;line-height:1.2}
+    .rating-photo-stars{color:#F59E0B;font-size:.95rem;letter-spacing:1px}
+    .rating-photo-comment{font-size:.84rem;color:#374151;line-height:1.48}
+    .rating-photo-foot{font-size:.76rem;color:var(--gray)}
 
     /* ── EMPTY ── */
     .empty{text-align:center;padding:3rem 1rem;color:var(--gray)}
@@ -310,6 +339,9 @@
       .modal{padding:1.25rem;border-radius:16px}
       .modal-actions{flex-direction:column}
       .modal-actions .btn-sm,.modal-actions a{width:100%;text-align:center}
+      .section-head{align-items:flex-start;flex-direction:column}
+      .section-head .btn-sm{width:100%}
+      .rating-photo-grid{grid-template-columns:1fr}
     }
     @media(max-width:420px){
       .stats{grid-template-columns:1fr 1fr;gap:.65rem}
@@ -351,6 +383,7 @@
       <div class="stat-card"><div class="stat-val" style="color:#92400E" id="s-pending">—</div><div class="stat-lbl">Pendientes</div></div>
       <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="s-active">—</div><div class="stat-lbl">Publicados</div></div>
       <div class="stat-card"><div class="stat-val" style="color:var(--amber)" id="s-revenue">—</div><div class="stat-lbl">Ingresos estimados / mes</div></div>
+      <div class="stat-card"><div class="stat-val" style="color:#92400E" id="s-photo-pending">—</div><div class="stat-lbl">Fotos por revisar</div></div>
     </div>
 
     <!-- FILTERS -->
@@ -386,6 +419,20 @@
       </table>
     </div>
 
+    <section class="admin-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Comunidad</div>
+          <div class="section-title">Fotos de calificaciones</div>
+          <div class="section-sub">Aprobá solo fotos reales y útiles. Si una foto no corresponde, queda oculta para los usuarios.</div>
+        </div>
+        <button class="btn-sm btn-expire" onclick="loadPhotoRatings()">↻ Refrescar fotos</button>
+      </div>
+      <div id="rating-photos-list" class="rating-photo-grid">
+        <div class="empty" style="grid-column:1/-1;background:#fff;border:1px solid var(--border);border-radius:16px">Cargando fotos…</div>
+      </div>
+    </section>
+
   </div><!-- /main -->
 </div><!-- /admin-app -->
 
@@ -398,10 +445,13 @@
 
 <div id="toast"></div>
 
+<script src="/data.js?v=0.5"></script>
 <script>
 var API     = '/api/admin-businesses';
+var RATINGS_API = '/api/admin-ratings';
 var adminToken = '';
 var allBiz  = [];
+var allPhotoRatings = [];
 var curFilter = 'todos';
 var curSearch = '';
 
@@ -421,6 +471,7 @@ function doLogin() {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-app').style.display = 'block';
       processData(data);
+      loadPhotoRatings();
     })
     .catch(function(err) {
       document.getElementById('login-err').style.display = 'block';
@@ -449,8 +500,29 @@ function loadBusinesses() {
     '<tr><td colspan="8" class="empty">Cargando…</td></tr>';
   fetch(API, { headers: { 'x-admin-token': adminToken } })
     .then(function(r) { return r.json(); })
-    .then(function(data) { processData(data); })
+    .then(function(data) { processData(data); loadPhotoRatings(); })
     .catch(function(err) { showToast('Error al cargar: ' + err.message); });
+}
+
+function loadPhotoRatings() {
+  var target = document.getElementById('rating-photos-list');
+  if (target) {
+    target.innerHTML = '<div class="empty" style="grid-column:1/-1;background:#fff;border:1px solid var(--border);border-radius:16px">Cargando fotos…</div>';
+  }
+  return fetch(RATINGS_API, { headers: { 'x-admin-token': adminToken } })
+    .then(function(r) {
+      if (!r.ok) throw new Error('Error ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      allPhotoRatings = Array.isArray(data) ? data : [];
+      updateStats();
+      renderPhotoRatings();
+    })
+    .catch(function(err) {
+      if (target) target.innerHTML = '<div class="empty" style="grid-column:1/-1;background:#fff;border:1px solid var(--border);border-radius:16px">No se pudieron cargar las fotos.</div>';
+      showToast('Error al cargar fotos: ' + err.message);
+    });
 }
 
 function processData(data) {
@@ -473,6 +545,9 @@ function updateStats() {
   document.getElementById('s-pending').textContent  = pending;
   document.getElementById('s-active').textContent   = active;
   document.getElementById('s-revenue').textContent  = revenue ? '$' + revenue.toLocaleString('es-UY') : '$0';
+  document.getElementById('s-photo-pending').textContent = allPhotoRatings.filter(function(r) {
+    return (r.photo_status || 'pending') === 'pending';
+  }).length;
 }
 
 // ── FILTERS ────────────────────────────────────────────────────────────────
@@ -493,6 +568,7 @@ var STATUS_LABELS = {
   pending: 'Pendiente', pending_payment: 'Aguardando pago',
   active: 'Publicado', rejected: 'Rechazado', expired: 'Vencido',
 };
+var PHOTO_STATUS_LABELS = { pending: 'Pendiente', approved: 'Aprobada', rejected: 'Oculta' };
 var PLAN_LABELS_ES = { basico: 'Básico', verificado: 'Verificado · datos confirmados', certificado: 'Certificado · protocolo SG' };
 var CATEGORY_LABELS_ES = {
   restaurante: 'Restaurante',
@@ -818,6 +894,78 @@ function buildActions(b) {
     btns += '<button class="btn-sm btn-approve" onclick="showDetail(\'' + b.id + '\')">Revisar</button>';
   }
   return '<div class="actions">' + btns + '</div>';
+}
+
+function localNameForSlug(slug) {
+  var match = allBiz.find(function(b) {
+    return readConfig(b).slug === slug;
+  });
+  if (match) return match.nombre || slug;
+  if (typeof lugares !== 'undefined') {
+    var publicMatch = lugares.find(function(l) { return l.slug === slug; });
+    if (publicMatch) return publicMatch.name || slug;
+  }
+  return slug;
+}
+
+function renderPhotoRatings() {
+  var target = document.getElementById('rating-photos-list');
+  if (!target) return;
+  if (!allPhotoRatings.length) {
+    target.innerHTML = '<div class="empty" style="grid-column:1/-1;background:#fff;border:1px solid var(--border);border-radius:16px">Todavía no hay fotos en calificaciones.</div>';
+    return;
+  }
+
+  target.innerHTML = allPhotoRatings.map(function(r) {
+    var status = r.photo_status || 'pending';
+    var badgeClass = status === 'approved' ? 'approved' : status === 'rejected' ? 'rejected' : 'pending';
+    var stars = '★★★★★'.slice(0, Number(r.score || 0));
+    var localName = localNameForSlug(r.slug);
+    var actions = '';
+    if (status !== 'approved') {
+      actions += '<button class="btn-sm btn-approve" onclick="setPhotoStatus(\'' + esc(r.id) + '\',\'approved\')">Aprobar</button>';
+    }
+    if (status !== 'rejected') {
+      actions += '<button class="btn-sm btn-reject" onclick="setPhotoStatus(\'' + esc(r.id) + '\',\'rejected\')">Ocultar</button>';
+    }
+    if (status !== 'pending') {
+      actions += '<button class="btn-sm btn-expire" onclick="setPhotoStatus(\'' + esc(r.id) + '\',\'pending\')">Volver a revisar</button>';
+    }
+    return '<article class="rating-photo-card">' +
+      '<a href="' + esc(r.photo_url || '') + '" target="_blank" rel="noopener">' +
+        '<img class="rating-photo-thumb" src="' + esc(r.photo_url || '') + '" alt="Foto subida por la comunidad">' +
+      '</a>' +
+      '<div class="rating-photo-body">' +
+        '<div class="rating-photo-meta">' +
+          '<div><div class="rating-photo-local">' + esc(localName) + '</div><div class="rating-photo-foot">' + esc(r.created_at ? r.created_at.slice(0, 10) : 'Sin fecha') + '</div></div>' +
+          '<span class="badge ' + badgeClass + '">' + esc(PHOTO_STATUS_LABELS[status] || status) + '</span>' +
+        '</div>' +
+        '<div class="rating-photo-stars">' + esc(stars || '—') + '</div>' +
+        (r.comentario ? '<div class="rating-photo-comment">"' + esc(r.comentario) + '"</div>' : '<div class="rating-photo-comment" style="color:var(--gray)">Sin comentario.</div>') +
+        '<div class="actions">' + actions + '</div>' +
+      '</div>' +
+    '</article>';
+  }).join('');
+}
+
+function setPhotoStatus(id, status) {
+  return fetch(RATINGS_API, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+    body: JSON.stringify({ id: id, photo_status: status }),
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('Error ' + r.status);
+    return r.json();
+  })
+  .then(function(updated) {
+    var idx = allPhotoRatings.findIndex(function(r) { return sameId(r.id, id); });
+    if (idx !== -1) allPhotoRatings[idx] = Object.assign(allPhotoRatings[idx], updated);
+    updateStats();
+    renderPhotoRatings();
+    showToast(status === 'approved' ? 'Foto aprobada' : status === 'rejected' ? 'Foto oculta' : 'Foto marcada pendiente');
+  })
+  .catch(function(err) { showToast('Error: ' + err.message); });
 }
 
 // ── PATCH HELPER ───────────────────────────────────────────────────────────
