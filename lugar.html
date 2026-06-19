@@ -89,6 +89,8 @@
       margin-top:.75rem;opacity:.85;font-size:.9rem;
     }
     .lugar-meta span{display:flex;align-items:center;gap:.3rem}
+    .lugar-category-icon{display:inline-flex;align-items:center;color:currentColor}
+    .lugar-category-icon svg{width:15px;height:15px}
     .source-alert{
       margin-top:1rem;max-width:760px;
       background:rgba(255,255,255,.1);
@@ -367,8 +369,57 @@
       otro: 'Otro',
     };
 
+    const CATEGORY_SVG = {
+      restaurante:
+        '<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+          '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/>' +
+          '<path d="M7 2v20M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>' +
+        '</svg>',
+      cafeteria:
+        '<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+          '<path d="M18 8h1a4 4 0 010 8h-1"/>' +
+          '<path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/>' +
+          '<line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>' +
+        '</svg>',
+      panaderia:
+        '<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+          '<path d="M17 8C17 11 13 13 12 14C11 13 7 11 7 8a5 5 0 0110 0z"/>' +
+          '<path d="M9 14v7h6v-7"/>' +
+          '<line x1="9" y1="17.5" x2="15" y2="17.5"/>' +
+        '</svg>',
+      heladeria:
+        '<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+          '<circle cx="12" cy="9" r="5"/>' +
+          '<path d="M9.5 14l2.5 7 2.5-7"/>' +
+        '</svg>',
+      rotiseria:
+        '<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+          '<path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/>' +
+        '</svg>',
+      hotel:
+        '<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+          '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>' +
+          '<polyline points="9 22 9 12 15 12 15 22"/>' +
+        '</svg>',
+      almacen:
+        '<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+          '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>' +
+          '<line x1="3" y1="6" x2="21" y2="6"/>' +
+          '<path d="M16 10a4 4 0 01-8 0"/>' +
+        '</svg>',
+      otro:
+        '<svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">' +
+          '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>' +
+          '<circle cx="12" cy="10" r="3"/>' +
+        '</svg>',
+    };
+
     function formatCategory(category) {
       return CATEGORY_LABELS[category] || category || 'Otro';
+    }
+
+    function categoryIcon(category) {
+      return '<span class="lugar-category-icon" aria-hidden="true">' + (CATEGORY_SVG[category] || CATEGORY_SVG.otro) + '</span>';
     }
 
     function hasValidCoords(lugar) {
@@ -544,7 +595,7 @@
             ${lugar.address}, ${lugar.neighborhood}
           </span>
           <span>
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>
+            ${categoryIcon(lugar.category)}
             ${formatCategory(lugar.category)}
           </span>
         </div>

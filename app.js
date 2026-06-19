@@ -531,7 +531,7 @@ function buildDir(filter, q){
         '<span class="dc-name" style="display:flex;align-items:center;gap:.4rem">' +
           visual + escapeHtml(l.name) +
         '</span>' +
-        '<span class="dc-badge '+escapeHtml(l.tipo)+'">'+(l.tipo==='exclusivo'?'100% GF':'Mixto')+'</span>' +
+        '<span class="dc-badge '+escapeHtml(l.tipo)+'">'+(l.tipo==='exclusivo'?'100% GF':'Opciones SG')+'</span>' +
       '</div>' +
       '<div class="dc-meta"><span>'+escapeHtml(l.neighborhood)+'</span><span class="dc-sep">·</span><span>'+escapeHtml(formatCategory(l.category))+'</span></div>' +
       '<p class="dc-desc">'+escapeHtml(l.desc)+'</p>' +

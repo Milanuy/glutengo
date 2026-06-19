@@ -313,7 +313,11 @@
     }
     .plan-price .currency{font-size:1.1rem;font-weight:600}
     .plan-price .period{font-size:.78rem;font-weight:400;opacity:.55;color:#fff}
-    .plan-price-note{font-size:.73rem;opacity:.5;margin-bottom:1.25rem}
+    .plan-price-note{font-size:.73rem;opacity:.64;margin-bottom:1.25rem;line-height:1.35}
+    .plan-card.featured .plan-price-note{
+      display:inline-flex;background:rgba(232,169,60,.16);color:var(--amber);
+      opacity:1;border-radius:999px;padding:.32rem .62rem;font-weight:800;
+    }
     .plan-features{list-style:none;flex:1;margin:0 0 1.5rem;padding:0}
     .plan-features li{
       display:flex;align-items:flex-start;gap:.55rem;
@@ -733,7 +737,7 @@
             <span class="currency">$</span>590
             <span class="period">UYU / mes</span>
           </div>
-          <p class="plan-price-note">≈ $15 USD · menos que un cubierto por semana</p>
+          <p class="plan-price-note">Te cuesta parecido a 1 pedido, 1 plato o 1 venta al mes</p>
           <ul class="plan-features">
             <li><span class="check">✓</span>Ficha enriquecida con horarios, menú y descripción cuidada</li>
             <li><span class="check">✓</span>Logo del local en ficha y tarjetas del directorio</li>
@@ -793,8 +797,8 @@
         <div class="visibility-card">
           <strong>Prioridad para planes pagos</strong>
           <h3>Destacado en home</h3>
-          <div class="visibility-price"><strong>Según cupo</strong><span>rotación editorial</span></div>
-          <p>Tarjeta prioritaria dentro de la página principal cuando el usuario está explorando lugares 100% SG, por momento o por zona.</p>
+          <div class="visibility-price"><strong>Acceso por cupo</strong><span> rotación editorial</span></div>
+          <p>No es un banner fijo comprado aparte: es una ubicación prioritaria para planes pagos cuando hay cupo editorial en home, por momento o por zona.</p>
           <span class="visibility-chip">No invasivo</span>
         </div>
         <div class="visibility-card">
@@ -868,7 +872,7 @@
     <div class="roi-inner">
       <div class="section-header">
         <span class="section-label" style="color:var(--amber)">Retorno simple</span>
-        <h2 class="section-title" style="color:#fff">Un cliente que confía puede justificar el plan rápidamente</h2>
+        <h2 class="section-title" style="color:#fff">La mensualidad puede costar lo mismo que una venta</h2>
       </div>
       <div class="roi-grid">
         <div class="roi-card">
@@ -877,9 +881,9 @@
           <div class="roi-note">Monto fijo, sin comisión por pedido o visita</div>
         </div>
         <div class="roi-card">
-          <div class="roi-number">1 mesa</div>
-          <div class="roi-label">puede cubrir una parte importante del costo mensual</div>
-          <div class="roi-note">Depende del ticket real de cada local</div>
+          <div class="roi-number">1 pedido</div>
+          <div class="roi-label">puede pagar casi todo el mes de visibilidad</div>
+          <div class="roi-note">También puede ser 1 plato, 1 venta o una mesa chica</div>
         </div>
         <div class="roi-card">
           <div class="roi-number">0%</div>
