@@ -148,14 +148,23 @@
     .eyebrow-mark svg{width:18px;height:18px;display:block}
     .chip-icon{
       width:.62rem;height:.62rem;border-radius:999px;
-      display:inline-block;margin-right:.42rem;vertical-align:.02rem;
+      display:inline-block;margin-right:0;vertical-align:.02rem;
       box-shadow:0 0 0 3px rgba(22,101,52,.08);
     }
     .chip-icon.sg{background:var(--green)}
     .chip-icon.mix{background:var(--amber);box-shadow:0 0 0 3px rgba(232,169,60,.16)}
+    .category-filter-icon{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:16px;height:16px;color:var(--green);flex:0 0 auto;
+    }
+    .category-filter-icon svg{width:16px;height:16px;display:block}
     .chip.active .chip-icon,.chip:hover .chip-icon,
     .map-chip.active .chip-icon,.map-chip:hover .chip-icon{
       box-shadow:0 0 0 3px rgba(255,255,255,.18);
+    }
+    .chip.active .category-filter-icon,.chip:hover .category-filter-icon,
+    .map-chip.active .category-filter-icon,.map-chip:hover .category-filter-icon{
+      color:#fff;
     }
 
     /* ─── STATS STRIP ────────────────────────────────────────── */
@@ -232,6 +241,7 @@
       border:1.5px solid var(--border);
       background:#fff;font-size:.82rem;font-weight:600;
       cursor:pointer;transition:all .15s;white-space:nowrap;
+      display:inline-flex;align-items:center;justify-content:center;gap:.38rem;
     }
     .map-chip.active,.map-chip:hover{
       background:var(--green);color:#fff;border-color:var(--green);
@@ -383,6 +393,7 @@
       border:1.5px solid var(--border);
       background:#fff;font-size:.82rem;font-weight:600;
       cursor:pointer;transition:all .15s;
+      display:inline-flex;align-items:center;justify-content:center;gap:.38rem;
     }
     .chip.active,.chip:hover{background:var(--green);color:#fff;border-color:var(--green)}
 
@@ -680,9 +691,9 @@
       <button class="map-chip active" data-filter="todos" onclick="setMapFilter(this,'todos')">Todos</button>
       <button class="map-chip" data-filter="exclusivo" onclick="setMapFilter(this,'exclusivo')"><span class="chip-icon sg" aria-hidden="true"></span>Solo 100% GF</button>
       <button class="map-chip" data-filter="mixto" onclick="setMapFilter(this,'mixto')"><span class="chip-icon mix" aria-hidden="true"></span>Opciones SG</button>
-      <button class="map-chip" data-filter="cat:panaderia" onclick="setMapFilter(this,'cat:panaderia')">Panaderías</button>
-      <button class="map-chip" data-filter="cat:restaurante" onclick="setMapFilter(this,'cat:restaurante')">Restaurantes</button>
-      <button class="map-chip" data-filter="cat:cafeteria" onclick="setMapFilter(this,'cat:cafeteria')">Cafés</button>
+      <button class="map-chip" data-filter="cat:panaderia" onclick="setMapFilter(this,'cat:panaderia')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 8C17 11 13 13 12 14C11 13 7 11 7 8a5 5 0 0110 0z"/><path d="M9 14v7h6v-7"/><line x1="9" y1="17.5" x2="15" y2="17.5"/></svg></span>Panaderías</button>
+      <button class="map-chip" data-filter="cat:restaurante" onclick="setMapFilter(this,'cat:restaurante')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></span>Restaurantes</button>
+      <button class="map-chip" data-filter="cat:cafeteria" onclick="setMapFilter(this,'cat:cafeteria')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>Cafés</button>
       <button class="map-chip map-chip-geo" onclick="geolocateMe()">
         <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
         Cerca de mí
@@ -744,11 +755,11 @@
         <button class="chip active" data-filter="todos" onclick="setDirFilter(this,'todos')">Todos</button>
         <button class="chip" data-filter="exclusivo" onclick="setDirFilter(this,'exclusivo')"><span class="chip-icon sg" aria-hidden="true"></span>100% GF</button>
         <button class="chip" data-filter="mixto" onclick="setDirFilter(this,'mixto')"><span class="chip-icon mix" aria-hidden="true"></span>Opciones SG</button>
-        <button class="chip" data-filter="cat:panaderia" onclick="setDirFilter(this,'cat:panaderia')">Panaderías</button>
-        <button class="chip" data-filter="cat:restaurante" onclick="setDirFilter(this,'cat:restaurante')">Restaurantes</button>
-        <button class="chip" data-filter="cat:cafeteria" onclick="setDirFilter(this,'cat:cafeteria')">Cafés</button>
-        <button class="chip" data-filter="cat:heladeria" onclick="setDirFilter(this,'cat:heladeria')">Heladerías</button>
-        <button class="chip" data-filter="cat:almacen" onclick="setDirFilter(this,'cat:almacen')">Almacenes</button>
+        <button class="chip" data-filter="cat:panaderia" onclick="setDirFilter(this,'cat:panaderia')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 8C17 11 13 13 12 14C11 13 7 11 7 8a5 5 0 0110 0z"/><path d="M9 14v7h6v-7"/><line x1="9" y1="17.5" x2="15" y2="17.5"/></svg></span>Panaderías</button>
+        <button class="chip" data-filter="cat:restaurante" onclick="setDirFilter(this,'cat:restaurante')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20M21 15V2a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></span>Restaurantes</button>
+        <button class="chip" data-filter="cat:cafeteria" onclick="setDirFilter(this,'cat:cafeteria')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>Cafés</button>
+        <button class="chip" data-filter="cat:heladeria" onclick="setDirFilter(this,'cat:heladeria')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M9.5 14l2.5 7 2.5-7"/></svg></span>Heladerías</button>
+        <button class="chip" data-filter="cat:almacen" onclick="setDirFilter(this,'cat:almacen')"><span class="category-filter-icon" aria-hidden="true"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span>Almacenes</button>
       </div>
     </div>
 
@@ -925,7 +936,7 @@
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
   <script src="/data.js?v=2.2"></script>
-  <script src="/app.js?v=2.7"></script>
+  <script src="/app.js?v=2.8"></script>
   <script src="/auth.js?v=2.1"></script>
   <script src="/business-cta.js?v=2.0"></script>
 
