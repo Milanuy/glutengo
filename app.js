@@ -82,7 +82,7 @@ function formatSponsorTarget(filter) {
   var labels = {
     todos: 'la home de GlutenGo',
     exclusivo: 'locales 100% GF',
-    mixto: 'locales con opciones SG',
+    mixto: 'locales con etiqueta Opciones SG',
     'cat:panaderia': 'Panaderías',
     'cat:restaurante': 'Restaurantes',
     'cat:cafeteria': 'Cafés',
@@ -345,7 +345,7 @@ function initMap(){
 
     var badgeBg    = isExcl ? '#DCFCE7' : '#FEF3C7';
     var badgeColor = isExcl ? '#166534' : '#92400E';
-    var badgeLabel = isExcl ? '100% Sin Gluten' : 'Con Opciones SG';
+    var badgeLabel = isExcl ? '100% Sin Gluten' : 'Opciones SG';
 
     var popupHtml =
       '<div style="font-family:DM Sans,sans-serif;min-width:210px;padding:.6rem .5rem .4rem">' +

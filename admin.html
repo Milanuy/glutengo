@@ -741,7 +741,7 @@ function previewHtml(b, cfg) {
       '</div>' +
     '</div>' +
     '<div class="preview-tags">' +
-      '<span class="preview-tag' + (isExclusive ? '' : ' warn') + '">' + (isExclusive ? '100% sin gluten' : 'Con opciones SG') + '</span>' +
+      '<span class="preview-tag' + (isExclusive ? '' : ' warn') + '">' + (isExclusive ? '100% sin gluten' : 'Opciones SG') + '</span>' +
       '<span class="preview-tag">' + esc(planLabel(b.plan)) + '</span>' +
       (hasCoords(cfg) ? '<span class="preview-tag">Con mapa</span>' : '<span class="preview-tag warn">Sin mapa</span>') +
     '</div>' +
@@ -1055,7 +1055,7 @@ function showDetail(id) {
         <label>Tipo de oferta</label>
         <select id="cfg-tipo">
           <option value="exclusivo"${selected(b.tipo, 'exclusivo')}>100% sin gluten</option>
-          <option value="mixto"${selected(b.tipo, 'mixto')}>Con opciones sin gluten</option>
+          <option value="mixto"${selected(b.tipo, 'mixto')}>Opciones SG</option>
         </select>
       </div>
       <div class="modal-field">
@@ -1138,7 +1138,7 @@ function showDetail(id) {
           <option value=""${selected(cfg.sponsorTarget, '')}>Elegir sección</option>
           <option value="home"${selected(cfg.sponsorTarget, 'home')}>Home / todos los lugares</option>
           <option value="exclusivo"${selected(cfg.sponsorTarget, 'exclusivo')}>100% GF</option>
-          <option value="mixto"${selected(cfg.sponsorTarget, 'mixto')}>Con opciones</option>
+          <option value="mixto"${selected(cfg.sponsorTarget, 'mixto')}>Opciones SG</option>
           <option value="cat:panaderia"${selected(cfg.sponsorTarget, 'cat:panaderia')}>Panaderías</option>
           <option value="cat:restaurante"${selected(cfg.sponsorTarget, 'cat:restaurante')}>Restaurantes</option>
           <option value="cat:cafeteria"${selected(cfg.sponsorTarget, 'cat:cafeteria')}>Cafés</option>
