@@ -712,6 +712,7 @@ function defaultConfig(b) {
     sponsorStart: '',
     sponsorEnd: '',
     sponsorPaid: false,
+    monthlyPaid: b.status === 'active' && (b.plan === 'verificado' || b.plan === 'certificado'),
     internal: '',
     reviewChecklist: (preset.reviewChecklist || []).slice(),
     benefits: cloneBenefits(preset.benefits)
@@ -785,8 +786,8 @@ function getReadiness(b, cfg) {
     if (!hasText(cfg.sponsorTarget)) missing.push('Sección del sponsor');
     if (!hasText(cfg.sponsorStart) || !hasText(cfg.sponsorEnd)) missing.push('Fechas del sponsor');
   }
-  if ((plan === 'verificado' || plan === 'certificado') && b.status === 'pending_payment') {
-    warnings.push('Confirmá el pago antes de publicar.');
+  if ((plan === 'verificado' || plan === 'certificado') && (b.status === 'pending_payment' || !cfg.monthlyPaid)) {
+    warnings.push('Confirmá el pago mensual antes de publicar.');
   }
 
   if (b.status === 'active') return { tone: 'published', label: 'Publicado', missing: missing, warnings: warnings };
@@ -883,6 +884,7 @@ function collectModalState() {
     sponsorStart: document.getElementById('cfg-sponsor-start').value,
     sponsorEnd: document.getElementById('cfg-sponsor-end').value,
     sponsorPaid: document.getElementById('cfg-sponsor-paid').checked,
+    monthlyPaid: document.getElementById('cfg-monthly-paid').checked,
     internal: document.getElementById('cfg-internal').value.trim(),
     reviewChecklist: String(checklistEl ? checklistEl.value : '')
       .split(/\r?\n/)
@@ -926,7 +928,7 @@ function refreshConfigPreview() {
 
 function bindConfigPreview() {
   var ids = [
-    'cfg-status','cfg-plan','cfg-visibility-level','cfg-position','cfg-name','cfg-tipo','cfg-category','cfg-phone',
+    'cfg-status','cfg-plan','cfg-monthly-paid','cfg-visibility-level','cfg-position','cfg-name','cfg-tipo','cfg-category','cfg-phone',
     'cfg-address','cfg-neighborhood','cfg-slug','cfg-description','cfg-lat','cfg-lng',
     'cfg-instagram','cfg-logo','cfg-photos','cfg-featured','cfg-internal',
     'cfg-sponsor-target','cfg-sponsor-label','cfg-sponsor-start','cfg-sponsor-end','cfg-sponsor-paid',
@@ -967,6 +969,8 @@ function applyPlanBenefits() {
   if (statusEl && statusEl.value !== 'active' && statusEl.value !== 'rejected' && statusEl.value !== 'expired') {
     statusEl.value = plan === 'basico' ? 'pending' : 'pending_payment';
   }
+  var monthlyPaidEl = document.getElementById('cfg-monthly-paid');
+  if (monthlyPaidEl && plan === 'basico') monthlyPaidEl.checked = false;
   var checklistEl = document.getElementById('cfg-review-checklist');
   if (checklistEl) checklistEl.value = (preset.reviewChecklist || []).join('\n');
   setBenefitChecks(preset.benefits);
@@ -1063,6 +1067,119 @@ function fillSponsorLabelIfBlank() {
   } else if (featuredEl.value === 'mega') {
     labelEl.value = 'Mega banner semanal';
   }
+}
+
+function categoryNameForCopy(category) {
+  return String(CATEGORY_LABELS_ES[category] || category || 'Local').toLowerCase();
+}
+
+function suggestedDescriptionFor(b, cfg) {
+  var name = b.nombre || 'Este local';
+  var category = categoryNameForCopy(cfg.category);
+  var zone = hasText(b.barrio) ? ' en ' + b.barrio : '';
+  var offer = b.tipo === 'exclusivo'
+    ? 'una propuesta 100% sin gluten'
+    : 'una propuesta con opciones SG';
+  var confirm = b.tipo === 'exclusivo'
+    ? 'Confirmá horarios, disponibilidad y menú vigente antes de ir.'
+    : 'Confirmá disponibilidad, protocolo y riesgo de contaminación cruzada directamente con el local.';
+  var base = name + ' figura en GlutenGo como ' + category + zone + ', con ' + offer + '. ';
+  var benefits = cfg.benefits || {};
+  if (b.plan === 'certificado' && benefits.certifiedBadge) {
+    return base + 'Ficha con protocolo SG revisado por GlutenGo. ' + confirm;
+  }
+  if ((b.plan === 'verificado' || b.plan === 'certificado') && benefits.verifiedBadge) {
+    return base + 'Datos comerciales revisados por GlutenGo. ' + confirm;
+  }
+  return base + 'Información pública y comunitaria para ayudarte a decidir. ' + confirm;
+}
+
+function appendInternalNote(message) {
+  var noteEl = document.getElementById('cfg-internal');
+  if (!noteEl || !message || noteEl.value.indexOf(message) !== -1) return;
+  noteEl.value = (noteEl.value.trim() ? noteEl.value.trim() + '\n' : '') + message;
+}
+
+function completeSuggestedProfile() {
+  var state = collectModalState();
+  var b = state.b;
+  var cfg = state.cfg;
+  var preset = presetForPlan(b.plan || 'basico');
+  var statusEl = document.getElementById('cfg-status');
+  var slugEl = document.getElementById('cfg-slug');
+  var descriptionEl = document.getElementById('cfg-description');
+  var visibilityEl = document.getElementById('cfg-visibility-level');
+  var positionEl = document.getElementById('cfg-position');
+  var monthlyPaidEl = document.getElementById('cfg-monthly-paid');
+
+  if (slugEl && !hasText(slugEl.value)) slugEl.value = slugify(b.nombre);
+  if (descriptionEl && !hasText(descriptionEl.value)) descriptionEl.value = suggestedDescriptionFor(b, cfg);
+  if (visibilityEl && !hasText(visibilityEl.value)) visibilityEl.value = preset.visibilityLevel;
+  if (positionEl && (!Number.isFinite(Number(positionEl.value)) || Number(positionEl.value) <= 0)) {
+    positionEl.value = preset.position || 999;
+  }
+  if (statusEl && statusEl.value !== 'active' && statusEl.value !== 'rejected' && statusEl.value !== 'expired') {
+    statusEl.value = b.plan === 'basico' ? 'pending' : 'pending_payment';
+  }
+  if (monthlyPaidEl && b.plan === 'basico') monthlyPaidEl.checked = false;
+  if (cfg.featuredPlacement && cfg.featuredPlacement !== 'none') {
+    ensureCampaignDates(cfg.featuredPlacement);
+    fillSponsorLabelIfBlank();
+  }
+  appendInternalNote('Ficha sugerida completada el ' + formatDateInput(new Date()) + '.');
+  refreshConfigPreview();
+  showToast('Ficha sugerida completada');
+}
+
+function uniqueItems(items) {
+  var seen = {};
+  return items.filter(function(item) {
+    if (!item || seen[item]) return false;
+    seen[item] = true;
+    return true;
+  });
+}
+
+function getPublishBlockers(b, cfg) {
+  var readiness = getReadiness(Object.assign({}, b, { status: 'pending' }), cfg);
+  var blockers = readiness.missing.slice();
+  var benefits = cfg.benefits || {};
+  var plan = b.plan || 'basico';
+  var placement = cfg.featuredPlacement || 'none';
+  var hasCampaign = placement !== 'none';
+  var position = Number(cfg.position || 999);
+
+  if ((plan === 'verificado' || plan === 'certificado') && !cfg.monthlyPaid) {
+    blockers.push('Confirmar pago mensual');
+  }
+  if (plan === 'basico' && (
+    benefits.verifiedBadge || benefits.certifiedBadge || benefits.directContact || benefits.logo ||
+    benefits.priority || benefits.homeFeature || benefits.sideBanner || benefits.megaBanner ||
+    cfg.visibilityLevel !== 'base' || position < 999 || hasCampaign
+  )) {
+    blockers.push('Quitar beneficios pagos o cambiar a un plan pago');
+  }
+  if (plan !== 'certificado' && benefits.certifiedBadge) {
+    blockers.push('Usar Protocolo certificado solo con plan Certificado');
+  }
+  if (plan === 'certificado' && !benefits.certifiedBadge) {
+    blockers.push('Activar insignia Protocolo certificado o cambiar el plan');
+  }
+  if ((plan === 'verificado' || plan === 'certificado') && !benefits.verifiedBadge) {
+    blockers.push('Activar insignia Datos confirmados para el plan pago');
+  }
+  if (hasCampaign) {
+    if (cfg.visibilityLevel !== 'campaign') blockers.push('Cambiar visibilidad a Campaña contratada');
+    if (!cfg.sponsorPaid) blockers.push('Confirmar pago de campaña extra');
+    if (!hasText(cfg.sponsorTarget)) blockers.push('Elegir sección o zona de campaña');
+    if (!hasText(cfg.sponsorStart) || !hasText(cfg.sponsorEnd)) blockers.push('Completar fechas de campaña');
+    if (!hasText(cfg.sponsorLabel)) blockers.push('Completar texto de campaña');
+    if (placement === 'home' && !benefits.homeFeature) blockers.push('Activar Home destacado');
+    if (placement === 'side' && !benefits.sideBanner) blockers.push('Activar banner flotante');
+    if (placement === 'mega' && !benefits.megaBanner) blockers.push('Activar mega banner');
+  }
+
+  return uniqueItems(blockers);
 }
 
 function setPositionPreset(level) {
@@ -1224,7 +1341,10 @@ function patch(id, fields, successMsg) {
   .catch(function(err) { showToast('Error: ' + err.message); return false; });
 }
 
-function approve(id) { patch(id, { status: 'active' }, 'Negocio publicado en GlutenGo'); }
+function approve(id) {
+  showDetail(id);
+  showToast('Revisá la ficha y usá Publicar seguro');
+}
 function reject(id)  { patch(id, { status: 'rejected' }, '🚫 Negocio rechazado'); }
 function expire(id)  { patch(id, { status: 'expired' }, 'Negocio suspendido'); }
 
@@ -1273,6 +1393,11 @@ function showDetail(id) {
         <div class="config-help">Al cambiar el plan se cargan beneficios y prioridad sugerida.</div>
       </div>
       <div class="modal-field">
+        <label>Pago mensual</label>
+        <label class="check-item" style="margin-top:.15rem"><input id="cfg-monthly-paid" type="checkbox"${checked(cfg.monthlyPaid)}> Mensualidad confirmada</label>
+        <div class="config-help">Necesario para publicar Verificado o Certificado. Los extras se confirman aparte.</div>
+      </div>
+      <div class="modal-field">
         <label>Nivel de visibilidad</label>
         <select id="cfg-visibility-level">
           <option value="base"${selected(cfg.visibilityLevel, 'base')}>Presencia simple</option>
@@ -1297,6 +1422,10 @@ function showDetail(id) {
     <div class="automation-box">
       <strong>Automatización del alta</strong>
       La solicitud ya trae el preset del plan elegido: beneficios base, nivel de visibilidad, posición sugerida y checklist interno. Desde acá solo revisás datos, ajustás extras contratados y publicás.
+      <div class="preset-actions" style="margin-top:.75rem">
+        <button type="button" onclick="completeSuggestedProfile()">Completar ficha sugerida</button>
+        <button type="button" onclick="applyPlanBenefits()">Reaplicar preset del plan</button>
+      </div>
     </div>
     <textarea id="cfg-review-checklist" style="display:none">${esc(Array.isArray(cfg.reviewChecklist) ? cfg.reviewChecklist.join('\n') : '')}</textarea>
     <div id="cfg-checklist-live">${reviewChecklistHtml(cfg)}</div>
@@ -1429,11 +1558,6 @@ function showDetail(id) {
         <label>Pago campaña</label>
         <label class="check-item" style="margin-top:.15rem"><input id="cfg-sponsor-paid" type="checkbox"${checked(cfg.sponsorPaid)}> Pago confirmado</label>
       </div>
-      <div class="modal-field">
-        <label>Atajo de beneficios</label>
-        <button class="btn-sm btn-expire" style="width:100%;padding:.65rem .75rem" onclick="applyPlanBenefits()">Reaplicar preset del plan</button>
-        <div class="config-help">Vuelve a cargar el paquete base del plan elegido. No activa banners ni sponsor.</div>
-      </div>
     </div>
 
     <div class="modal-field">
@@ -1464,7 +1588,7 @@ function showDetail(id) {
       <button class="btn-sm" style="background:#F3F4F6;color:#374151" onclick="closeModal()">Cerrar</button>
       ${b.email ? `<a href="mailto:${esc(b.email)}" class="btn-sm" style="background:#F3F4F6;color:#374151;text-decoration:none">Email</a>` : ''}
       <button class="btn-sm btn-approve" onclick="saveConfig('${esc(b.id)}', false)">Guardar configuración</button>
-      <button class="btn-sm btn-approve" onclick="saveConfig('${esc(b.id)}', true)">Guardar y publicar</button>
+      <button class="btn-sm btn-approve" onclick="saveConfig('${esc(b.id)}', true)">Publicar seguro</button>
     </div>`;
   document.getElementById('modal-overlay').classList.add('show');
   bindConfigPreview();
@@ -1479,10 +1603,21 @@ function saveConfig(id, activate) {
     cfg.slug = slugify(modalBiz.nombre);
     document.getElementById('cfg-slug').value = cfg.slug;
   }
-  var readiness = getReadiness(Object.assign({}, modalBiz, { status: activate ? 'pending' : modalBiz.status }), cfg);
-  if (activate && readiness.missing.length) {
+  if (activate && !hasText(cfg.description)) {
+    cfg.description = suggestedDescriptionFor(modalBiz, cfg);
+    document.getElementById('cfg-description').value = cfg.description;
+  }
+  if (activate && cfg.featuredPlacement && cfg.featuredPlacement !== 'none') {
+    ensureCampaignDates(cfg.featuredPlacement);
+    fillSponsorLabelIfBlank();
+    state = collectModalState();
+    cfg = state.cfg;
+    modalBiz = state.b;
+  }
+  var blockers = activate ? getPublishBlockers(modalBiz, cfg) : [];
+  if (activate && blockers.length) {
     refreshConfigPreview();
-    showToast('Faltan datos antes de publicar');
+    showToast('No publicado: ' + blockers[0]);
     return;
   }
   var fields = {
