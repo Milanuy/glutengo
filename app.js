@@ -1,4 +1,4 @@
-// GlutenGo — app.js v1.2
+// GlutenGo — app.js v1.3
 // Script principal de la home. Separado del HTML para evitar bloqueo de extensiones.
 
 // ────────────────────────────────────────────────────
@@ -81,15 +81,22 @@ var MONTEVIDEO_BARRIOS = [
   'Centro',
   'Ciudad Vieja',
   'Cordón',
+  'Atahualpa',
+  'Belvedere',
   'La Blanqueada',
   'La Comercial',
+  'Goes',
+  'Jacinto Vera',
   'Malvín',
   'Palermo',
+  'Parque Posadas',
   'Parque Batlle',
   'Parque Rodó',
+  'Paso Molino',
   'Pocitos',
   'Prado',
-  'Punta Carretas'
+  'Punta Carretas',
+  'Punta Gorda'
 ];
 
 var DEPARTMENT_BY_ZONE = {
@@ -352,6 +359,13 @@ function emptyStateSvg(color) {
 }
 
 var dirFilter  = 'todos';
+var dirFilters = {
+  offer: 'todos',
+  category: 'todos',
+  moment: 'todos',
+  zone: 'todos',
+  department: 'todos'
+};
 var searchTerm = '';
 
 // ────────────────────────────────────────────────────
@@ -577,10 +591,80 @@ function scrollRail(direction){
 // ────────────────────────────────────────────────────
 // DIRECTORIO
 // ────────────────────────────────────────────────────
+function defaultDirFilters() {
+  return {
+    offer: 'todos',
+    category: 'todos',
+    moment: 'todos',
+    zone: 'todos',
+    department: 'todos'
+  };
+}
+
+function isDefaultDirFilters(filters) {
+  return filters.offer === 'todos' &&
+    filters.category === 'todos' &&
+    filters.moment === 'todos' &&
+    filters.zone === 'todos' &&
+    filters.department === 'todos';
+}
+
+function dirFilterGroup(filter) {
+  if (filter === 'exclusivo' || filter === 'mixto') return 'offer';
+  if (filter && filter.indexOf('cat:') === 0) return 'category';
+  if (filter && filter.indexOf('moment:') === 0) return 'moment';
+  if (filter && filter.indexOf('dept:') === 0) return 'department';
+  if (filter === 'Online') return 'department';
+  return 'zone';
+}
+
+function normalizeDirFilters(filter) {
+  var base = defaultDirFilters();
+  if (filter && typeof filter === 'object') {
+    return Object.assign(base, filter);
+  }
+  if (!filter || filter === 'todos') return base;
+  base[dirFilterGroup(filter)] = filter;
+  return base;
+}
+
+function matchesDirFilters(lugar, filters) {
+  return matchesFilter(lugar, filters.offer) &&
+    matchesFilter(lugar, filters.category) &&
+    matchesFilter(lugar, filters.moment) &&
+    matchesFilter(lugar, filters.zone) &&
+    matchesFilter(lugar, filters.department);
+}
+
+function sponsorFilterFromDirFilters(filters) {
+  if (filters.zone !== 'todos') return filters.zone;
+  if (filters.department !== 'todos') return filters.department;
+  if (filters.category !== 'todos') return filters.category;
+  if (filters.moment !== 'todos') return filters.moment;
+  if (filters.offer !== 'todos') return filters.offer;
+  return 'todos';
+}
+
+function updateDirChipState() {
+  var root = document.getElementById('directorio') || document;
+  var isDefault = isDefaultDirFilters(dirFilters);
+  root.querySelectorAll('.chip').forEach(function(b) {
+    var filter = b.getAttribute('data-filter');
+    b.classList.remove('active');
+    if (filter === 'todos') {
+      if (isDefault) b.classList.add('active');
+      return;
+    }
+    var group = dirFilterGroup(filter);
+    if (dirFilters[group] === filter) b.classList.add('active');
+  });
+}
+
 function buildDir(filter, q){
   var grid = document.getElementById('dir-grid');
+  var activeFilters = normalizeDirFilters(filter);
   var filtered = lugares.filter(function(l){
-    var matchFilter = matchesFilter(l, filter);
+    var matchFilter = matchesDirFilters(l, activeFilters);
     var matchQ = !q ||
       l.name.toLowerCase().indexOf(q) !== -1 ||
       l.neighborhood.toLowerCase().indexOf(q) !== -1 ||
@@ -595,8 +679,9 @@ function buildDir(filter, q){
   }
 
   filtered = sortPlacesForDisplay(filtered);
-  var sponsor = findSponsorForFilter(filter);
-  var sponsorHtml = sponsorCardHtml(sponsor, filter) || (!q ? availableSponsorCardHtml(filter) : '');
+  var sponsorFilter = sponsorFilterFromDirFilters(activeFilters);
+  var sponsor = findSponsorForFilter(sponsorFilter);
+  var sponsorHtml = sponsorCardHtml(sponsor, sponsorFilter) || (!q ? availableSponsorCardHtml(sponsorFilter) : '');
 
   grid.innerHTML = sponsorHtml + filtered.map(function(l){
     var iconColor = l.tipo === 'exclusivo' ? '#166534' : '#D97706';
@@ -618,15 +703,21 @@ function buildDir(filter, q){
 }
 
 function setDirFilter(btn, filter){
-  document.querySelectorAll('.chip').forEach(function(b){b.classList.remove('active')});
-  btn.classList.add('active');
-  dirFilter = filter;
-  buildDir(dirFilter, searchTerm);
+  if (filter === 'todos') {
+    dirFilters = defaultDirFilters();
+    dirFilter = 'todos';
+  } else {
+    var group = dirFilterGroup(filter);
+    dirFilters[group] = dirFilters[group] === filter ? 'todos' : filter;
+    dirFilter = sponsorFilterFromDirFilters(dirFilters);
+  }
+  updateDirChipState();
+  buildDir(dirFilters, searchTerm);
 }
 
 function filterDir(){
   searchTerm = document.getElementById('hero-search').value.toLowerCase().trim();
-  buildDir(dirFilter, searchTerm);
+  buildDir(dirFilters, searchTerm);
 }
 
 function scrollToDir(e){
@@ -645,7 +736,7 @@ function initApp() {
     try { updateStats(); } catch(e){ console.error('Stats error:', e); }
     try { initMap(); } catch(e){ console.error('Map error:', e); }
     try { buildRail(); } catch(e){ console.error('Rail error:', e); }
-    try { buildDir('todos',''); } catch(e){ console.error('Dir error:', e); }
+    try { buildDir(dirFilters,''); updateDirChipState(); } catch(e){ console.error('Dir error:', e); }
   } else {
     console.error('data.js no cargó o lugares está vacío');
     document.getElementById('dir-grid').innerHTML =

@@ -1,7 +1,7 @@
-// GlutenGo Service Worker v4.7
+// GlutenGo Service Worker v4.8
 // Cache-first solo para assets estáticos. Las APIs siempre van a red.
 
-const CACHE = 'glutengo-v4.7';
+const CACHE = 'glutengo-v4.8';
 const STATIC = [
   '/',
   '/index.html',
@@ -9,8 +9,8 @@ const STATIC = [
   '/gracias.html',
   '/negocios.html',
   '/bienvenido.html',
-  '/data.js?v=2.6',
-  '/app.js?v=3.1',
+  '/data.js?v=2.7',
+  '/app.js?v=3.2',
   '/auth.js?v=2.1',
   '/business-cta.js?v=2.2',
   '/manifest.json',

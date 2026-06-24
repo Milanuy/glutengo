@@ -9,7 +9,7 @@ Plataforma para que celíacos encuentren lugares seguros donde comer en Uruguay.
 **Fase 0 — Landing de validación** (en producción)
 
 Landing estática con:
-- Guía de 150 lugares y servicios sin gluten en Uruguay
+- Guía de 162 lugares y servicios sin gluten en Uruguay
 - Buscador por nombre y filtros por categoría
 - Fichas individuales por local con link a Google Maps
 - Formulario de lista de espera (Netlify Forms)
