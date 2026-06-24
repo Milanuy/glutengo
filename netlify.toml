@@ -31,6 +31,19 @@
   status = 301
   force  = true
 
+# Acceso directo al panel interno
+[[redirects]]
+  from   = "https://admin.glutengo.com.uy/"
+  to     = "/admin.html"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "http://admin.glutengo.com.uy/"
+  to     = "https://admin.glutengo.com.uy/"
+  status = 301
+  force  = true
+
 # Redirect para API interna
 [[redirects]]
   from   = "/api/*"
