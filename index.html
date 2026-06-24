@@ -771,7 +771,7 @@
     <div class="section-header" data-aos="fade-up">
       <span class="section-label">Guía completa</span>
       <h2 class="section-title">Todos los lugares</h2>
-      <p class="section-sub">Filtrá por tipo, momento o zona y encontrá dónde comer. Confirmá siempre con el local antes de ir.</p>
+      <p class="section-sub">Filtrá por tipo, momento, barrio o departamento y encontrá dónde comer. Confirmá siempre con el local antes de ir.</p>
     </div>
 
     <div class="filter-block" data-aos="fade-up" data-aos-delay="50">
@@ -806,27 +806,46 @@
     </div>
 
     <div class="filter-block" data-aos="fade-up" data-aos-delay="110">
-      <span class="filter-label">Zona</span>
+      <span class="filter-label">Barrios de Montevideo</span>
       <div class="filter-row filter-row-scroll">
+        <button class="chip" data-filter="Barrio Sur" onclick="setDirFilter(this,'Barrio Sur')">Barrio Sur</button>
+        <button class="chip" data-filter="Buceo" onclick="setDirFilter(this,'Buceo')">Buceo</button>
+        <button class="chip" data-filter="Carrasco" onclick="setDirFilter(this,'Carrasco')">Carrasco</button>
         <button class="chip" data-filter="Centro" onclick="setDirFilter(this,'Centro')">Centro</button>
         <button class="chip" data-filter="Ciudad Vieja" onclick="setDirFilter(this,'Ciudad Vieja')">Ciudad Vieja</button>
-        <button class="chip" data-filter="Pocitos" onclick="setDirFilter(this,'Pocitos')">Pocitos</button>
-        <button class="chip" data-filter="Punta Carretas" onclick="setDirFilter(this,'Punta Carretas')">P. Carretas</button>
         <button class="chip" data-filter="Cordón" onclick="setDirFilter(this,'Cordón')">Cordón</button>
+        <button class="chip" data-filter="La Blanqueada" onclick="setDirFilter(this,'La Blanqueada')">La Blanqueada</button>
         <button class="chip" data-filter="La Comercial" onclick="setDirFilter(this,'La Comercial')">La Comercial</button>
+        <button class="chip" data-filter="Malvín" onclick="setDirFilter(this,'Malvín')">Malvín</button>
         <button class="chip" data-filter="Palermo" onclick="setDirFilter(this,'Palermo')">Palermo</button>
-        <button class="chip" data-filter="Carrasco" onclick="setDirFilter(this,'Carrasco')">Carrasco</button>
-        <button class="chip" data-filter="Ciudad de la Costa" onclick="setDirFilter(this,'Ciudad de la Costa')">Ciudad de la Costa</button>
-        <button class="chip" data-filter="El Pinar" onclick="setDirFilter(this,'El Pinar')">El Pinar</button>
-        <button class="chip" data-filter="Colonia" onclick="setDirFilter(this,'Colonia')">Colonia</button>
-        <button class="chip" data-filter="Carmelo" onclick="setDirFilter(this,'Carmelo')">Carmelo</button>
-        <button class="chip" data-filter="San Carlos" onclick="setDirFilter(this,'San Carlos')">San Carlos</button>
-        <button class="chip" data-filter="Maldonado" onclick="setDirFilter(this,'Maldonado')">Maldonado</button>
-        <button class="chip" data-filter="La Barra" onclick="setDirFilter(this,'La Barra')">La Barra</button>
-        <button class="chip" data-filter="Salto" onclick="setDirFilter(this,'Salto')">Salto</button>
-        <button class="chip" data-filter="Paysandú" onclick="setDirFilter(this,'Paysandú')">Paysandú</button>
-        <button class="chip" data-filter="Minas" onclick="setDirFilter(this,'Minas')">Minas</button>
-        <button class="chip" data-filter="Piriápolis" onclick="setDirFilter(this,'Piriápolis')">Piriápolis</button>
+        <button class="chip" data-filter="Parque Batlle" onclick="setDirFilter(this,'Parque Batlle')">Parque Batlle</button>
+        <button class="chip" data-filter="Parque Rodó" onclick="setDirFilter(this,'Parque Rodó')">Parque Rodó</button>
+        <button class="chip" data-filter="Pocitos" onclick="setDirFilter(this,'Pocitos')">Pocitos</button>
+        <button class="chip" data-filter="Prado" onclick="setDirFilter(this,'Prado')">Prado</button>
+        <button class="chip" data-filter="Punta Carretas" onclick="setDirFilter(this,'Punta Carretas')">P. Carretas</button>
+      </div>
+    </div>
+
+    <div class="filter-block" data-aos="fade-up" data-aos-delay="125">
+      <span class="filter-label">Departamentos</span>
+      <div class="filter-row filter-row-scroll">
+        <button class="chip" data-filter="dept:Montevideo" onclick="setDirFilter(this,'dept:Montevideo')">Montevideo</button>
+        <button class="chip" data-filter="dept:Canelones" onclick="setDirFilter(this,'dept:Canelones')">Canelones</button>
+        <button class="chip" data-filter="dept:Maldonado" onclick="setDirFilter(this,'dept:Maldonado')">Maldonado</button>
+        <button class="chip" data-filter="dept:Colonia" onclick="setDirFilter(this,'dept:Colonia')">Colonia</button>
+        <button class="chip" data-filter="dept:Rocha" onclick="setDirFilter(this,'dept:Rocha')">Rocha</button>
+        <button class="chip" data-filter="dept:Durazno" onclick="setDirFilter(this,'dept:Durazno')">Durazno</button>
+        <button class="chip" data-filter="dept:Rivera" onclick="setDirFilter(this,'dept:Rivera')">Rivera</button>
+        <button class="chip" data-filter="dept:Tacuarembó" onclick="setDirFilter(this,'dept:Tacuarembó')">Tacuarembó</button>
+        <button class="chip" data-filter="dept:Cerro Largo" onclick="setDirFilter(this,'dept:Cerro Largo')">Cerro Largo</button>
+        <button class="chip" data-filter="dept:Treinta y Tres" onclick="setDirFilter(this,'dept:Treinta y Tres')">Treinta y Tres</button>
+        <button class="chip" data-filter="dept:Soriano" onclick="setDirFilter(this,'dept:Soriano')">Soriano</button>
+        <button class="chip" data-filter="dept:Florida" onclick="setDirFilter(this,'dept:Florida')">Florida</button>
+        <button class="chip" data-filter="dept:San José" onclick="setDirFilter(this,'dept:San José')">San José</button>
+        <button class="chip" data-filter="dept:Lavalleja" onclick="setDirFilter(this,'dept:Lavalleja')">Lavalleja</button>
+        <button class="chip" data-filter="dept:Salto" onclick="setDirFilter(this,'dept:Salto')">Salto</button>
+        <button class="chip" data-filter="dept:Paysandú" onclick="setDirFilter(this,'dept:Paysandú')">Paysandú</button>
+        <button class="chip" data-filter="dept:Artigas" onclick="setDirFilter(this,'dept:Artigas')">Artigas</button>
         <button class="chip" data-filter="Online" onclick="setDirFilter(this,'Online')">Online</button>
       </div>
     </div>
@@ -974,8 +993,8 @@
   </footer>
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
-  <script src="/data.js?v=2.5"></script>
-  <script src="/app.js?v=3.0"></script>
+  <script src="/data.js?v=2.6"></script>
+  <script src="/app.js?v=3.1"></script>
   <script src="/auth.js?v=2.1"></script>
   <script src="/business-cta.js?v=2.2"></script>
 

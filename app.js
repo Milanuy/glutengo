@@ -74,8 +74,69 @@ var MOMENT_FILTERS = {
   'moment:compras': ['almacen'],
 };
 
+var MONTEVIDEO_BARRIOS = [
+  'Barrio Sur',
+  'Buceo',
+  'Carrasco',
+  'Centro',
+  'Ciudad Vieja',
+  'Cordón',
+  'La Blanqueada',
+  'La Comercial',
+  'Malvín',
+  'Palermo',
+  'Parque Batlle',
+  'Parque Rodó',
+  'Pocitos',
+  'Prado',
+  'Punta Carretas'
+];
+
+var DEPARTMENT_BY_ZONE = {
+  'Artigas': 'Artigas',
+  'Atlántida / Fortín de Santa Rosa': 'Canelones',
+  'Cabo Polonio': 'Rocha',
+  'Carmelo': 'Colonia',
+  'Ciudad de la Costa': 'Canelones',
+  'Colonia': 'Colonia',
+  'Durazno': 'Durazno',
+  'El Pinar': 'Canelones',
+  'Florida': 'Florida',
+  'La Barra': 'Maldonado',
+  'La Paloma': 'Rocha',
+  'La Pedrera': 'Rocha',
+  'Las Flores': 'Maldonado',
+  'Maldonado': 'Maldonado',
+  'Melo': 'Cerro Largo',
+  'Mercedes': 'Soriano',
+  'Minas': 'Lavalleja',
+  'Parque del Plata': 'Canelones',
+  'Paysandú': 'Paysandú',
+  'Piriápolis': 'Maldonado',
+  'Punta del Diablo': 'Rocha',
+  'Punta del Este': 'Maldonado',
+  'Rocha': 'Rocha',
+  'Salto': 'Salto',
+  'San Carlos': 'Maldonado',
+  'San José': 'San José',
+  'Tacuarembó': 'Tacuarembó',
+  'Treinta y Tres': 'Treinta y Tres'
+};
+
 function formatCategory(category) {
   return CATEGORY_LABELS[category] || category || 'Otro';
+}
+
+function getDepartment(lugar) {
+  if (!lugar) return '';
+  if (lugar.department) return lugar.department;
+  var zone = String(lugar.neighborhood || '').trim();
+  if (!zone) return '';
+  if (zone.indexOf('Online / ') === 0) {
+    return zone.replace('Online / ', '').trim();
+  }
+  if (MONTEVIDEO_BARRIOS.indexOf(zone) !== -1) return 'Montevideo';
+  return DEPARTMENT_BY_ZONE[zone] || zone;
 }
 
 function formatSponsorTarget(filter) {
@@ -92,9 +153,15 @@ function formatSponsorTarget(filter) {
     'moment:almuerzo': 'Almuerzo o cena',
     'moment:postre': 'Postre / helado',
     'moment:llevar': 'Para llevar',
-    'moment:compras': 'Compras SG'
+    'moment:compras': 'Compras SG',
+    'dept:Montevideo': 'Montevideo',
+    'dept:Canelones': 'Canelones',
+    'dept:Maldonado': 'Maldonado',
+    'dept:Colonia': 'Colonia',
+    'dept:Rocha': 'Rocha'
   };
   if (labels[filter]) return labels[filter];
+  if (filter && filter.indexOf('dept:') === 0) return filter.replace('dept:', '');
   return filter || 'esta sección';
 }
 
@@ -112,6 +179,7 @@ function matchesFilter(lugar, filter) {
   if (filter && filter.indexOf('moment:') === 0) {
     return (MOMENT_FILTERS[filter] || []).indexOf(lugar.category) !== -1;
   }
+  if (filter && filter.indexOf('dept:') === 0) return getDepartment(lugar) === filter.replace('dept:', '');
   if (filter === 'Online') return lugar.neighborhood.indexOf('Online') === 0;
   return lugar.neighborhood === filter;
 }
