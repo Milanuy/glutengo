@@ -428,14 +428,14 @@ function initMap(){
 function updateStats(){
   var totalEl = document.getElementById('stat-total');
   var exclEl  = document.getElementById('stat-exclusivos');
-  var mixtEl  = document.getElementById('stat-mixtos');
-  if(!totalEl || !exclEl || !mixtEl) return;
+  var opcionesEl  = document.getElementById('stat-opciones') || document.getElementById('stat-mixtos');
+  if(!totalEl || !exclEl || !opcionesEl) return;
 
   var exclusivos = lugares.filter(function(l){ return l.tipo === 'exclusivo'; }).length;
-  var mixtos = lugares.filter(function(l){ return l.tipo === 'mixto'; }).length;
+  var opciones = lugares.filter(function(l){ return l.tipo === 'mixto'; }).length;
   totalEl.textContent = lugares.length;
   exclEl.textContent = exclusivos;
-  mixtEl.textContent = mixtos;
+  opcionesEl.textContent = opciones;
 }
 
 function setMapFilter(btn, filter){
