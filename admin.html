@@ -457,7 +457,7 @@
 
 <div id="toast"></div>
 
-<script src="/data.js?v=2.4"></script>
+<script src="/data.js?v=2.5"></script>
 <script>
 var API     = '/api/admin-businesses';
 var RATINGS_API = '/api/admin-ratings';
@@ -762,7 +762,7 @@ function getReadiness(b, cfg) {
   if (!hasText(cfg.slug)) missing.push('Slug público');
 
   if (!hasText(cfg.description)) warnings.push('Falta descripción pública; se usará un texto automático.');
-  if (!hasCoords(cfg)) warnings.push('Sin coordenadas: aparece en directorio y ficha, pero no en el mapa.');
+  if (!hasCoords(cfg)) warnings.push('Sin coordenadas: aparece en guía y ficha, pero no en el mapa.');
   if (benefits.directContact && !hasText(b.telefono) && !hasText(cfg.instagram)) {
     missing.push('Contacto directo habilitado, pero falta WhatsApp o Instagram');
   }
@@ -1367,7 +1367,7 @@ function showDetail(id) {
     <div class="modal-divider"></div>
     <div class="publish-note">
       <strong>Cómo se publica</strong>
-      Si el estado queda en Publicado, este local aparece en GlutenGo. Con latitud y longitud aparece también en el mapa; sin coordenadas queda visible en el directorio y en su ficha hasta completar ubicación.
+      Si el estado queda en Publicado, este local aparece en GlutenGo. Con latitud y longitud aparece también en el mapa; sin coordenadas queda visible en la guía y en su ficha hasta completar ubicación.
     </div>
     <div id="cfg-readiness-live">${readinessPanelHtml(getReadiness(b, cfg))}</div>
 

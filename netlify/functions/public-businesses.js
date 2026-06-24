@@ -3,7 +3,7 @@
  * GET /api/public-businesses
  *
  * Devuelve negocios activos aprobados desde admin, con solo campos seguros
- * para mezclar en el mapa, directorio y fichas públicas.
+ * para mezclar en el mapa, guía y fichas públicas.
  */
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;

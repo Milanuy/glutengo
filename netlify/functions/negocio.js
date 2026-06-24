@@ -150,7 +150,7 @@ function buildAdminEmail(data) {
     <h2 style="color:#0E3D22;margin-top:0">Nuevo negocio registrado en GlutenGo</h2>
     <table style="width:100%;border-collapse:collapse">
       <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151;width:40%">Local</td><td style="padding:.5rem">${data.nombre}</td></tr>
-      <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Tipo</td><td style="padding:.5rem">${data.tipo === 'exclusivo' ? '100% sin gluten' : 'Con opciones SG'}</td></tr>
+      <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Tipo</td><td style="padding:.5rem">${data.tipo === 'exclusivo' ? '100% sin gluten' : 'Opciones SG'}</td></tr>
       <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Dirección</td><td style="padding:.5rem">${data.direccion}${data.barrio ? ', ' + data.barrio : ''}</td></tr>
       <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Email</td><td style="padding:.5rem"><a href="mailto:${data.email}">${data.email}</a></td></tr>
       <tr style="border-bottom:1px solid #eee"><td style="padding:.5rem;font-weight:700;color:#374151">Teléfono</td><td style="padding:.5rem">${data.telefono || '—'}</td></tr>
@@ -210,7 +210,7 @@ function buildAutoReply(data) {
                   Te llamamos o escribimos para completar la ficha
                 </td></tr>
                 <tr><td style="padding:.3rem 0;color:#374151;font-size:.88rem">
-                  Tu local aparece en el directorio de GlutenGo
+                  Tu local aparece en la guía de GlutenGo
                 </td></tr>
                 ${data.plan === 'certificado' ? '<tr><td style="padding:.3rem 0;color:#374151;font-size:.88rem">Coordinamos la auditoría presencial</td></tr>' : ''}
               </table>
@@ -225,7 +225,7 @@ function buildAutoReply(data) {
               <a href="${BASE_URL}"
                  style="display:inline-block;background:#166534;color:#fff;text-decoration:none;
                         padding:.75rem 1.75rem;border-radius:12px;font-weight:700;font-size:.9rem">
-                Ver el directorio →
+                Ver la guía →
               </a>
             </div>
           </td>

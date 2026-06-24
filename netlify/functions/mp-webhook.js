@@ -56,19 +56,19 @@ async function buildWelcomeEmail(negocio) {
   <tr><td style="padding:2rem 2.5rem">
     <h2 style="color:#0E3D22;text-align:center">Tu local ya está activo</h2>
     <p style="color:#374151;line-height:1.65">
-      Hola, el pago fue confirmado y <strong>${negocio.nombre}</strong> ya aparece en el directorio de GlutenGo
+      Hola, el pago fue confirmado y <strong>${negocio.nombre}</strong> ya aparece en la guía de GlutenGo
       con el plan <strong>${PLAN_LABELS[negocio.plan] || negocio.plan}</strong>.
     </p>
     <div style="background:#F0FDF4;border-radius:12px;padding:1.25rem;margin:1.25rem 0">
       <p style="font-weight:700;color:#0E3D22;margin:0 0 .5rem">¿Qué sigue?</p>
-      <p style="color:#374151;font-size:.88rem;margin:.3rem 0">Tu ficha ya está visible en el mapa y el directorio.</p>
+      <p style="color:#374151;font-size:.88rem;margin:.3rem 0">Tu ficha ya está visible en el mapa y la guía.</p>
       ${negocio.plan === 'verificado' ? '<p style="color:#374151;font-size:.88rem;margin:.3rem 0">Te contactaremos para coordinar el badge de verificación.</p>' : ''}
       ${negocio.plan === 'certificado' ? '<p style="color:#374151;font-size:.88rem;margin:.3rem 0">Coordinamos la auditoría presencial en los próximos 5 días hábiles.</p>' : ''}
       <p style="color:#374151;font-size:.88rem;margin:.3rem 0">Ante cualquier consulta escribinos a <a href="mailto:${ADMIN_EMAIL}" style="color:#166534">${ADMIN_EMAIL}</a></p>
     </div>
     <div style="text-align:center;margin-top:1.5rem">
       <a href="${BASE_URL}" style="display:inline-block;background:#166534;color:#fff;text-decoration:none;padding:.75rem 1.75rem;border-radius:12px;font-weight:700">
-        Ver el directorio →
+        Ver la guía →
       </a>
     </div>
   </td></tr>

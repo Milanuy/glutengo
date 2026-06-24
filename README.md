@@ -9,7 +9,7 @@ Plataforma para que celíacos encuentren lugares seguros donde comer en Uruguay.
 **Fase 0 — Landing de validación** (en producción)
 
 Landing estática con:
-- Directorio de 23 locales reales de Montevideo
+- Guía de 113 lugares y servicios sin gluten en Uruguay
 - Buscador por nombre y filtros por categoría
 - Fichas individuales por local con link a Google Maps
 - Formulario de lista de espera (Netlify Forms)
@@ -28,10 +28,10 @@ Landing estática con:
 
 ```
 /
-├── index.html       # Home: hero + rail + directorio con buscador
+├── index.html       # Home: hero + mapa + guía con buscador
 ├── lugar.html       # Ficha dinámica de cada local (JS carga desde data.js)
 ├── gracias.html     # Confirmación formulario lista de espera
-├── data.js          # 23 locales seed de Montevideo
+├── data.js          # Lugares seed de Uruguay
 ├── supabase/
 │   └── migrations/  # SQL migrations para Supabase
 └── docs/            # Documentación técnica del proyecto
@@ -50,8 +50,8 @@ Landing estática con:
 | Fase | Estado |
 |---|---|
 | Fase 0 — Landing de validación | ✅ Live |
-| Fase 1 — Directorio + fichas + buscador | ✅ Live |
-| Fase 2 — Mapa interactivo | 🔜 |
+| Fase 1 — Guía + fichas + buscador | ✅ Live |
+| Fase 2 — Mapa interactivo | ✅ Live |
 | Fase 3 — Registro de visitas + Score | 🔜 |
 | Fase 4 — Beta cerrada (20-50 celíacos) | 🔜 |
 | Fase 5 — Lanzamiento público | 🔜 |
