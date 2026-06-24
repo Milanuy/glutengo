@@ -76,6 +76,7 @@ var MOMENT_FILTERS = {
 
 var MONTEVIDEO_BARRIOS = [
   'Barrio Sur',
+  'Aguada',
   'Buceo',
   'Carrasco',
   'Centro',
@@ -96,7 +97,10 @@ var MONTEVIDEO_BARRIOS = [
   'Pocitos',
   'Prado',
   'Punta Carretas',
-  'Punta Gorda'
+  'Punta Gorda',
+  'Tres Cruces',
+  'Unión',
+  'Montevideo Rural'
 ];
 
 var DEPARTMENT_BY_ZONE = {

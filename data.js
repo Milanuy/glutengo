@@ -1,4 +1,4 @@
-// GlutenGo — datos de establecimientos v0.9
+// GlutenGo — datos de establecimientos v1.0
 // Coordenadas para Leaflet (OpenStreetMap)
 // Campos pagos opcionales:
 // - plan: "verificado" | "certificado" habilita contacto directo en la ficha.
@@ -2429,3 +2429,1592 @@ var lugares = [
     source: "public-research",
   },
 ];
+
+
+// ─── TANDA 250: RESTAURANTES Y SERVICIOS SG ─────────────────────────────
+lugares = lugares.concat([
+    {
+        "slug":  "one-love",
+        "name":  "One Love",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Soriano 1149, Montevideo",
+        "neighborhood":  "Centro",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9077294,
+        "lng":  -56.19138,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "hoy-te-quiero",
+        "name":  "Hoy Te Quiero",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Jaime Zudáñez 2601, Montevideo",
+        "neighborhood":  "Pocitos",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9160515,
+        "lng":  -56.1559512,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "merino",
+        "name":  "Merino",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Maldonado 1500, Montevideo",
+        "neighborhood":  "Barrio Sur",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9091526,
+        "lng":  -56.1830661,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "franca",
+        "name":  "Franca",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Circunvalación Plaza Cagancha 1124, Montevideo",
+        "neighborhood":  "Centro",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9065244,
+        "lng":  -56.1918714,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "oriundo",
+        "name":  "Oriundo",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Dr. Pablo de María 1013, Montevideo",
+        "neighborhood":  "Parque Rodó",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9105017,
+        "lng":  -56.1705697,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "mercado-williman",
+        "name":  "Mercado Williman",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Claudio Williman 626, Montevideo",
+        "neighborhood":  "Punta Carretas",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9195,
+        "lng":  -56.1638,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "mercado-ferrando",
+        "name":  "Mercado Ferrando",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "José Enrique Rodó 2130, Montevideo",
+        "neighborhood":  "Cordón",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.903356,
+        "lng":  -56.1706292,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-morada-de-saturno",
+        "name":  "La Morada de Saturno",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Acevedo Díaz 1445, Montevideo",
+        "neighborhood":  "Tres Cruces",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.901215,
+        "lng":  -56.1667639,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "toledo-bar-de-tapas",
+        "name":  "Toledo Bar de Tapas",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Dr. Pablo de María 1018, Montevideo",
+        "neighborhood":  "Parque Rodó",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9103414,
+        "lng":  -56.1703493,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "biga-pizza-pasta",
+        "name":  "Biga pizza \u0026 pasta",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Guayaquí 2985, Montevideo",
+        "neighborhood":  "Pocitos",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.90646,
+        "lng":  -56.1517948,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "pinche-calaca-bar-mexa",
+        "name":  "Pinche Calaca - Bar Mexa",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Scoseria 2549, Montevideo",
+        "neighborhood":  "Pocitos",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9152592,
+        "lng":  -56.1575818,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "savarin",
+        "name":  "Savarin",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Maldonado 2370, Montevideo",
+        "neighborhood":  "Parque Rodó",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9077388,
+        "lng":  -56.162808,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-cabrona-mvd",
+        "name":  "La Cabrona MVD",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Gral. Brito del Pino 1317 bis, Montevideo",
+        "neighborhood":  "Pocitos",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9112,
+        "lng":  -56.1517,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "me-gusta",
+        "name":  "Me Gusta",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Carlos Roxlo 1374, Montevideo",
+        "neighborhood":  "Cordón",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9044974,
+        "lng":  -56.1813759,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "hb-coffee-shop",
+        "name":  "HB Coffee Shop",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Av. Italia 2420, Montevideo",
+        "neighborhood":  "Parque Batlle",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8942774,
+        "lng":  -56.1629987,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "q-paso-pana",
+        "name":  "Q\u0027 Pasó Pana!!",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "José L. Terra 2220, Montevideo",
+        "neighborhood":  "Goes",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8869732,
+        "lng":  -56.1834097,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-carola",
+        "name":  "La Carola",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Av. Gonzalo Ramírez 2225, Montevideo",
+        "neighborhood":  "Parque Rodó",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9112755,
+        "lng":  -56.1665015,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "charo",
+        "name":  "Charo",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Rambla República de México 6363, Montevideo",
+        "neighborhood":  "Carrasco",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8923903,
+        "lng":  -56.0576775,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "demorondanga-bar",
+        "name":  "Demorondanga Bar",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Charrúa 2295, Montevideo",
+        "neighborhood":  "Cordón",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9057403,
+        "lng":  -56.1767618,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "ine-boutique-de-cosas-ricas",
+        "name":  "Ine Boutique de Cosas Ricas",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Simón Bolívar 1245, Montevideo",
+        "neighborhood":  "Pocitos",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9065826,
+        "lng":  -56.1599061,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "queriendote-montevideo",
+        "name":  "Queriéndote Montevideo",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "José Ellauri 1249, Montevideo",
+        "neighborhood":  "Pocitos",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9086881,
+        "lng":  -56.1501788,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "gr-t-helados",
+        "name":  "grøt helados",
+        "category":  "heladeria",
+        "tipo":  "mixto",
+        "address":  "Convención 1399, Montevideo",
+        "neighborhood":  "Centro",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Heladería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9055405,
+        "lng":  -56.1971685,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "rey-de-la-pizza",
+        "name":  "Rey de la Pizza",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Calle 29 entre Calle 20, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9629,
+        "lng":  -54.9433,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-marea",
+        "name":  "La Marea",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "El Trinquete, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9687703,
+        "lng":  -54.9526909,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "l-incanto-restaurante",
+        "name":  "L\u0027Incanto Restaurante",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Av. Pedragosa Sierra, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.919389,
+        "lng":  -54.9217676,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "virazon-puerto",
+        "name":  "Virazón Puerto",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Casa Los Barcos, Virazón, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9629,
+        "lng":  -54.9433,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-taberna",
+        "name":  "La Taberna",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Av. Chiverta 711, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9517333,
+        "lng":  -54.9294465,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "arenas-magnum",
+        "name":  "Arenas Magnum",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Parada 19 Playa Mansa, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9629,
+        "lng":  -54.9433,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "restaurant-y-parrillada-la-cava",
+        "name":  "Restaurant y Parrillada La Cava",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Bvar. Gral. José Gervasio Artigas, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9629,
+        "lng":  -54.9433,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "guappa",
+        "name":  "Guappa",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Rambla entre Calles 27 y 28, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9629,
+        "lng":  -54.9433,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "cafe-de-la-mansa-zunino",
+        "name":  "Cafe de la Mansa Zunino",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Emilio Inzaurraga 9002, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9588665,
+        "lng":  -54.9390518,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "lady-marion",
+        "name":  "Lady Marion",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Calle 28 entre Calle 20 y Calle 18, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9629,
+        "lng":  -54.9433,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-casita-de-cari",
+        "name":  "La Casita de Cari",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Esquilo 8343, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.924803,
+        "lng":  -54.9393582,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "vitaminas-casa-de-playa-y-cafe",
+        "name":  "Vitaminas Casa de Playa y Café",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Playa El Emir, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9629165,
+        "lng":  -54.9404317,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "piazzarella",
+        "name":  "Piazzarella",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "El Trinquete 1181, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9687703,
+        "lng":  -54.9526909,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-bizcocheria-boutique",
+        "name":  "La Bizcochería Boutique",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Francisco Salazar, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.949661999999996,
+        "lng":  -54.9365558,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "gelateria-il-porto-gorlero",
+        "name":  "Gelateria Il Porto Gorlero",
+        "category":  "heladeria",
+        "tipo":  "mixto",
+        "address":  "Gorlero, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Heladería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9624156,
+        "lng":  -54.9438951,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "loco-suelto",
+        "name":  "Loco Suelto",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Joaquín Lenzina 102, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9539169,
+        "lng":  -54.9332772,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-susana",
+        "name":  "La Susana",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "José Ignacio, Maldonado",
+        "neighborhood":  "José Ignacio",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8448208,
+        "lng":  -54.6376934,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "leonardo-etxea",
+        "name":  "Leonardo Etxea",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Punta del Este, Maldonado",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9632342,
+        "lng":  -54.9439981,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-bourgogne",
+        "name":  "La Bourgogne",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Punta del Este, Maldonado",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9632342,
+        "lng":  -54.9439981,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "vina-eden-restaurant",
+        "name":  "Viña Edén Restaurant",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Viña Edén, Maldonado",
+        "neighborhood":  "Maldonado",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.6623534,
+        "lng":  -55.0403212,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "zazu-puerto",
+        "name":  "Zazú Puerto",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Puerto de Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9628511,
+        "lng":  -54.945644,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "lo-de-tere",
+        "name":  "Lo de Tere",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Rambla del Puerto, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9629,
+        "lng":  -54.9433,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "olivia-resto",
+        "name":  "Olivia Resto",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Punta del Este, Maldonado",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9632342,
+        "lng":  -54.9439981,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "rustic-resto-bar",
+        "name":  "Rustic Resto Bar",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Punta del Este, Maldonado",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9632342,
+        "lng":  -54.9439981,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "481-gourmet",
+        "name":  "481 Gourmet",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Punta del Este, Maldonado",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9632342,
+        "lng":  -54.9439981,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "i-marangatu",
+        "name":  "I\u0027marangatú",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Punta del Este, Maldonado",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9632342,
+        "lng":  -54.9439981,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "salado-y-dulce",
+        "name":  "Salado y Dulce",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Punta del Este, Maldonado",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9632342,
+        "lng":  -54.9439981,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "l-auberge",
+        "name":  "L\u0027Auberge",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "L\u0027Auberge, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9318832,
+        "lng":  -54.90559,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "life-bistro-bar",
+        "name":  "Life Bistro + Bar",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Punta del Este, Maldonado",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9632342,
+        "lng":  -54.9439981,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "bungalow-suizo",
+        "name":  "Bungalow Suizo",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Punta del Este, Maldonado",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9632342,
+        "lng":  -54.9439981,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "classic-restaurante-y-parrillada",
+        "name":  "Classic Restaurante y Parrillada",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Lenzina esq. Francia, Punta del Este",
+        "neighborhood":  "Punta del Este",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9629,
+        "lng":  -54.9433,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "coffee-house-cafe-deli",
+        "name":  "Coffee House Café \u0026 Deli",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Sarandí 642 y Treinta y Tres, Maldonado",
+        "neighborhood":  "Maldonado",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9119127,
+        "lng":  -54.9576512,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "de-los-dos",
+        "name":  "De los Dos",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Edificio Campanario, Maldonado",
+        "neighborhood":  "Maldonado",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.908,
+        "lng":  -54.9587,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "ocho-nudos",
+        "name":  "Ocho Nudos",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Piriápolis, Maldonado",
+        "neighborhood":  "Piriápolis",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8689037,
+        "lng":  -55.2724472,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "kraken",
+        "name":  "Kraken",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Rambla de los Ingleses, Piriápolis",
+        "neighborhood":  "Piriápolis",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8822901,
+        "lng":  -55.2786779,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "algo-de-mi",
+        "name":  "Algo de Mi",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Maldonado esq. Buenos Aires, Playa Verde",
+        "neighborhood":  "Playa Verde",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.807,
+        "lng":  -55.301,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-goleta",
+        "name":  "La Goleta",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Rambla de Piriápolis esq. Atanasio Sierra, Piriápolis",
+        "neighborhood":  "Piriápolis",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8629,
+        "lng":  -55.274,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "restaurante-meridiano-58",
+        "name":  "Restaurante Meridiano 58",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Cerro San Antonio, Piriápolis",
+        "neighborhood":  "Piriápolis",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8781724,
+        "lng":  -55.2740249,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "trattoria-da-piero",
+        "name":  "Trattoria Da Piero",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Rambla de los Ingleses esq. Dr. Fermín Ferreira, Piriápolis",
+        "neighborhood":  "Piriápolis",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8629,
+        "lng":  -55.274,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "ale-s-di-mare",
+        "name":  "Ale\u0027s Di Mare",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Rambla de los Ingleses y Ramos Mejías, Punta Fría",
+        "neighborhood":  "Punta Fría",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8863,
+        "lng":  -55.2807,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "barba-negra",
+        "name":  "Barba Negra",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Av. Cachimba y Faroles, Aguas Dulces",
+        "neighborhood":  "Aguas Dulces",
+        "department":  "Rocha",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.277613,
+        "lng":  -53.7799398,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "panes-y-peces",
+        "name":  "Panes y Peces",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Calle 3 esq. 12, Playa del Rivero, Punta del Diablo",
+        "neighborhood":  "Punta del Diablo",
+        "department":  "Rocha",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.0435,
+        "lng":  -53.54,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-sazon-de-amelia",
+        "name":  "La Sazón de Amelia",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Punta del Diablo, Rocha",
+        "neighborhood":  "Punta del Diablo",
+        "department":  "Rocha",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.0449102,
+        "lng":  -53.5398091,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "mirjo-restaurante",
+        "name":  "Mirjo Restaurante",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Av. de los Pescadores s/n, Punta del Diablo",
+        "neighborhood":  "Punta del Diablo",
+        "department":  "Rocha",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.0435,
+        "lng":  -53.54,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "bohemia-bistro",
+        "name":  "Bohemia Bistro",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "De San Pedro 142, Colonia del Sacramento",
+        "neighborhood":  "Colonia",
+        "department":  "Colonia",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.4731857,
+        "lng":  -57.8512702,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "buenos-amigos",
+        "name":  "Buenos Amigos",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Comercio 101, Colonia del Sacramento",
+        "neighborhood":  "Colonia",
+        "department":  "Colonia",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.4710697,
+        "lng":  -57.8526244,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "mercosur",
+        "name":  "Mercosur",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Gral. Flores 252, Colonia del Sacramento",
+        "neighborhood":  "Colonia",
+        "department":  "Colonia",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.471,
+        "lng":  -57.844,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "mi-granja-109",
+        "name":  "Mi Granja 109",
+        "category":  "almacen",
+        "tipo":  "exclusivo",
+        "address":  "Ruta 1 km 109, Colonia Valdense",
+        "neighborhood":  "Colonia Valdense",
+        "department":  "Colonia",
+        "phone":  "",
+        "desc":  "Tienda con propuesta sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.3362177,
+        "lng":  -57.2609718,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "los-3-tanos",
+        "name":  "Los 3 Tanos",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Mario Ferreira, Las Toscas",
+        "neighborhood":  "Las Toscas",
+        "department":  "Canelones",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.7717387,
+        "lng":  -55.735347,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "el-carrito-de-colonia",
+        "name":  "El Carrito de Colonia",
+        "category":  "rotiseria",
+        "tipo":  "mixto",
+        "address":  "Av. Calcagno frente al Devoto, Shangrilá",
+        "neighborhood":  "Shangrilá",
+        "department":  "Canelones",
+        "phone":  "",
+        "desc":  "Rotisería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8503,
+        "lng":  -55.9993,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "cafeteria-terminal-24hs",
+        "name":  "Cafetería Terminal 24hs",
+        "category":  "cafeteria",
+        "tipo":  "mixto",
+        "address":  "Avenida Victorino Pereira 351, Tacuarembó",
+        "neighborhood":  "Tacuarembó",
+        "department":  "Tacuarembó",
+        "phone":  "",
+        "desc":  "Cafetería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -31.7131,
+        "lng":  -55.9728,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "puerta-del-este-las-tres-g",
+        "name":  "Puerta del Este - Las Tres G",
+        "category":  "rotiseria",
+        "tipo":  "mixto",
+        "address":  "Gutiérrez Ruiz 221, Salto",
+        "neighborhood":  "Salto",
+        "department":  "Salto",
+        "phone":  "",
+        "desc":  "Rotisería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -31.3865372,
+        "lng":  -57.9541607,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "la-alacena",
+        "name":  "La Alacena",
+        "category":  "rotiseria",
+        "tipo":  "mixto",
+        "address":  "Salto, Uruguay",
+        "neighborhood":  "Salto",
+        "department":  "Salto",
+        "phone":  "",
+        "desc":  "Rotisería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -31.3876645,
+        "lng":  -57.9649035,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "las-delicias-de-paz",
+        "name":  "Las Delicias de Paz",
+        "category":  "panaderia",
+        "tipo":  "mixto",
+        "address":  "Bella Unión 516, Salto",
+        "neighborhood":  "Salto",
+        "department":  "Salto",
+        "phone":  "",
+        "desc":  "Panadería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -31.3852704,
+        "lng":  -57.9401244,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "naturalissimo",
+        "name":  "Naturalissimo",
+        "category":  "rotiseria",
+        "tipo":  "mixto",
+        "address":  "Martín García 1793 esq. República, Montevideo",
+        "neighborhood":  "La Comercial",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Rotisería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8881,
+        "lng":  -56.1805,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "farmaguada",
+        "name":  "Farmaguada",
+        "category":  "almacen",
+        "tipo":  "mixto",
+        "address":  "San Martín 2151, Montevideo",
+        "neighborhood":  "Aguada",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Tienda con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.886693,
+        "lng":  -56.1881342,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "picadores-productos-naturales",
+        "name":  "Picadores Productos Naturales",
+        "category":  "almacen",
+        "tipo":  "mixto",
+        "address":  "Av. Gral. José Garibaldi 2201, Montevideo",
+        "neighborhood":  "Jacinto Vera",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Tienda con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8803,
+        "lng":  -56.1713,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "panaderia-bizcocheria-tres-magos",
+        "name":  "Panadería Bizcochería Tres Magos",
+        "category":  "panaderia",
+        "tipo":  "mixto",
+        "address":  "Gral. Pagola 2252, Montevideo",
+        "neighborhood":  "Tres Cruces",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Panadería con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8901,
+        "lng":  -56.1677,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "delishop",
+        "name":  "Delishop",
+        "category":  "almacen",
+        "tipo":  "mixto",
+        "address":  "Benito Blanco 705, Montevideo",
+        "neighborhood":  "Pocitos",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Tienda con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.9187569,
+        "lng":  -56.1509673,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "autoservice-la-parada-2",
+        "name":  "Autoservice La Parada 2",
+        "category":  "almacen",
+        "tipo":  "mixto",
+        "address":  "Av. Agraciada 2592 esq. General Luna, Montevideo",
+        "neighborhood":  "Goes",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Tienda con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8841,
+        "lng":  -56.1935,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "free-tacc",
+        "name":  "Free Tacc",
+        "category":  "almacen",
+        "tipo":  "exclusivo",
+        "address":  "Gral. Flores 2537, Montevideo",
+        "neighborhood":  "Goes",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Tienda con propuesta sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8841,
+        "lng":  -56.1935,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "dakari-bar-y-pizzeria",
+        "name":  "Dakari Bar y Pizzería",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Unión, Montevideo",
+        "neighborhood":  "Unión",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8802364,
+        "lng":  -56.1376878,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "almacen-el-deposito",
+        "name":  "Almacén El Depósito",
+        "category":  "almacen",
+        "tipo":  "mixto",
+        "address":  "Las Piedras y Sanabria, Piriápolis",
+        "neighborhood":  "Piriápolis",
+        "department":  "Maldonado",
+        "phone":  "",
+        "desc":  "Tienda con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.8629,
+        "lng":  -55.274,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "bodega-bouza",
+        "name":  "Bodega Bouza",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Camino La Redención 7658, Montevideo",
+        "neighborhood":  "Montevideo Rural",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.7907967,
+        "lng":  -56.2770796,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "panini-s",
+        "name":  "Panini\u0027s",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Montevideo, Uruguay",
+        "neighborhood":  "Montevideo",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.902769,
+        "lng":  -56.1859891,
+        "instagram":  "",
+        "source":  "public-research"
+    },
+    {
+        "slug":  "ruffino",
+        "name":  "Ruffino",
+        "category":  "restaurante",
+        "tipo":  "mixto",
+        "address":  "Montevideo, Uruguay",
+        "neighborhood":  "Montevideo",
+        "department":  "Montevideo",
+        "phone":  "",
+        "desc":  "Restaurante con opciones sin gluten registrada en fuentes públicas. Confirmá menú, disponibilidad, protocolo y riesgo de contaminación cruzada antes de consumir o comprar.",
+        "hours":  {
+                      "lun_dom":  "Consultar horarios actuales"
+                  },
+        "lat":  -34.902769,
+        "lng":  -56.1859891,
+        "instagram":  "",
+        "source":  "public-research"
+    }
+]);
