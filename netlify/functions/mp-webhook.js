@@ -27,7 +27,7 @@ const SEND_BUSINESS_EMAILS = process.env.ENABLE_BUSINESS_EMAILS === 'true';
 const AUTO_ACTIVATE_PAID_BUSINESSES = process.env.AUTO_ACTIVATE_PAID_BUSINESSES === 'true';
 const FROM_EMAIL     = 'GlutenGo <onboarding@resend.dev>';
 const ADMIN_EMAIL    = 'anmaurano@gmail.com';
-const BASE_URL       = 'https://glutengo.netlify.app';
+const BASE_URL       = 'https://glutengo.com.uy';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

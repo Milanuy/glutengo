@@ -2,7 +2,7 @@
 
 Plataforma para que celíacos encuentren lugares seguros donde comer en Uruguay.
 
-**Sitio:** https://glutengo.netlify.app
+**Sitio:** https://glutengo.com.uy
 
 ## Estado actual
 

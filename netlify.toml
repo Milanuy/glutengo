@@ -6,6 +6,31 @@
 [functions]
   node_bundler = "esbuild"
 
+# Dominio canonico
+[[redirects]]
+  from   = "https://glutengo.netlify.app/*"
+  to     = "https://glutengo.com.uy/:splat"
+  status = 301
+  force  = true
+
+[[redirects]]
+  from   = "http://glutengo.netlify.app/*"
+  to     = "https://glutengo.com.uy/:splat"
+  status = 301
+  force  = true
+
+[[redirects]]
+  from   = "https://www.glutengo.com.uy/*"
+  to     = "https://glutengo.com.uy/:splat"
+  status = 301
+  force  = true
+
+[[redirects]]
+  from   = "http://www.glutengo.com.uy/*"
+  to     = "https://glutengo.com.uy/:splat"
+  status = 301
+  force  = true
+
 # Redirect para API interna
 [[redirects]]
   from   = "/api/*"

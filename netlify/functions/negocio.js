@@ -18,7 +18,7 @@ const SEND_BUSINESS_EMAILS = process.env.ENABLE_BUSINESS_EMAILS === 'true';
 
 const FROM_EMAIL = 'GlutenGo <onboarding@resend.dev>';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'hola@monvi.com.uy';
-const BASE_URL = 'https://glutengo.netlify.app';
+const BASE_URL = 'https://glutengo.com.uy';
 
 // Links de pago de MercadoPago. El verificado usa un plan de suscripción real.
 const DEFAULT_MP_LINK_VERIFICADO =
