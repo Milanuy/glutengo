@@ -106,6 +106,18 @@
     .analytics-sales-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
     .analytics-sales-head strong{color:var(--green-deep);font-size:.9rem}
     .analytics-sales-copy{color:#14532D;font-size:.88rem;line-height:1.55}
+    .analytics-report{margin-top:1rem;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff}
+    .analytics-report-head{
+      display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+      padding:.85rem .95rem;background:var(--bg);border-bottom:1px solid var(--border);
+    }
+    .analytics-report-head strong{font-size:.9rem;color:var(--green-deep)}
+    .analytics-report-actions{display:flex;gap:.45rem;flex-wrap:wrap}
+    .analytics-report-table{width:100%;border-collapse:collapse;font-size:.82rem}
+    .analytics-report-table th{font-size:.68rem;padding:.62rem .75rem}
+    .analytics-report-table td{padding:.62rem .75rem}
+    .analytics-report-table td:not(:first-child),.analytics-report-table th:not(:first-child){text-align:right}
+    .analytics-report-table .empty-row td{text-align:center;color:var(--gray);padding:1.25rem}
 
     /* ── FILTERS ── */
     .filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
@@ -346,6 +358,9 @@
       .analytics-columns{grid-template-columns:1fr}
       .analytics-controls{justify-content:flex-start}
       .analytics-sales-head{align-items:flex-start;flex-direction:column}
+      .analytics-report-head{align-items:flex-start;flex-direction:column}
+      .analytics-report-table{min-width:680px}
+      .analytics-report{overflow-x:auto}
       .stat-card{padding:1rem}
       .stat-val{font-size:1.55rem}
       .filters{gap:.4rem}
@@ -482,6 +497,32 @@
           <div class="analytics-list" id="analytics-daily"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
         </div>
       </div>
+      <div class="analytics-report">
+        <div class="analytics-report-head">
+          <strong>Reporte por local</strong>
+          <div class="analytics-report-actions">
+            <button class="btn-sm btn-approve" onclick="copyPlaceReport()">Copiar reporte</button>
+            <button class="btn-sm btn-expire" onclick="downloadPlaceCsv()">Descargar CSV</button>
+          </div>
+        </div>
+        <table class="analytics-report-table">
+          <thead>
+            <tr>
+              <th>Local</th>
+              <th>Ficha</th>
+              <th>Contacto</th>
+              <th>Desde guía</th>
+              <th>WhatsApp</th>
+              <th>Instagram</th>
+              <th>Mapa</th>
+              <th>Reseñas</th>
+            </tr>
+          </thead>
+          <tbody id="analytics-place-report">
+            <tr class="empty-row"><td colspan="8">Sin datos todavía</td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <!-- FILTERS -->
@@ -555,6 +596,7 @@ var curFilter = 'todos';
 var curSearch = '';
 var analyticsDays = 7;
 var analyticsPitch = '';
+var analyticsPlaceStats = [];
 
 // ── LOGIN ──────────────────────────────────────────────────────────────────
 function doLogin() {
@@ -693,6 +735,82 @@ function buildAnalyticsPitch(data, clicks) {
   return text;
 }
 
+function renderPlaceReport(items) {
+  analyticsPlaceStats = Array.isArray(items) ? items : [];
+  var target = document.getElementById('analytics-place-report');
+  if (!target) return;
+  if (!analyticsPlaceStats.length) {
+    target.innerHTML = '<tr class="empty-row"><td colspan="8">Sin datos todavía</td></tr>';
+    return;
+  }
+  target.innerHTML = analyticsPlaceStats.slice(0, 80).map(function(item) {
+    return '<tr>' +
+      '<td><strong>' + esc(item.label || item.slug || 'Ficha sin nombre') + '</strong></td>' +
+      '<td>' + fmtNum(item.views) + '</td>' +
+      '<td>' + fmtNum(item.contactClicks) + '</td>' +
+      '<td>' + fmtNum(item.listingClicks) + '</td>' +
+      '<td>' + fmtNum(item.whatsapp) + '</td>' +
+      '<td>' + fmtNum(item.instagram) + '</td>' +
+      '<td>' + fmtNum(item.maps) + '</td>' +
+      '<td>' + fmtNum(item.ratings) + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+function placeReportText(limit) {
+  if (!analyticsPlaceStats.length) return '';
+  var period = analyticsPeriodLabel(analyticsDays);
+  var rows = analyticsPlaceStats.slice(0, limit || 20).map(function(item, index) {
+    return (index + 1) + '. ' + (item.label || item.slug || 'Ficha sin nombre') +
+      ' — ' + fmtNum(item.views) + ' vistas de ficha, ' +
+      fmtNum(item.contactClicks) + ' clics de contacto, ' +
+      fmtNum(item.listingClicks) + ' clics desde la guía';
+  });
+  return 'Reporte GlutenGo por local (' + period + ')\n' + rows.join('\n');
+}
+
+function copyPlaceReport() {
+  var text = placeReportText(20);
+  if (!text) return showToast('Todavía no hay reporte por local');
+  navigator.clipboard.writeText(text).then(function() {
+    showToast('Reporte por local copiado');
+  }).catch(function() {
+    showToast('No se pudo copiar el reporte');
+  });
+}
+
+function csvValue(value) {
+  return '"' + String(value == null ? '' : value).replace(/"/g, '""') + '"';
+}
+
+function downloadPlaceCsv() {
+  if (!analyticsPlaceStats.length) return showToast('Todavía no hay datos para exportar');
+  var header = ['Local','Slug','Vistas ficha','Clics contacto','Clics desde guía','WhatsApp','Instagram','Mapa','Compartidos','Reseñas'];
+  var lines = [header.map(csvValue).join(',')].concat(analyticsPlaceStats.map(function(item) {
+    return [
+      item.label,
+      item.slug,
+      item.views,
+      item.contactClicks,
+      item.listingClicks,
+      item.whatsapp,
+      item.instagram,
+      item.maps,
+      item.shares,
+      item.ratings
+    ].map(csvValue).join(',');
+  }));
+  var blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'glutengo-reporte-locales-' + analyticsDays + 'd.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+}
+
 function copyAnalyticsPitch() {
   if (!analyticsPitch) return showToast('Todavía no hay texto para copiar');
   navigator.clipboard.writeText(analyticsPitch).then(function() {
@@ -712,7 +830,9 @@ function renderAnalytics(data) {
     }
     ['a-pageviews','a-placeviews','a-sessions','a-clicks','a-forms','a-ratings'].forEach(function(id){ setText(id, '—'); });
     analyticsPitch = '';
+    analyticsPlaceStats = [];
     setText('analytics-sales-copy', 'Primero hay que aplicar la migración de Supabase para empezar a guardar visitas y clics.');
+    renderPlaceReport([]);
     return;
   }
   var t = data.totals || {};
@@ -726,6 +846,7 @@ function renderAnalytics(data) {
   document.getElementById('analytics-top-places').innerHTML = analyticsRowsHtml(data.topPlaces);
   document.getElementById('analytics-clicks').innerHTML = analyticsRowsHtml(data.clicks);
   document.getElementById('analytics-daily').innerHTML = analyticsDailyHtml(data.daily);
+  renderPlaceReport(data.placeStats);
   analyticsPitch = buildAnalyticsPitch(data, clicks);
   setText('analytics-sales-copy', analyticsPitch);
   if (status) {

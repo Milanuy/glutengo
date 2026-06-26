@@ -98,6 +98,34 @@ function topFromMap(map, limit) {
     .slice(0, limit || 8);
 }
 
+function placeKey(row, meta) {
+  return row.slug || meta.slug || meta.local || meta.name || '';
+}
+
+function ensurePlace(stats, row, meta) {
+  const key = placeKey(row, meta);
+  if (!key) return null;
+  if (!stats[key]) {
+    stats[key] = {
+      slug: row.slug || '',
+      label: meta.name || meta.local || row.slug || 'Ficha sin nombre',
+      views: 0,
+      contactClicks: 0,
+      listingClicks: 0,
+      shares: 0,
+      ratings: 0,
+      whatsapp: 0,
+      instagram: 0,
+      maps: 0,
+    };
+  }
+  if ((meta.name || meta.local) && stats[key].label === (row.slug || 'Ficha sin nombre')) {
+    stats[key].label = meta.name || meta.local;
+  }
+  if (row.slug && !stats[key].slug) stats[key].slug = row.slug;
+  return stats[key];
+}
+
 function summarize(rows, days) {
   const sessions = new Set();
   const totals = {
@@ -112,6 +140,7 @@ function summarize(rows, days) {
     uniqueSessions: 0,
   };
   const topPlaces = {};
+  const placeStats = {};
   const clicks = {};
   const filters = {};
   const daily = {};
@@ -139,20 +168,39 @@ function summarize(rows, days) {
       totals.placeViews += 1;
       daily[date].placeViews += 1;
       addCount(topPlaces, meta.name || row.slug || 'Ficha sin nombre');
+      const place = ensurePlace(placeStats, row, meta);
+      if (place) place.views += 1;
     }
     if (type === 'outbound_click') {
       totals.outboundClicks += 1;
       daily[date].clicks += 1;
       addCount(clicks, meta.target || 'click externo');
+      const place = ensurePlace(placeStats, row, meta);
+      if (place) {
+        place.contactClicks += 1;
+        if (meta.target === 'whatsapp') place.whatsapp += 1;
+        if (meta.target === 'instagram') place.instagram += 1;
+        if (meta.target === 'google-maps') place.maps += 1;
+      }
     }
     if (type === 'cta_click') {
       totals.ctaClicks += 1;
       daily[date].clicks += 1;
       addCount(clicks, meta.target || 'cta');
+      const place = ensurePlace(placeStats, row, meta);
+      if (place && row.slug) place.listingClicks += 1;
     }
     if (type === 'business_form_submit') totals.businessForms += 1;
     if (type === 'mp_click') totals.mpClicks += 1;
-    if (type === 'rating_submit') totals.ratingSubmits += 1;
+    if (type === 'rating_submit') {
+      totals.ratingSubmits += 1;
+      const place = ensurePlace(placeStats, row, meta);
+      if (place) place.ratings += 1;
+    }
+    if (type === 'share_click') {
+      const place = ensurePlace(placeStats, row, meta);
+      if (place) place.shares += 1;
+    }
     if (type === 'filter_use') addCount(filters, meta.label || meta.filter || 'filtro');
   });
 
@@ -162,6 +210,14 @@ function summarize(rows, days) {
     days,
     totals,
     topPlaces: topFromMap(topPlaces, 10),
+    placeStats: Object.keys(placeStats)
+      .map((key) => placeStats[key])
+      .sort((a, b) =>
+        (b.views - a.views) ||
+        (b.contactClicks - a.contactClicks) ||
+        (b.listingClicks - a.listingClicks) ||
+        a.label.localeCompare(b.label)
+      ),
     clicks: topFromMap(clicks, 10),
     filters: topFromMap(filters, 10),
     daily: Object.keys(daily).sort().map((key) => daily[key]),
@@ -235,7 +291,7 @@ exports.handler = async function(event) {
       const res = await fetch(url, { headers: sbHeaders() });
       if (!res.ok) {
         const raw = await res.text();
-        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days, totals: {}, daily: [], topPlaces: [], clicks: [], filters: [] });
+        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days, totals: {}, daily: [], topPlaces: [], placeStats: [], clicks: [], filters: [] });
         return json(500, { error: raw });
       }
       const rows = await res.json();

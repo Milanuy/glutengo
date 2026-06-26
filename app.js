@@ -233,10 +233,12 @@ document.addEventListener('click', function(e) {
   var eventName = el.getAttribute('data-analytics-event');
   var slug = el.getAttribute('data-analytics-slug') || '';
   if (eventName === 'place_card') {
-    trackAnalytics('place_view', {
+    var meta = analyticsMetaFromEl(el);
+    meta.target = meta.target || 'open-place-card';
+    trackAnalytics('cta_click', {
       page: 'home',
       slug: slug,
-      metadata: analyticsMetaFromEl(el)
+      metadata: meta
     });
     return;
   }
