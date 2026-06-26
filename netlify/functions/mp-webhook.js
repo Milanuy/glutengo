@@ -6,7 +6,7 @@
  * Cuando un pago se aprueba, activa el negocio en Supabase.
  *
  * Config en MP: https://www.mercadopago.com.uy/developers/panel/notifications
- * URL a configurar: https://tu-sitio.netlify.app/api/mp-webhook
+ * URL a configurar: https://glutengo.com.uy/api/mp-webhook
  *
  * Variables de entorno requeridas:
  *   MP_ACCESS_TOKEN   — token de MP para verificar el pago
@@ -26,7 +26,7 @@ const RESEND_KEY     = process.env.RESEND_API_KEY;
 const SEND_BUSINESS_EMAILS = process.env.ENABLE_BUSINESS_EMAILS === 'true';
 const AUTO_ACTIVATE_PAID_BUSINESSES = process.env.AUTO_ACTIVATE_PAID_BUSINESSES === 'true';
 const FROM_EMAIL     = 'GlutenGo <onboarding@resend.dev>';
-const ADMIN_EMAIL    = 'anmaurano@gmail.com';
+const ADMIN_EMAIL    = process.env.ADMIN_EMAIL || 'hola@glutengo.com.uy';
 const BASE_URL       = 'https://glutengo.com.uy';
 
 const corsHeaders = {
