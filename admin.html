@@ -80,6 +80,13 @@
     .analytics-card{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:.9rem 1rem}
     .analytics-card strong{display:block;font-size:1.55rem;line-height:1;color:var(--green-deep);margin-bottom:.22rem}
     .analytics-card span{font-size:.76rem;color:var(--gray);font-weight:700}
+    .analytics-controls{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;justify-content:flex-end}
+    .analytics-period{
+      border:1.5px solid var(--border);background:#fff;color:var(--green-deep);
+      border-radius:999px;padding:.35rem .75rem;font-size:.78rem;font-weight:800;
+      cursor:pointer;font-family:inherit;
+    }
+    .analytics-period.active{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
     .analytics-columns{display:grid;grid-template-columns:1.2fr .9fr .9fr;gap:1rem}
     .analytics-box{border:1px solid var(--border);border-radius:14px;padding:.9rem;background:#fff}
     .analytics-box h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);margin-bottom:.6rem}
@@ -92,6 +99,13 @@
     .analytics-bar i{display:block;height:100%;background:var(--green);border-radius:999px}
     .analytics-status{font-size:.84rem;color:var(--gray);line-height:1.5;margin-top:.4rem}
     .analytics-warning{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;border-radius:12px;padding:.8rem .9rem;font-size:.84rem;line-height:1.45}
+    .analytics-sales-box{
+      border:1px solid #BBF7D0;background:#F0FDF4;border-radius:14px;
+      padding:.9rem 1rem;margin:.9rem 0 1rem;display:grid;gap:.55rem;
+    }
+    .analytics-sales-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+    .analytics-sales-head strong{color:var(--green-deep);font-size:.9rem}
+    .analytics-sales-copy{color:#14532D;font-size:.88rem;line-height:1.55}
 
     /* ── FILTERS ── */
     .filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
@@ -330,6 +344,8 @@
       .top-logout{font-size:.72rem;padding:.25rem .55rem}
       .stats{grid-template-columns:repeat(2,1fr)}
       .analytics-columns{grid-template-columns:1fr}
+      .analytics-controls{justify-content:flex-start}
+      .analytics-sales-head{align-items:flex-start;flex-direction:column}
       .stat-card{padding:1rem}
       .stat-val{font-size:1.55rem}
       .filters{gap:.4rem}
@@ -427,10 +443,14 @@
       <div class="section-head">
         <div>
           <div class="section-kicker">Métricas propias</div>
-          <div class="section-title">Actividad últimos 7 días</div>
+          <div class="section-title" id="analytics-title">Actividad últimos 7 días</div>
           <div class="section-sub">Visitas, fichas abiertas y clics guardados en Supabase sin usar herramientas externas.</div>
         </div>
-        <button class="btn-sm btn-expire" onclick="loadAnalytics()">↻ Refrescar métricas</button>
+        <div class="analytics-controls">
+          <button class="analytics-period active" onclick="setAnalyticsDays(7,this)">7 días</button>
+          <button class="analytics-period" onclick="setAnalyticsDays(30,this)">30 días</button>
+          <button class="btn-sm btn-expire" onclick="loadAnalytics()">↻ Refrescar</button>
+        </div>
       </div>
       <div class="analytics-cards">
         <div class="analytics-card"><strong id="a-pageviews">—</strong><span>visitas a páginas</span></div>
@@ -441,6 +461,13 @@
         <div class="analytics-card"><strong id="a-ratings">—</strong><span>valoraciones nuevas</span></div>
       </div>
       <div id="analytics-status" class="analytics-status">Cargando métricas…</div>
+      <div class="analytics-sales-box">
+        <div class="analytics-sales-head">
+          <strong>Argumento para vender a locales</strong>
+          <button class="btn-sm btn-approve" onclick="copyAnalyticsPitch()">Copiar texto</button>
+        </div>
+        <div class="analytics-sales-copy" id="analytics-sales-copy">Cuando haya datos, acá aparece un texto listo para WhatsApp o mail comercial.</div>
+      </div>
       <div class="analytics-columns">
         <div class="analytics-box">
           <h4>Fichas más vistas</h4>
@@ -526,6 +553,8 @@ var allBiz  = [];
 var allPhotoRatings = [];
 var curFilter = 'todos';
 var curSearch = '';
+var analyticsDays = 7;
+var analyticsPitch = '';
 
 // ── LOGIN ──────────────────────────────────────────────────────────────────
 function doLogin() {
@@ -633,13 +662,57 @@ function analyticsDailyHtml(items) {
   }).join('');
 }
 
+function analyticsPeriodLabel(days) {
+  return Number(days) === 30 ? 'últimos 30 días' : 'últimos 7 días';
+}
+
+function setAnalyticsDays(days, btn) {
+  analyticsDays = Number(days) === 30 ? 30 : 7;
+  document.querySelectorAll('.analytics-period').forEach(function(item) {
+    item.classList.toggle('active', item === btn);
+  });
+  loadAnalytics();
+}
+
+function buildAnalyticsPitch(data, clicks) {
+  var t = data.totals || {};
+  var period = analyticsPeriodLabel(data.days || analyticsDays);
+  var pageViews = Number(t.pageViews || 0);
+  var placeViews = Number(t.placeViews || 0);
+  var sessions = Number(t.uniqueSessions || 0);
+  if (!pageViews && !placeViews && !sessions) {
+    return 'Todavía estamos juntando datos propios de GlutenGo. En cuanto tengamos tráfico suficiente, vamos a poder mostrar visitas semanales/mensuales, fichas abiertas y clics reales hacia locales.';
+  }
+  var top = data.topPlaces && data.topPlaces[0] ? data.topPlaces[0].label : '';
+  var text = 'En los ' + period + ', GlutenGo registró ' + fmtNum(pageViews) +
+    ' visitas a páginas, ' + fmtNum(sessions) + ' sesiones anónimas y ' +
+    fmtNum(placeViews) + ' aperturas de fichas de locales. También medimos ' +
+    fmtNum(clicks) + ' clics hacia acciones como WhatsApp, Instagram, mapa, Mercado Pago o botones comerciales.';
+  if (top) text += ' La ficha más vista en este período fue ' + top + '.';
+  text += ' Estos datos muestran demanda real de personas buscando opciones sin gluten en Uruguay.';
+  return text;
+}
+
+function copyAnalyticsPitch() {
+  if (!analyticsPitch) return showToast('Todavía no hay texto para copiar');
+  navigator.clipboard.writeText(analyticsPitch).then(function() {
+    showToast('Texto comercial copiado');
+  }).catch(function() {
+    showToast('No se pudo copiar el texto');
+  });
+}
+
 function renderAnalytics(data) {
   var status = document.getElementById('analytics-status');
+  var title = document.getElementById('analytics-title');
+  if (title) title.textContent = 'Actividad ' + analyticsPeriodLabel((data && data.days) || analyticsDays);
   if (!data || data.pendingMigration) {
     if (status) {
       status.innerHTML = '<div class="analytics-warning">Falta aplicar la migración <strong>0006_first_party_analytics.sql</strong> en Supabase. La web ya está preparada; cuando exista la tabla, las métricas empiezan a entrar.</div>';
     }
     ['a-pageviews','a-placeviews','a-sessions','a-clicks','a-forms','a-ratings'].forEach(function(id){ setText(id, '—'); });
+    analyticsPitch = '';
+    setText('analytics-sales-copy', 'Primero hay que aplicar la migración de Supabase para empezar a guardar visitas y clics.');
     return;
   }
   var t = data.totals || {};
@@ -653,6 +726,8 @@ function renderAnalytics(data) {
   document.getElementById('analytics-top-places').innerHTML = analyticsRowsHtml(data.topPlaces);
   document.getElementById('analytics-clicks').innerHTML = analyticsRowsHtml(data.clicks);
   document.getElementById('analytics-daily').innerHTML = analyticsDailyHtml(data.daily);
+  analyticsPitch = buildAnalyticsPitch(data, clicks);
+  setText('analytics-sales-copy', analyticsPitch);
   if (status) {
     status.textContent = 'Datos actualizados ' + new Date(data.generatedAt || Date.now()).toLocaleTimeString('es-UY') + '. Hoy: ' + fmtNum(t.todayViews) + ' visitas a páginas.';
   }
@@ -661,7 +736,9 @@ function renderAnalytics(data) {
 function loadAnalytics() {
   var status = document.getElementById('analytics-status');
   if (status) status.textContent = 'Cargando métricas…';
-  return fetch(ANALYTICS_API + '?days=7', { headers: { 'x-admin-token': adminToken } })
+  var title = document.getElementById('analytics-title');
+  if (title) title.textContent = 'Actividad ' + analyticsPeriodLabel(analyticsDays);
+  return fetch(ANALYTICS_API + '?days=' + encodeURIComponent(analyticsDays), { headers: { 'x-admin-token': adminToken } })
     .then(function(r) {
       if (!r.ok) throw new Error('Error ' + r.status);
       return r.json();
