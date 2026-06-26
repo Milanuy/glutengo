@@ -70,6 +70,29 @@
     .stat-val{font-size:2rem;font-weight:900;line-height:1;margin-bottom:.2rem}
     .stat-lbl{font-size:.78rem;color:var(--gray)}
 
+    /* ── ANALYTICS ── */
+    .analytics-section{
+      background:#fff;border:1px solid var(--border);border-radius:18px;
+      padding:1.2rem 1.3rem;margin:-.25rem 0 1.5rem;
+      box-shadow:0 4px 16px rgba(0,0,0,.03);
+    }
+    .analytics-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.8rem;margin:.9rem 0 1rem}
+    .analytics-card{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:.9rem 1rem}
+    .analytics-card strong{display:block;font-size:1.55rem;line-height:1;color:var(--green-deep);margin-bottom:.22rem}
+    .analytics-card span{font-size:.76rem;color:var(--gray);font-weight:700}
+    .analytics-columns{display:grid;grid-template-columns:1.2fr .9fr .9fr;gap:1rem}
+    .analytics-box{border:1px solid var(--border);border-radius:14px;padding:.9rem;background:#fff}
+    .analytics-box h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);margin-bottom:.6rem}
+    .analytics-list{display:grid;gap:.45rem}
+    .analytics-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;font-size:.84rem}
+    .analytics-row span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#111;font-weight:700}
+    .analytics-row span:last-child{color:var(--green-deep);font-weight:900}
+    .analytics-day{display:grid;grid-template-columns:74px 1fr 42px;align-items:center;gap:.5rem;font-size:.78rem;color:var(--gray)}
+    .analytics-bar{height:8px;background:#E5E7EB;border-radius:999px;overflow:hidden}
+    .analytics-bar i{display:block;height:100%;background:var(--green);border-radius:999px}
+    .analytics-status{font-size:.84rem;color:var(--gray);line-height:1.5;margin-top:.4rem}
+    .analytics-warning{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;border-radius:12px;padding:.8rem .9rem;font-size:.84rem;line-height:1.45}
+
     /* ── FILTERS ── */
     .filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
     .filter-btn{
@@ -306,6 +329,7 @@
       .top-badge{font-size:.72rem;padding:.25rem .55rem}
       .top-logout{font-size:.72rem;padding:.25rem .55rem}
       .stats{grid-template-columns:repeat(2,1fr)}
+      .analytics-columns{grid-template-columns:1fr}
       .stat-card{padding:1rem}
       .stat-val{font-size:1.55rem}
       .filters{gap:.4rem}
@@ -398,6 +422,41 @@
       <div class="stat-card"><div class="stat-val" style="color:#92400E" id="s-photo-pending">—</div><div class="stat-lbl">Fotos por revisar</div></div>
     </div>
 
+    <!-- ANALYTICS -->
+    <section class="admin-section analytics-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Métricas propias</div>
+          <div class="section-title">Actividad últimos 7 días</div>
+          <div class="section-sub">Visitas, fichas abiertas y clics guardados en Supabase sin usar herramientas externas.</div>
+        </div>
+        <button class="btn-sm btn-expire" onclick="loadAnalytics()">↻ Refrescar métricas</button>
+      </div>
+      <div class="analytics-cards">
+        <div class="analytics-card"><strong id="a-pageviews">—</strong><span>visitas a páginas</span></div>
+        <div class="analytics-card"><strong id="a-placeviews">—</strong><span>fichas abiertas</span></div>
+        <div class="analytics-card"><strong id="a-sessions">—</strong><span>sesiones anónimas</span></div>
+        <div class="analytics-card"><strong id="a-clicks">—</strong><span>clics medidos</span></div>
+        <div class="analytics-card"><strong id="a-forms">—</strong><span>solicitudes enviadas</span></div>
+        <div class="analytics-card"><strong id="a-ratings">—</strong><span>valoraciones nuevas</span></div>
+      </div>
+      <div id="analytics-status" class="analytics-status">Cargando métricas…</div>
+      <div class="analytics-columns">
+        <div class="analytics-box">
+          <h4>Fichas más vistas</h4>
+          <div class="analytics-list" id="analytics-top-places"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+        </div>
+        <div class="analytics-box">
+          <h4>Clics por canal</h4>
+          <div class="analytics-list" id="analytics-clicks"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+        </div>
+        <div class="analytics-box">
+          <h4>Movimiento diario</h4>
+          <div class="analytics-list" id="analytics-daily"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+        </div>
+      </div>
+    </section>
+
     <!-- FILTERS -->
     <div class="filters">
       <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
@@ -461,6 +520,7 @@
 <script>
 var API     = '/api/admin-businesses';
 var RATINGS_API = '/api/admin-ratings';
+var ANALYTICS_API = '/api/analytics';
 var adminToken = '';
 var allBiz  = [];
 var allPhotoRatings = [];
@@ -484,6 +544,7 @@ function doLogin() {
       document.getElementById('admin-app').style.display = 'block';
       processData(data);
       loadPhotoRatings();
+      loadAnalytics();
     })
     .catch(function(err) {
       document.getElementById('login-err').style.display = 'block';
@@ -512,7 +573,7 @@ function loadBusinesses() {
     '<tr><td colspan="8" class="empty">Cargando…</td></tr>';
   fetch(API, { headers: { 'x-admin-token': adminToken } })
     .then(function(r) { return r.json(); })
-    .then(function(data) { processData(data); loadPhotoRatings(); })
+    .then(function(data) { processData(data); loadPhotoRatings(); loadAnalytics(); })
     .catch(function(err) { showToast('Error al cargar: ' + err.message); });
 }
 
@@ -534,6 +595,80 @@ function loadPhotoRatings() {
     .catch(function(err) {
       if (target) target.innerHTML = '<div class="empty" style="grid-column:1/-1;background:#fff;border:1px solid var(--border);border-radius:16px">No se pudieron cargar las fotos.</div>';
       showToast('Error al cargar fotos: ' + err.message);
+    });
+}
+
+function fmtNum(value) {
+  return Number(value || 0).toLocaleString('es-UY');
+}
+
+function setText(id, value) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function analyticsRowsHtml(items) {
+  if (!items || !items.length) {
+    return '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
+  }
+  return items.map(function(item) {
+    return '<div class="analytics-row"><span title="' + esc(item.label) + '">' + esc(item.label) + '</span><span>' + fmtNum(item.count) + '</span></div>';
+  }).join('');
+}
+
+function analyticsDailyHtml(items) {
+  if (!items || !items.length) return '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
+  var max = items.reduce(function(m, item) {
+    return Math.max(m, Number(item.pageViews || 0) + Number(item.placeViews || 0) + Number(item.clicks || 0));
+  }, 1);
+  return items.map(function(item) {
+    var total = Number(item.pageViews || 0) + Number(item.placeViews || 0) + Number(item.clicks || 0);
+    var pct = Math.max(4, Math.round((total / max) * 100));
+    var label = new Date(item.date + 'T12:00:00').toLocaleDateString('es-UY', { day: '2-digit', month: '2-digit' });
+    return '<div class="analytics-day">' +
+      '<span>' + label + '</span>' +
+      '<div class="analytics-bar"><i style="width:' + pct + '%"></i></div>' +
+      '<strong>' + fmtNum(total) + '</strong>' +
+    '</div>';
+  }).join('');
+}
+
+function renderAnalytics(data) {
+  var status = document.getElementById('analytics-status');
+  if (!data || data.pendingMigration) {
+    if (status) {
+      status.innerHTML = '<div class="analytics-warning">Falta aplicar la migración <strong>0006_first_party_analytics.sql</strong> en Supabase. La web ya está preparada; cuando exista la tabla, las métricas empiezan a entrar.</div>';
+    }
+    ['a-pageviews','a-placeviews','a-sessions','a-clicks','a-forms','a-ratings'].forEach(function(id){ setText(id, '—'); });
+    return;
+  }
+  var t = data.totals || {};
+  var clicks = Number(t.outboundClicks || 0) + Number(t.ctaClicks || 0) + Number(t.mpClicks || 0);
+  setText('a-pageviews', fmtNum(t.pageViews));
+  setText('a-placeviews', fmtNum(t.placeViews));
+  setText('a-sessions', fmtNum(t.uniqueSessions));
+  setText('a-clicks', fmtNum(clicks));
+  setText('a-forms', fmtNum(t.businessForms));
+  setText('a-ratings', fmtNum(t.ratingSubmits));
+  document.getElementById('analytics-top-places').innerHTML = analyticsRowsHtml(data.topPlaces);
+  document.getElementById('analytics-clicks').innerHTML = analyticsRowsHtml(data.clicks);
+  document.getElementById('analytics-daily').innerHTML = analyticsDailyHtml(data.daily);
+  if (status) {
+    status.textContent = 'Datos actualizados ' + new Date(data.generatedAt || Date.now()).toLocaleTimeString('es-UY') + '. Hoy: ' + fmtNum(t.todayViews) + ' visitas a páginas.';
+  }
+}
+
+function loadAnalytics() {
+  var status = document.getElementById('analytics-status');
+  if (status) status.textContent = 'Cargando métricas…';
+  return fetch(ANALYTICS_API + '?days=7', { headers: { 'x-admin-token': adminToken } })
+    .then(function(r) {
+      if (!r.ok) throw new Error('Error ' + r.status);
+      return r.json();
+    })
+    .then(renderAnalytics)
+    .catch(function(err) {
+      if (status) status.innerHTML = '<div class="analytics-warning">No se pudieron cargar las métricas: ' + esc(err.message) + '</div>';
     });
 }
 

@@ -657,7 +657,7 @@
     }
   </style>
 </head>
-<body>
+<body data-page="home">
 
   <!-- ── HEADER ──────────────────────────────────────────────── -->
   <header class="site-header">
@@ -707,7 +707,8 @@
 
   <!-- ── ESPACIO DISPONIBLE HOME ────────────────────────────── -->
   <section class="home-slot-section" aria-label="Espacio disponible en GlutenGo">
-    <a href="/negocios.html?ref=espacio-home-disponible#visibilidad" class="home-slot-banner">
+    <a href="/negocios.html?ref=espacio-home-disponible#visibilidad" class="home-slot-banner"
+       data-analytics-event="cta_click" data-analytics-source="home" data-analytics-target="espacio-home-disponible">
       <div>
         <span class="home-slot-kicker">Espacio disponible</span>
         <h2 class="home-slot-title">Tu local puede aparecer acá</h2>
@@ -736,7 +737,8 @@
 
   <!-- ── MEGA BANNER DISPONIBLE ──────────────────────────────── -->
   <section class="house-mega-section" aria-label="Mega banner disponible">
-    <a href="/negocios.html?ref=mega-banner-disponible#visibilidad" class="house-mega-banner">
+    <a href="/negocios.html?ref=mega-banner-disponible#visibilidad" class="house-mega-banner"
+       data-analytics-event="cta_click" data-analytics-source="home" data-analytics-target="mega-banner-disponible">
       <div>
         <span class="house-mega-kicker">Mega banner disponible</span>
         <h2 class="house-mega-title">Tu marca puede ocupar este espacio</h2>
@@ -1007,9 +1009,10 @@
 
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
   <script src="/data.js?v=2.8"></script>
-  <script src="/app.js?v=3.3"></script>
+  <script src="/analytics.js?v=1.0"></script>
+  <script src="/app.js?v=3.4"></script>
   <script src="/auth.js?v=2.1"></script>
-  <script src="/business-cta.js?v=2.2"></script>
+  <script src="/business-cta.js?v=2.3"></script>
 
 </body>
 </html>

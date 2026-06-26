@@ -207,6 +207,48 @@ function escapeHtml(value) {
   });
 }
 
+function trackAnalytics(eventType, options) {
+  try {
+    if (window.GlutenAnalytics && typeof window.GlutenAnalytics.track === 'function') {
+      window.GlutenAnalytics.track(eventType, options || {});
+    }
+  } catch (_) {}
+}
+
+function analyticsMetaFromEl(el) {
+  return {
+    target: el.getAttribute('data-analytics-target') || '',
+    source: el.getAttribute('data-analytics-source') || '',
+    filter: el.getAttribute('data-analytics-filter') || '',
+    label: el.getAttribute('data-analytics-label') || '',
+    name: el.getAttribute('data-analytics-name') || '',
+    tipo: el.getAttribute('data-analytics-tipo') || '',
+    category: el.getAttribute('data-analytics-category') || ''
+  };
+}
+
+document.addEventListener('click', function(e) {
+  var el = e.target.closest ? e.target.closest('[data-analytics-event]') : null;
+  if (!el) return;
+  var eventName = el.getAttribute('data-analytics-event');
+  var slug = el.getAttribute('data-analytics-slug') || '';
+  if (eventName === 'place_card') {
+    trackAnalytics('place_view', {
+      page: 'home',
+      slug: slug,
+      metadata: analyticsMetaFromEl(el)
+    });
+    return;
+  }
+  if (eventName === 'cta_click') {
+    trackAnalytics('cta_click', {
+      page: 'home',
+      slug: slug,
+      metadata: analyticsMetaFromEl(el)
+    });
+  }
+});
+
 function placeLogoHtml(lugar, className) {
   if (!lugar || !lugar.logoUrl) return '';
   var classes = ['brand-logo'];
@@ -329,7 +371,10 @@ function sponsorCardHtml(lugar, filter) {
   var sponsor = lugar.sponsor || {};
   var label = sponsor.label || 'Sponsor de esta sección';
   var section = filter === 'todos' ? 'GlutenGo' : label;
-  return '<a href="/lugar.html?slug=' + encodeURIComponent(lugar.slug) + '" class="sponsor-card sponsor-card-live">' +
+  return '<a href="/lugar.html?slug=' + encodeURIComponent(lugar.slug) + '" class="sponsor-card sponsor-card-live" ' +
+    'data-analytics-event="place_card" data-analytics-source="sponsor" data-analytics-target="sponsor-live" ' +
+    'data-analytics-filter="' + escapeHtml(filter || 'todos') + '" data-analytics-label="' + escapeHtml(section) + '" ' +
+    'data-analytics-slug="' + escapeHtml(lugar.slug) + '" data-analytics-name="' + escapeHtml(lugar.name) + '">' +
     '<div>' +
       '<span class="sponsor-kicker">Presentado por</span>' +
       '<div class="sponsor-title">' + escapeHtml(section) + '</div>' +
@@ -342,7 +387,9 @@ function sponsorCardHtml(lugar, filter) {
 function availableSponsorCardHtml(filter) {
   var target = formatSponsorTarget(filter);
   var href = '/negocios.html?ref=sponsor-disponible&slot=' + encodeURIComponent(sponsorSlotParam(filter)) + '#visibilidad';
-  return '<a href="' + href + '" class="sponsor-card sponsor-card-available">' +
+  return '<a href="' + href + '" class="sponsor-card sponsor-card-available" ' +
+    'data-analytics-event="cta_click" data-analytics-source="directorio" data-analytics-target="sponsor-disponible" ' +
+    'data-analytics-filter="' + escapeHtml(filter || 'todos') + '" data-analytics-label="' + escapeHtml(target) + '">' +
     '<div>' +
       '<span class="sponsor-kicker">Espacio disponible</span>' +
       '<div class="sponsor-title">Tu local puede aparecer acá</div>' +
@@ -461,7 +508,9 @@ function initMap(){
         '<div style="font-size:.69rem;color:#8a8f98;line-height:1.35;margin:0 0 .55rem">' +
           'Info pública: confirmá protocolo y disponibilidad con el local.' +
         '</div>' +
-        '<a href="/lugar.html?slug=' + l.slug + '" ' +
+        '<a href="/lugar.html?slug=' + l.slug + '" data-analytics-event="place_card" ' +
+          'data-analytics-source="map-popup" data-analytics-target="ver-ficha" ' +
+          'data-analytics-slug="' + escapeHtml(l.slug) + '" data-analytics-name="' + escapeHtml(l.name) + '" ' +
           'style="display:block;text-align:center;padding:.42rem .75rem;' +
           'background:#166534;color:#fff;border-radius:9px;' +
           'font-size:.82rem;font-weight:700;text-decoration:none">' +
@@ -482,6 +531,17 @@ function initMap(){
     markers.push(marker);
 
     marker.on('popupopen', function(){
+      trackAnalytics('map_interaction', {
+        page: 'home',
+        slug: l.slug,
+        metadata: {
+          target: 'popup_open',
+          name: l.name,
+          tipo: l.tipo,
+          category: l.category,
+          zone: l.neighborhood
+        }
+      });
       var el = document.getElementById('pop-score-' + l.slug);
       if(!el || el.dataset.loaded) return;
       el.dataset.loaded = '1';
@@ -535,6 +595,10 @@ function setMapFilter(btn, filter){
       if(map.hasLayer(m)) map.removeLayer(m);
     }
   });
+  trackAnalytics('filter_use', {
+    page: 'home',
+    metadata: { filter: filter, group: 'map', label: formatSponsorTarget(filter) }
+  });
 }
 
 function geolocateMe(){
@@ -556,6 +620,7 @@ function geolocateMe(){
           iconSize:[16,16],iconAnchor:[8,8]
         })
       }).addTo(map).bindPopup('Estás acá').openPopup();
+      trackAnalytics('map_interaction', { page: 'home', metadata: { target: 'near_me' } });
       btn.innerHTML = prev; btn.disabled = false;
     },
     function(){
@@ -575,7 +640,10 @@ function buildRail(){
     var iconSvg = getCatSVG(l.category, '#166534');
     var visual = placeLogoHtml(l, 'rail-brand-logo') ||
       '<div class="icon" style="display:flex;align-items:center;justify-content:center">' + iconSvg + '</div>';
-    return '<a href="/lugar.html?slug='+encodeURIComponent(l.slug)+'" class="rail-card">' +
+    return '<a href="/lugar.html?slug='+encodeURIComponent(l.slug)+'" class="rail-card" ' +
+      'data-analytics-event="place_card" data-analytics-source="rail-100gf" ' +
+      'data-analytics-slug="' + escapeHtml(l.slug) + '" data-analytics-name="' + escapeHtml(l.name) + '" ' +
+      'data-analytics-tipo="' + escapeHtml(l.tipo) + '" data-analytics-category="' + escapeHtml(l.category) + '">' +
       visual +
       '<div class="rc-name">'+escapeHtml(l.name)+'</div>' +
       '<div class="rc-hood">'+escapeHtml(l.neighborhood)+'</div>' +
@@ -692,7 +760,10 @@ function buildDir(filter, q){
     var iconSvg   = getCatSVG(l.category, iconColor);
     var visual = placeLogoHtml(l, 'dc-brand-logo') ||
       '<span class="dc-category-icon">' + iconSvg + '</span>';
-    return '<a href="/lugar.html?slug='+encodeURIComponent(l.slug)+'" class="dir-card '+escapeHtml(l.tipo)+'">' +
+    return '<a href="/lugar.html?slug='+encodeURIComponent(l.slug)+'" class="dir-card '+escapeHtml(l.tipo)+'" ' +
+      'data-analytics-event="place_card" data-analytics-source="directorio" ' +
+      'data-analytics-slug="' + escapeHtml(l.slug) + '" data-analytics-name="' + escapeHtml(l.name) + '" ' +
+      'data-analytics-tipo="' + escapeHtml(l.tipo) + '" data-analytics-category="' + escapeHtml(l.category) + '">' +
       '<div class="dc-header">' +
         '<span class="dc-name" style="display:flex;align-items:center;gap:.4rem">' +
           visual + escapeHtml(l.name) +
@@ -707,6 +778,7 @@ function buildDir(filter, q){
 }
 
 function setDirFilter(btn, filter){
+  var previous = Object.assign({}, dirFilters);
   if (filter === 'todos') {
     dirFilters = defaultDirFilters();
     dirFilter = 'todos';
@@ -717,11 +789,30 @@ function setDirFilter(btn, filter){
   }
   updateDirChipState();
   buildDir(dirFilters, searchTerm);
+  trackAnalytics('filter_use', {
+    page: 'home',
+    metadata: {
+      filter: filter,
+      group: filter === 'todos' ? 'all' : dirFilterGroup(filter),
+      label: formatSponsorTarget(filter),
+      active: JSON.stringify(previous) !== JSON.stringify(dirFilters)
+    }
+  });
 }
 
+var searchTrackTimer = null;
 function filterDir(){
   searchTerm = document.getElementById('hero-search').value.toLowerCase().trim();
   buildDir(dirFilters, searchTerm);
+  clearTimeout(searchTrackTimer);
+  if (searchTerm.length >= 2) {
+    searchTrackTimer = setTimeout(function(){
+      trackAnalytics('search_use', {
+        page: 'home',
+        metadata: { queryLength: searchTerm.length }
+      });
+    }, 900);
+  }
 }
 
 function scrollToDir(e){

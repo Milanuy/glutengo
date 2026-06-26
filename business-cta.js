@@ -32,6 +32,17 @@
     write(key, String(Date.now() + days * 24 * 60 * 60 * 1000));
   }
 
+  function trackCta(target, action) {
+    try {
+      if (window.GlutenAnalytics && typeof window.GlutenAnalytics.track === 'function') {
+        window.GlutenAnalytics.track('cta_click', {
+          page: location.pathname.indexOf('lugar.html') !== -1 ? 'place' : 'home',
+          metadata: { target: target, action: action || 'click' }
+        });
+      }
+    } catch (_) {}
+  }
+
   if (document.getElementById('gg-business-cta') || document.getElementById('gg-visibility-cta')) return;
 
   var style = document.createElement('style');
@@ -113,9 +124,11 @@
     if (isDismissed(options.dismissKey)) return null;
     var card = options.create();
     card.querySelector('.gg-float-close').addEventListener('click', function(){
+      trackCta(options.analyticsTarget, 'close');
       dismiss(options.dismissKey, card, 14);
     });
     card.querySelector('.gg-float-link').addEventListener('click', function(){
+      trackCta(options.analyticsTarget, 'open');
       writeSession(options.sessionKey, '1');
     });
 
@@ -158,7 +171,8 @@
     compactDelay: 1200,
     compactSeenDelay: 2400,
     scrollY: 520,
-    compactScrollY: 220
+    compactScrollY: 220,
+    analyticsTarget: 'registrar-local-flotante'
   });
 
   wireCard({
@@ -170,6 +184,7 @@
     compactDelay: 3400,
     compactSeenDelay: 5200,
     scrollY: 760,
-    compactScrollY: 420
+    compactScrollY: 420,
+    analyticsTarget: 'banner-flotante-disponible'
   });
 })();

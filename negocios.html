@@ -504,7 +504,7 @@
     .footer-logo span{color:var(--amber)}
   </style>
 </head>
-<body>
+<body data-page="negocios">
 
   <!-- HEADER -->
   <header class="site-header">
@@ -1127,8 +1127,21 @@
     </p>
   </footer>
 
+  <script src="/analytics.js?v=1.0"></script>
   <script>
+  function trackBiz(eventType, metadata) {
+    try {
+      if (window.GlutenAnalytics && typeof window.GlutenAnalytics.track === 'function') {
+        window.GlutenAnalytics.track(eventType, {
+          page: 'negocios',
+          metadata: metadata || {}
+        });
+      }
+    } catch (_) {}
+  }
+
   function selectPlan(plan) {
+    trackBiz('cta_click', { target: 'select-plan', plan: plan });
     var radio = document.querySelector('input[name="plan"][value="' + plan + '"]');
     if (radio) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
     var el = document.getElementById('form-registro');
@@ -1174,6 +1187,12 @@
       });
     })
     .then(function(j){
+      trackBiz('business_form_submit', {
+        plan: data.plan,
+        tipo: data.tipo,
+        categoria: data.categoria,
+        barrio: data.barrio ? 'con barrio' : 'sin barrio'
+      });
       if (j.mp_link) {
         showPago(j.mp_link, data.plan);
       } else {
@@ -1204,7 +1223,11 @@
     pago.style.display = 'block';
     pago.classList.add('show');
     document.getElementById('pago-plan-label').textContent = PLAN_LABELS[plan] || plan;
-    document.getElementById('mp-link-btn').href = mpLink;
+    var mpBtn = document.getElementById('mp-link-btn');
+    mpBtn.href = mpLink;
+    mpBtn.onclick = function() {
+      trackBiz('mp_click', { target: 'mercado-pago-subscription', plan: plan });
+    };
     scrollToForm();
   }
 
