@@ -99,6 +99,11 @@
     .analytics-bar i{display:block;height:100%;background:var(--green);border-radius:999px}
     .analytics-status{font-size:.84rem;color:var(--gray);line-height:1.5;margin-top:.4rem}
     .analytics-warning{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;border-radius:12px;padding:.8rem .9rem;font-size:.84rem;line-height:1.45}
+    .analytics-help-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:.9rem 0 1rem}
+    .analytics-help-card{border:1px solid var(--border);background:#fff;border-radius:14px;padding:.85rem .95rem}
+    .analytics-help-card b{display:block;color:var(--green-deep);font-size:.86rem;margin-bottom:.2rem}
+    .analytics-help-card strong{font-size:1.25rem;color:var(--green-deep);letter-spacing:.02em}
+    .analytics-help-card p{margin:.3rem 0 0;color:var(--gray);font-size:.78rem;line-height:1.45}
     .analytics-sales-box{
       border:1px solid #BBF7D0;background:#F0FDF4;border-radius:14px;
       padding:.9rem 1rem;margin:.9rem 0 1rem;display:grid;gap:.55rem;
@@ -112,6 +117,7 @@
       padding:.85rem .95rem;background:var(--bg);border-bottom:1px solid var(--border);
     }
     .analytics-report-head strong{font-size:.9rem;color:var(--green-deep)}
+    .analytics-report-head small{display:block;margin-top:.2rem;color:var(--gray);font-size:.72rem;line-height:1.35}
     .analytics-report-actions{display:flex;gap:.45rem;flex-wrap:wrap}
     .analytics-report-table{width:100%;border-collapse:collapse;font-size:.82rem}
     .analytics-report-table th{font-size:.68rem;padding:.62rem .75rem}
@@ -357,9 +363,10 @@
       .stats{grid-template-columns:repeat(2,1fr)}
       .analytics-columns{grid-template-columns:1fr}
       .analytics-controls{justify-content:flex-start}
+      .analytics-help-grid{grid-template-columns:1fr}
       .analytics-sales-head{align-items:flex-start;flex-direction:column}
       .analytics-report-head{align-items:flex-start;flex-direction:column}
-      .analytics-report-table{min-width:680px}
+      .analytics-report-table{min-width:920px}
       .analytics-report{overflow-x:auto}
       .stat-card{padding:1rem}
       .stat-val{font-size:1.55rem}
@@ -476,6 +483,23 @@
         <div class="analytics-card"><strong id="a-ratings">—</strong><span>valoraciones nuevas</span></div>
       </div>
       <div id="analytics-status" class="analytics-status">Cargando métricas…</div>
+      <div class="analytics-help-grid">
+        <div class="analytics-help-card">
+          <b>CPC</b>
+          <strong>Costo por clic</strong>
+          <p>Inversión estimada del período dividida entre clics de intención: abrir ficha, WhatsApp, Instagram, mapa o compartir.</p>
+        </div>
+        <div class="analytics-help-card">
+          <b>CPR</b>
+          <strong>Costo por reserva</strong>
+          <p>Cuando activemos calendario, va a mostrar cuánto costó cada reserva recibida por ese local.</p>
+        </div>
+        <div class="analytics-help-card">
+          <b>Clics de intención</b>
+          <strong>Señales comerciales</strong>
+          <p>Muestran dónde el usuario avanzó dentro de cada local: ficha, contacto, mapa, redes o reseña.</p>
+        </div>
+      </div>
       <div class="analytics-sales-box">
         <div class="analytics-sales-head">
           <strong>Argumento para vender a locales</strong>
@@ -485,11 +509,11 @@
       </div>
       <div class="analytics-columns">
         <div class="analytics-box">
-          <h4>Fichas más vistas</h4>
+          <h4>Fichas más abiertas</h4>
           <div class="analytics-list" id="analytics-top-places"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
         </div>
         <div class="analytics-box">
-          <h4>Clics por canal</h4>
+          <h4>Clics de intención por canal</h4>
           <div class="analytics-list" id="analytics-clicks"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
         </div>
         <div class="analytics-box">
@@ -499,7 +523,10 @@
       </div>
       <div class="analytics-report">
         <div class="analytics-report-head">
-          <strong>Reporte por local</strong>
+          <div>
+            <strong>Reporte claro por local</strong>
+            <small>La inversión se estima según el plan y el período seleccionado. En 7 días se prorratea la mensualidad.</small>
+          </div>
           <div class="analytics-report-actions">
             <button class="btn-sm btn-approve" onclick="copyPlaceReport()">Copiar reporte</button>
             <button class="btn-sm btn-expire" onclick="downloadPlaceCsv()">Descargar CSV</button>
@@ -509,8 +536,12 @@
           <thead>
             <tr>
               <th>Local</th>
+              <th>Plan</th>
+              <th>Inversión</th>
               <th>Ficha</th>
-              <th>Contacto</th>
+              <th>Clics intención</th>
+              <th>CPC</th>
+              <th>CPR</th>
               <th>Desde guía</th>
               <th>WhatsApp</th>
               <th>Instagram</th>
@@ -519,7 +550,7 @@
             </tr>
           </thead>
           <tbody id="analytics-place-report">
-            <tr class="empty-row"><td colspan="8">Sin datos todavía</td></tr>
+            <tr class="empty-row"><td colspan="12">Sin datos todavía</td></tr>
           </tbody>
         </table>
       </div>
@@ -673,9 +704,89 @@ function fmtNum(value) {
   return Number(value || 0).toLocaleString('es-UY');
 }
 
+function fmtMoney(value) {
+  var amount = Number(value || 0);
+  if (!amount) return '—';
+  return '$' + Math.round(amount).toLocaleString('es-UY');
+}
+
 function setText(id, value) {
   var el = document.getElementById(id);
   if (el) el.textContent = value;
+}
+
+var CHANNEL_LABELS_ES = {
+  'open-place-card': 'Abrir ficha desde la guía',
+  'ver-ficha': 'Ver ficha desde mapa',
+  'whatsapp': 'WhatsApp',
+  'instagram': 'Instagram',
+  'google-maps': 'Cómo llegar / mapa',
+  'native-share': 'Compartir ficha',
+  'copy-link': 'Copiar link',
+  'sponsor-live': 'Clic en sponsor activo',
+  'sponsor-disponible': 'Consulta por sponsor',
+  'espacio-home-disponible': 'Consulta espacio home',
+  'mega-banner-disponible': 'Consulta mega banner',
+  'banner-flotante-disponible': 'Consulta banner flotante',
+  'registrar-local-flotante': 'Registrar local',
+  'mercado-pago-subscription': 'Pago Mercado Pago',
+  'google-login-rating': 'Login para valorar',
+  'close': 'Cerrar banner',
+  'open': 'Abrir llamado comercial'
+};
+
+var PLAN_PRICES = { basico: 0, verificado: 590, certificado: 1590 };
+var PLAN_SHORT_LABELS = { basico: 'Básico', verificado: 'Verificado', certificado: 'Certificado' };
+
+function channelLabel(label) {
+  return CHANNEL_LABELS_ES[label] || label || 'Sin dato';
+}
+
+function planMonthlyPrice(plan) {
+  return PLAN_PRICES[plan] || 0;
+}
+
+function periodInvestment(plan) {
+  var monthly = planMonthlyPrice(plan);
+  if (!monthly) return 0;
+  return monthly * ((analyticsDays || 30) / 30);
+}
+
+function businessForAnalyticsSlug(slug, label) {
+  var safeSlug = String(slug || '').trim();
+  var safeLabel = String(label || '').trim().toLowerCase();
+  return (allBiz || []).find(function(b) {
+    var cfg = readConfig(b);
+    return (safeSlug && cfg.slug === safeSlug) ||
+      (safeSlug && slugify(b.nombre) === safeSlug) ||
+      (safeLabel && String(b.nombre || '').trim().toLowerCase() === safeLabel);
+  }) || null;
+}
+
+function enrichPlaceStat(item) {
+  var business = businessForAnalyticsSlug(item.slug, item.label);
+  var plan = business ? (business.plan || 'basico') : 'basico';
+  var investment = business ? periodInvestment(plan) : 0;
+  var intentClicks =
+    Number(item.listingClicks || 0) +
+    Number(item.contactClicks || 0) +
+    Number(item.shares || 0);
+  var reservations = Number(item.reservations || 0);
+  var cpc = investment && intentClicks ? investment / intentClicks : null;
+  var cpr = investment && reservations ? investment / reservations : null;
+  return Object.assign({}, item, {
+    plan: plan,
+    planLabel: business ? (PLAN_SHORT_LABELS[plan] || plan || 'Básico') : 'No registrado',
+    investment: investment,
+    intentClicks: intentClicks,
+    reservations: reservations,
+    cpc: cpc,
+    cpr: cpr
+  });
+}
+
+function fmtCost(value) {
+  return value == null || !Number.isFinite(Number(value)) ? '—' : fmtMoney(value);
 }
 
 function analyticsRowsHtml(items) {
@@ -683,7 +794,8 @@ function analyticsRowsHtml(items) {
     return '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
   }
   return items.map(function(item) {
-    return '<div class="analytics-row"><span title="' + esc(item.label) + '">' + esc(item.label) + '</span><span>' + fmtNum(item.count) + '</span></div>';
+    var label = channelLabel(item.label);
+    return '<div class="analytics-row"><span title="' + esc(label) + '">' + esc(label) + '</span><span>' + fmtNum(item.count) + '</span></div>';
   }).join('');
 }
 
@@ -729,25 +841,30 @@ function buildAnalyticsPitch(data, clicks) {
   var text = 'En los ' + period + ', GlutenGo registró ' + fmtNum(pageViews) +
     ' visitas a páginas, ' + fmtNum(sessions) + ' sesiones anónimas y ' +
     fmtNum(placeViews) + ' aperturas de fichas de locales. También medimos ' +
-    fmtNum(clicks) + ' clics hacia acciones como WhatsApp, Instagram, mapa, Mercado Pago o botones comerciales.';
+    fmtNum(clicks) + ' clics de intención hacia acciones como abrir ficha, WhatsApp, Instagram, mapa, Mercado Pago o botones comerciales.';
   if (top) text += ' La ficha más vista en este período fue ' + top + '.';
-  text += ' Estos datos muestran demanda real de personas buscando opciones sin gluten en Uruguay.';
+  text += ' El reporte permite mostrar CPC (costo por clic) por local y dejar preparado CPR (costo por reserva) cuando activemos calendario. Estos datos muestran demanda real de personas buscando opciones sin gluten en Uruguay.';
   return text;
 }
 
 function renderPlaceReport(items) {
-  analyticsPlaceStats = Array.isArray(items) ? items : [];
+  analyticsPlaceStats = (Array.isArray(items) ? items : []).map(enrichPlaceStat);
   var target = document.getElementById('analytics-place-report');
   if (!target) return;
   if (!analyticsPlaceStats.length) {
-    target.innerHTML = '<tr class="empty-row"><td colspan="8">Sin datos todavía</td></tr>';
+    target.innerHTML = '<tr class="empty-row"><td colspan="12">Sin datos todavía</td></tr>';
     return;
   }
   target.innerHTML = analyticsPlaceStats.slice(0, 80).map(function(item) {
+    var cprText = item.reservations ? fmtCost(item.cpr) : 'Sin reservas';
     return '<tr>' +
       '<td><strong>' + esc(item.label || item.slug || 'Ficha sin nombre') + '</strong></td>' +
+      '<td>' + esc(item.planLabel) + '</td>' +
+      '<td>' + fmtMoney(item.investment) + '</td>' +
       '<td>' + fmtNum(item.views) + '</td>' +
-      '<td>' + fmtNum(item.contactClicks) + '</td>' +
+      '<td>' + fmtNum(item.intentClicks) + '</td>' +
+      '<td>' + fmtCost(item.cpc) + '</td>' +
+      '<td>' + esc(cprText) + '</td>' +
       '<td>' + fmtNum(item.listingClicks) + '</td>' +
       '<td>' + fmtNum(item.whatsapp) + '</td>' +
       '<td>' + fmtNum(item.instagram) + '</td>' +
@@ -763,10 +880,15 @@ function placeReportText(limit) {
   var rows = analyticsPlaceStats.slice(0, limit || 20).map(function(item, index) {
     return (index + 1) + '. ' + (item.label || item.slug || 'Ficha sin nombre') +
       ' — ' + fmtNum(item.views) + ' vistas de ficha, ' +
-      fmtNum(item.contactClicks) + ' clics de contacto, ' +
-      fmtNum(item.listingClicks) + ' clics desde la guía';
+      fmtNum(item.intentClicks) + ' clics de intención, ' +
+      'CPC ' + fmtCost(item.cpc) + ', ' +
+      'CPR ' + (item.reservations ? fmtCost(item.cpr) : 'sin reservas medidas') + '. ' +
+      'Detalle: ' + fmtNum(item.listingClicks) + ' desde la guía, ' +
+      fmtNum(item.whatsapp) + ' WhatsApp, ' +
+      fmtNum(item.instagram) + ' Instagram, ' +
+      fmtNum(item.maps) + ' mapa';
   });
-  return 'Reporte GlutenGo por local (' + period + ')\n' + rows.join('\n');
+  return 'Reporte GlutenGo por local (' + period + ')\nCPC = costo por clic de intención. CPR = costo por reserva cuando el calendario esté activo.\n' + rows.join('\n');
 }
 
 function copyPlaceReport() {
@@ -785,13 +907,17 @@ function csvValue(value) {
 
 function downloadPlaceCsv() {
   if (!analyticsPlaceStats.length) return showToast('Todavía no hay datos para exportar');
-  var header = ['Local','Slug','Vistas ficha','Clics contacto','Clics desde guía','WhatsApp','Instagram','Mapa','Compartidos','Reseñas'];
+  var header = ['Local','Slug','Plan','Inversion estimada','Vistas ficha','Clics intencion','CPC','CPR','Clics desde guia','WhatsApp','Instagram','Mapa','Compartidos','Reseñas'];
   var lines = [header.map(csvValue).join(',')].concat(analyticsPlaceStats.map(function(item) {
     return [
       item.label,
       item.slug,
+      item.planLabel,
+      item.investment ? Math.round(item.investment) : '',
       item.views,
-      item.contactClicks,
+      item.intentClicks,
+      item.cpc != null ? Math.round(item.cpc) : '',
+      item.cpr != null ? Math.round(item.cpr) : '',
       item.listingClicks,
       item.whatsapp,
       item.instagram,
