@@ -70,6 +70,21 @@
     .stat-val{font-size:2rem;font-weight:900;line-height:1;margin-bottom:.2rem}
     .stat-lbl{font-size:.78rem;color:var(--gray)}
 
+    /* ── MODULES ── */
+    .module-nav{
+      display:flex;gap:.55rem;flex-wrap:wrap;align-items:center;
+      background:#fff;border:1px solid var(--border);border-radius:18px;
+      padding:.65rem;margin:-.5rem 0 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,.03);
+    }
+    .module-tab{
+      border:1.5px solid transparent;background:transparent;color:#374151;
+      border-radius:12px;padding:.65rem .9rem;font-family:inherit;font-size:.82rem;
+      font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:.45rem;
+    }
+    .module-tab span{font-size:1rem;line-height:1}
+    .module-tab.active{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+    .module-tab:not(.active):hover{background:var(--bg);border-color:var(--border)}
+
     /* ── OWNER REQUESTS ── */
     .owner-requests{background:#fff;border:1px solid var(--border);border-radius:18px;padding:1.2rem 1.3rem;margin:-.25rem 0 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,.03)}
     .owner-request-list{display:grid;gap:.75rem;margin-top:.9rem}
@@ -112,6 +127,21 @@
     .analytics-day{display:grid;grid-template-columns:74px 1fr 42px;align-items:center;gap:.5rem;font-size:.78rem;color:var(--gray)}
     .analytics-bar{height:8px;background:#E5E7EB;border-radius:999px;overflow:hidden}
     .analytics-bar i{display:block;height:100%;background:var(--green);border-radius:999px}
+    .analytics-graph-card{border:1px solid var(--border);border-radius:14px;background:#fff;padding:.9rem 1rem;margin:.9rem 0 1rem}
+    .analytics-graph-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:.75rem}
+    .analytics-graph-head h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray)}
+    .analytics-graph-head p{font-size:.74rem;color:var(--gray);line-height:1.4}
+    .analytics-graph-bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(34px,1fr));gap:.45rem;align-items:end;min-height:150px}
+    .analytics-graph-item{display:grid;grid-template-rows:130px auto;gap:.38rem;align-items:end;text-align:center}
+    .analytics-graph-stack{height:130px;display:flex;flex-direction:column-reverse;justify-content:flex-start;background:#F3F4F6;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+    .analytics-graph-stack i{display:block;width:100%;min-height:3px}
+    .analytics-graph-stack .page{background:#166534}
+    .analytics-graph-stack .place{background:#E8A93C}
+    .analytics-graph-stack .click{background:#0EA5E9}
+    .analytics-graph-label{font-size:.68rem;color:var(--gray);font-weight:800}
+    .analytics-legend{display:flex;gap:.6rem;flex-wrap:wrap;font-size:.72rem;color:var(--gray);font-weight:800}
+    .analytics-legend span{display:inline-flex;align-items:center;gap:.25rem}
+    .analytics-legend i{width:8px;height:8px;border-radius:999px;display:inline-block}
     .analytics-status{font-size:.84rem;color:var(--gray);line-height:1.5;margin-top:.4rem}
     .analytics-warning{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;border-radius:12px;padding:.8rem .9rem;font-size:.84rem;line-height:1.45}
     .analytics-help-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:.9rem 0 1rem}
@@ -139,6 +169,45 @@
     .analytics-report-table td{padding:.62rem .75rem}
     .analytics-report-table td:not(:first-child),.analytics-report-table th:not(:first-child){text-align:right}
     .analytics-report-table .empty-row td{text-align:center;color:var(--gray);padding:1.25rem}
+
+    /* ── SOCIAL METRICS ── */
+    .social-section{
+      background:#fff;border:1px solid var(--border);border-radius:18px;
+      padding:1.2rem 1.3rem;margin:-.25rem 0 1.5rem;
+      box-shadow:0 4px 16px rgba(0,0,0,.03);
+    }
+    .social-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.8rem;margin:.9rem 0 1rem}
+    .social-card{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:.9rem 1rem}
+    .social-card strong{display:block;font-size:1.5rem;line-height:1;color:var(--green-deep);margin-bottom:.24rem}
+    .social-card span{display:block;font-size:.76rem;color:var(--gray);font-weight:800}
+    .social-card small{display:block;margin-top:.35rem;font-size:.72rem;color:#15803D;font-weight:900}
+    .social-form{
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem;
+      border:1px solid var(--border);border-radius:14px;background:var(--bg);
+      padding:.9rem;margin:1rem 0;
+    }
+    .social-form label{display:grid;gap:.28rem;font-size:.72rem;font-weight:900;color:#374151;text-transform:uppercase;letter-spacing:.04em}
+    .social-form input,.social-form select,.social-form textarea{
+      border:1.5px solid var(--border);border-radius:10px;padding:.58rem .7rem;
+      font-family:inherit;font-size:.86rem;background:#fff;color:#111;
+    }
+    .social-form textarea{min-height:72px;resize:vertical}
+    .social-form .wide{grid-column:span 2}
+    .social-form .full{grid-column:1/-1}
+    .social-form input:focus,.social-form select:focus,.social-form textarea:focus{outline:none;border-color:var(--green)}
+    .social-chart-card{border:1px solid var(--border);border-radius:14px;background:#fff;padding:.9rem 1rem;margin:.9rem 0 1rem}
+    .social-chart{display:grid;gap:.55rem}
+    .social-chart-row{display:grid;grid-template-columns:96px 1fr 70px;align-items:center;gap:.55rem;font-size:.78rem;color:var(--gray)}
+    .social-chart-bar{height:10px;background:#E5E7EB;border-radius:999px;overflow:hidden}
+    .social-chart-bar i{display:block;height:100%;background:var(--green);border-radius:999px}
+    .social-list{display:grid;gap:.65rem}
+    .social-item{border:1px solid var(--border);border-radius:14px;padding:.85rem .95rem;background:#fff;display:grid;gap:.45rem}
+    .social-item-head{display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+    .social-item-title{font-weight:900;color:var(--green-deep)}
+    .social-item-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.45rem}
+    .social-item-stat{background:var(--bg);border-radius:10px;padding:.48rem .55rem;font-size:.72rem;color:var(--gray)}
+    .social-item-stat b{display:block;color:#111;font-size:.86rem}
+    .social-note{font-size:.78rem;color:#374151;line-height:1.45}
 
     /* ── FILTERS ── */
     .filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem;align-items:center}
@@ -376,6 +445,8 @@
       .top-badge{font-size:.72rem;padding:.25rem .55rem}
       .top-logout{font-size:.72rem;padding:.25rem .55rem}
       .stats{grid-template-columns:repeat(2,1fr)}
+      .module-nav{display:grid;grid-template-columns:repeat(2,1fr);gap:.45rem}
+      .module-tab{justify-content:center;padding:.58rem .65rem}
       .owner-request-grid{grid-template-columns:1fr}
       .owner-request-head{flex-direction:column}
       .owner-request-actions{justify-content:flex-start}
@@ -386,6 +457,11 @@
       .analytics-report-head{align-items:flex-start;flex-direction:column}
       .analytics-report-table{min-width:920px}
       .analytics-report{overflow-x:auto}
+      .analytics-graph-head{align-items:flex-start;flex-direction:column}
+      .social-form{grid-template-columns:1fr}
+      .social-form .wide,.social-form .full{grid-column:1}
+      .social-chart-row{grid-template-columns:78px 1fr 48px}
+      .social-item-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
       .stat-card{padding:1rem}
       .stat-val{font-size:1.55rem}
       .filters{gap:.4rem}
@@ -478,8 +554,15 @@
       <div class="stat-card"><div class="stat-val" style="color:#92400E" id="s-photo-pending">—</div><div class="stat-lbl">Fotos por revisar</div></div>
     </div>
 
+    <div class="module-nav" aria-label="Módulos de administración">
+      <button class="module-tab active" data-admin-module="locales" onclick="setAdminModule('locales',this)"><span>▦</span> Locales</button>
+      <button class="module-tab" data-admin-module="metricas" onclick="setAdminModule('metricas',this)"><span>↗</span> Métricas</button>
+      <button class="module-tab" data-admin-module="redes" onclick="setAdminModule('redes',this)"><span>◉</span> Redes</button>
+      <button class="module-tab" data-admin-module="comunidad" onclick="setAdminModule('comunidad',this)"><span>★</span> Comunidad</button>
+    </div>
+
     <!-- OWNER REQUESTS -->
-    <section class="owner-requests" id="owner-requests-section" style="display:none">
+    <section class="owner-requests" id="owner-requests-section" data-module-panel="locales" data-module-visible="1" style="display:none">
       <div class="section-head">
         <div>
           <div class="section-kicker">Autogestión de locales</div>
@@ -494,7 +577,7 @@
     </section>
 
     <!-- ANALYTICS -->
-    <section class="admin-section analytics-section">
+    <section class="admin-section analytics-section" data-module-panel="metricas" style="display:none">
       <div class="section-head">
         <div>
           <div class="section-kicker">Métricas propias</div>
@@ -539,6 +622,22 @@
           <button class="btn-sm btn-approve" onclick="copyAnalyticsPitch()">Copiar texto</button>
         </div>
         <div class="analytics-sales-copy" id="analytics-sales-copy">Cuando haya datos, acá aparece un texto listo para WhatsApp o mail comercial.</div>
+      </div>
+      <div class="analytics-graph-card">
+        <div class="analytics-graph-head">
+          <div>
+            <h4>Evolución de actividad</h4>
+            <p>Lectura rápida por día para entender si la web está creciendo y qué acciones empujan consultas reales.</p>
+          </div>
+          <div class="analytics-legend">
+            <span><i style="background:#166534"></i> páginas</span>
+            <span><i style="background:#E8A93C"></i> fichas</span>
+            <span><i style="background:#0EA5E9"></i> clics</span>
+          </div>
+        </div>
+        <div id="analytics-graph" class="analytics-graph-bars">
+          <div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>
+        </div>
       </div>
       <div class="analytics-columns">
         <div class="analytics-box">
@@ -589,8 +688,75 @@
       </div>
     </section>
 
+    <!-- SOCIAL METRICS -->
+    <section class="admin-section social-section" data-module-panel="redes" style="display:none">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Redes y comunidad</div>
+          <div class="section-title">Instagram y canales sociales</div>
+          <div class="section-sub">Cargá una foto semanal de números desde Insights: seguidores, alcance, visitas al perfil y clics al sitio. Sirve para saber si la red trae demanda hacia GlutenGo.</div>
+        </div>
+        <button class="btn-sm btn-expire" onclick="loadSocialMetrics()">↻ Refrescar redes</button>
+      </div>
+      <div id="social-status" class="analytics-status">Cargando métricas sociales…</div>
+      <div class="social-summary">
+        <div class="social-card"><strong id="social-followers">—</strong><span>seguidores</span><small id="social-followers-delta">sin comparación</small></div>
+        <div class="social-card"><strong id="social-reach">—</strong><span>alcance del snapshot</span><small id="social-reach-delta">sin comparación</small></div>
+        <div class="social-card"><strong id="social-profile">—</strong><span>visitas al perfil</span><small id="social-profile-delta">sin comparación</small></div>
+        <div class="social-card"><strong id="social-web">—</strong><span>clics al sitio</span><small id="social-web-delta">sin comparación</small></div>
+      </div>
+      <form class="social-form" onsubmit="saveSocialMetric(event)">
+        <label>Fecha
+          <input type="date" id="social-date" required />
+        </label>
+        <label>Canal
+          <select id="social-channel">
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="facebook">Facebook</option>
+            <option value="otro">Otro</option>
+          </select>
+        </label>
+        <label>Seguidores
+          <input type="number" id="social-followers-input" min="0" step="1" value="0" />
+        </label>
+        <label>Publicaciones
+          <input type="number" id="social-posts-input" min="0" step="1" value="0" />
+        </label>
+        <label>Alcance
+          <input type="number" id="social-reach-input" min="0" step="1" value="0" />
+        </label>
+        <label>Visitas perfil
+          <input type="number" id="social-profile-input" min="0" step="1" value="0" />
+        </label>
+        <label>Clics al sitio
+          <input type="number" id="social-web-input" min="0" step="1" value="0" />
+        </label>
+        <label class="wide">Nota interna
+          <input type="text" id="social-notes-input" maxlength="1000" placeholder="Ej: semana de lanzamiento, reel de Carrasco, campaña paga, etc." />
+        </label>
+        <div class="full">
+          <button class="btn-sm btn-approve" type="submit">Guardar medición social</button>
+        </div>
+      </form>
+      <div class="social-chart-card">
+        <div class="analytics-graph-head">
+          <div>
+            <h4>Últimos snapshots</h4>
+            <p>El gráfico usa alcance como barra principal y deja visible si esos días también hubo clics hacia la web.</p>
+          </div>
+        </div>
+        <div id="social-chart" class="social-chart">
+          <div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>
+        </div>
+      </div>
+      <div id="social-list" class="social-list">
+        <div class="owner-request-empty">Todavía no hay mediciones de redes cargadas.</div>
+      </div>
+    </section>
+
     <!-- FILTERS -->
-    <div class="filters">
+    <div class="filters" data-module-panel="locales">
       <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
       <button class="filter-btn" onclick="setFilter('pending',this)">Pendientes</button>
       <button class="filter-btn" onclick="setFilter('pending_payment',this)">Aguardando pago</button>
@@ -602,7 +768,7 @@
     </div>
 
     <!-- TABLE -->
-    <div class="table-wrap">
+    <div class="table-wrap" data-module-panel="locales">
       <table>
         <thead>
           <tr>
@@ -622,7 +788,7 @@
       </table>
     </div>
 
-    <section class="admin-section">
+    <section class="admin-section" data-module-panel="comunidad" style="display:none">
       <div class="section-head">
         <div>
           <div class="section-kicker">Comunidad</div>
@@ -654,12 +820,15 @@ var API     = '/api/admin-businesses';
 var RATINGS_API = '/api/admin-ratings';
 var ANALYTICS_API = '/api/analytics';
 var OWNER_REQUESTS_API = '/api/admin-owner-requests';
+var SOCIAL_API = '/api/admin-social-metrics';
 var adminToken = '';
 var allBiz  = [];
 var allPhotoRatings = [];
 var allOwnerRequests = [];
+var allSocialMetrics = [];
 var curFilter = 'todos';
 var curSearch = '';
+var currentAdminModule = 'locales';
 var analyticsDays = 7;
 var analyticsPitch = '';
 var analyticsPlaceStats = [];
@@ -683,6 +852,8 @@ function doLogin() {
       loadOwnerRequests();
       loadPhotoRatings();
       loadAnalytics();
+      loadSocialMetrics();
+      setAdminModule(currentAdminModule || 'locales');
     })
     .catch(function(err) {
       document.getElementById('login-err').style.display = 'block';
@@ -703,6 +874,30 @@ var savedPass = sessionStorage.getItem('gg_admin');
 if (savedPass) {
   document.getElementById('pass-input').value = savedPass;
   doLogin();
+}
+
+// ── ADMIN MODULES ─────────────────────────────────────────────────────────
+function setAdminModule(module, btn) {
+  currentAdminModule = module || 'locales';
+  document.querySelectorAll('.module-tab').forEach(function(item) {
+    item.classList.toggle('active', item.dataset.adminModule === currentAdminModule);
+  });
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('[data-module-panel]').forEach(function(panel) {
+    var show = panel.dataset.modulePanel === currentAdminModule;
+    if (panel.id === 'owner-requests-section') {
+      panel.dataset.moduleVisible = show ? '1' : '0';
+      if (show) renderOwnerRequests();
+      else panel.style.display = 'none';
+      return;
+    }
+    panel.style.display = show ? '' : 'none';
+  });
+  if (currentAdminModule === 'redes') {
+    setSocialDefaults();
+    if (!allSocialMetrics.length) loadSocialMetrics();
+  }
+  if (currentAdminModule === 'metricas' && adminToken) loadAnalytics();
 }
 
 // ── LOAD DATA ──────────────────────────────────────────────────────────────
@@ -852,6 +1047,32 @@ function analyticsDailyHtml(items) {
   }).join('');
 }
 
+function analyticsGraphHtml(items) {
+  if (!items || !items.length) return '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
+  var max = items.reduce(function(m, item) {
+    return Math.max(m, Number(item.pageViews || 0) + Number(item.placeViews || 0) + Number(item.clicks || 0));
+  }, 1);
+  return items.map(function(item) {
+    var page = Number(item.pageViews || 0);
+    var place = Number(item.placeViews || 0);
+    var clicks = Number(item.clicks || 0);
+    var total = page + place + clicks;
+    var pagePct = total ? Math.max(3, Math.round((page / max) * 100)) : 0;
+    var placePct = total ? Math.max(3, Math.round((place / max) * 100)) : 0;
+    var clickPct = total ? Math.max(3, Math.round((clicks / max) * 100)) : 0;
+    var label = new Date(item.date + 'T12:00:00').toLocaleDateString('es-UY', { day: '2-digit', month: '2-digit' });
+    var title = label + ' · páginas ' + fmtNum(page) + ', fichas ' + fmtNum(place) + ', clics ' + fmtNum(clicks);
+    return '<div class="analytics-graph-item" title="' + esc(title) + '">' +
+      '<div class="analytics-graph-stack">' +
+        (pagePct ? '<i class="page" style="height:' + pagePct + '%"></i>' : '') +
+        (placePct ? '<i class="place" style="height:' + placePct + '%"></i>' : '') +
+        (clickPct ? '<i class="click" style="height:' + clickPct + '%"></i>' : '') +
+      '</div>' +
+      '<div class="analytics-graph-label">' + esc(label) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
 function analyticsPeriodLabel(days) {
   return Number(days) === 30 ? 'últimos 30 días' : 'últimos 7 días';
 }
@@ -994,6 +1215,8 @@ function renderAnalytics(data) {
     analyticsPitch = '';
     analyticsPlaceStats = [];
     setText('analytics-sales-copy', 'Primero hay que aplicar la migración de Supabase para empezar a guardar visitas y clics.');
+    var graph = document.getElementById('analytics-graph');
+    if (graph) graph.innerHTML = '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
     renderPlaceReport([]);
     return;
   }
@@ -1008,6 +1231,8 @@ function renderAnalytics(data) {
   document.getElementById('analytics-top-places').innerHTML = analyticsRowsHtml(data.topPlaces);
   document.getElementById('analytics-clicks').innerHTML = analyticsRowsHtml(data.clicks);
   document.getElementById('analytics-daily').innerHTML = analyticsDailyHtml(data.daily);
+  var graph = document.getElementById('analytics-graph');
+  if (graph) graph.innerHTML = analyticsGraphHtml(data.daily);
   renderPlaceReport(data.placeStats);
   analyticsPitch = buildAnalyticsPitch(data, clicks);
   setText('analytics-sales-copy', analyticsPitch);
@@ -1030,6 +1255,182 @@ function loadAnalytics() {
     .catch(function(err) {
       if (status) status.innerHTML = '<div class="analytics-warning">No se pudieron cargar las métricas: ' + esc(err.message) + '</div>';
     });
+}
+
+// ── SOCIAL METRICS ────────────────────────────────────────────────────────
+var SOCIAL_CHANNEL_LABELS = {
+  instagram: 'Instagram',
+  tiktok: 'TikTok',
+  facebook: 'Facebook',
+  otro: 'Otro canal'
+};
+
+function localDateInputValue(value) {
+  var d = value ? new Date(value) : new Date();
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2, '0');
+  var day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+
+function setSocialDefaults() {
+  var dateEl = document.getElementById('social-date');
+  if (dateEl && !dateEl.value) dateEl.value = localDateInputValue();
+}
+
+function cleanMetricNumber(value) {
+  var n = Number(value || 0);
+  if (!Number.isFinite(n) || n < 0) return 0;
+  return Math.round(n);
+}
+
+function socialChannelLabel(channel) {
+  return SOCIAL_CHANNEL_LABELS[channel] || channel || 'Canal';
+}
+
+function metricDeltaText(current, previous, key) {
+  if (!previous) return 'sin comparación';
+  var delta = cleanMetricNumber(current && current[key]) - cleanMetricNumber(previous && previous[key]);
+  if (!delta) return 'sin cambios';
+  return (delta > 0 ? '+' : '') + fmtNum(delta) + ' vs anterior';
+}
+
+function latestSocialRows(channel) {
+  return (allSocialMetrics || [])
+    .filter(function(row) { return !channel || row.channel === channel; })
+    .sort(function(a, b) {
+      return String(b.metric_date || '').localeCompare(String(a.metric_date || '')) ||
+        String(b.created_at || '').localeCompare(String(a.created_at || ''));
+    });
+}
+
+function socialChartHtml(rows) {
+  var items = (rows || []).slice(0, 8).reverse();
+  if (!items.length) return '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
+  var max = items.reduce(function(m, item) {
+    return Math.max(m, cleanMetricNumber(item.reach), cleanMetricNumber(item.website_clicks));
+  }, 1);
+  return items.map(function(item) {
+    var reach = cleanMetricNumber(item.reach);
+    var clicks = cleanMetricNumber(item.website_clicks);
+    var pct = Math.max(4, Math.round((reach / max) * 100));
+    var clickPct = Math.max(4, Math.round((clicks / max) * 100));
+    var label = item.metric_date ? new Date(item.metric_date + 'T12:00:00').toLocaleDateString('es-UY', { day: '2-digit', month: '2-digit' }) : '—';
+    return '<div class="social-chart-row" title="' + esc(socialChannelLabel(item.channel) + ' · alcance ' + fmtNum(reach) + ' · clics ' + fmtNum(clicks)) + '">' +
+      '<span>' + esc(label) + '</span>' +
+      '<div class="social-chart-bar">' +
+        '<i style="width:' + pct + '%"></i>' +
+        (clicks ? '<i style="width:' + clickPct + '%;background:#0EA5E9;margin-top:-10px;opacity:.82"></i>' : '') +
+      '</div>' +
+      '<strong>' + fmtNum(reach) + '</strong>' +
+    '</div>';
+  }).join('');
+}
+
+function socialListHtml(rows) {
+  if (!rows || !rows.length) return '<div class="owner-request-empty">Todavía no hay mediciones de redes cargadas.</div>';
+  return rows.slice(0, 12).map(function(item) {
+    var date = item.metric_date ? new Date(item.metric_date + 'T12:00:00').toLocaleDateString('es-UY') : 'Sin fecha';
+    return '<article class="social-item">' +
+      '<div class="social-item-head">' +
+        '<div class="social-item-title">' + esc(socialChannelLabel(item.channel)) + ' · ' + esc(date) + '</div>' +
+        '<span class="badge active">' + fmtNum(item.posts) + ' posts</span>' +
+      '</div>' +
+      '<div class="social-item-grid">' +
+        '<div class="social-item-stat"><b>' + fmtNum(item.followers) + '</b>seguidores</div>' +
+        '<div class="social-item-stat"><b>' + fmtNum(item.reach) + '</b>alcance</div>' +
+        '<div class="social-item-stat"><b>' + fmtNum(item.profile_visits) + '</b>visitas perfil</div>' +
+        '<div class="social-item-stat"><b>' + fmtNum(item.website_clicks) + '</b>clics web</div>' +
+        '<div class="social-item-stat"><b>' + fmtNum(item.posts) + '</b>publicaciones</div>' +
+      '</div>' +
+      (item.notes ? '<div class="social-note">' + esc(item.notes) + '</div>' : '') +
+    '</article>';
+  }).join('');
+}
+
+function renderSocialMetrics(data) {
+  var status = document.getElementById('social-status');
+  if (data && data.pendingMigration) {
+    if (status) status.innerHTML = '<div class="analytics-warning">Falta aplicar la migración <strong>0008_social_metrics.sql</strong> en Supabase. El módulo ya está preparado; cuando exista la tabla, vas a poder guardar mediciones de Instagram.</div>';
+    ['social-followers','social-reach','social-profile','social-web'].forEach(function(id) { setText(id, '—'); });
+    setText('social-followers-delta', 'sin comparación');
+    setText('social-reach-delta', 'sin comparación');
+    setText('social-profile-delta', 'sin comparación');
+    setText('social-web-delta', 'sin comparación');
+    document.getElementById('social-chart').innerHTML = '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
+    document.getElementById('social-list').innerHTML = '<div class="owner-request-empty">Todavía no hay mediciones de redes cargadas.</div>';
+    return;
+  }
+  allSocialMetrics = Array.isArray(data) ? data : (data && Array.isArray(data.rows) ? data.rows : []);
+  var instagramRows = latestSocialRows('instagram');
+  var latest = instagramRows[0] || null;
+  var previous = instagramRows[1] || null;
+  setText('social-followers', latest ? fmtNum(latest.followers) : '—');
+  setText('social-reach', latest ? fmtNum(latest.reach) : '—');
+  setText('social-profile', latest ? fmtNum(latest.profile_visits) : '—');
+  setText('social-web', latest ? fmtNum(latest.website_clicks) : '—');
+  setText('social-followers-delta', latest ? metricDeltaText(latest, previous, 'followers') : 'sin comparación');
+  setText('social-reach-delta', latest ? metricDeltaText(latest, previous, 'reach') : 'sin comparación');
+  setText('social-profile-delta', latest ? metricDeltaText(latest, previous, 'profile_visits') : 'sin comparación');
+  setText('social-web-delta', latest ? metricDeltaText(latest, previous, 'website_clicks') : 'sin comparación');
+  var chart = document.getElementById('social-chart');
+  if (chart) chart.innerHTML = socialChartHtml(instagramRows);
+  var list = document.getElementById('social-list');
+  if (list) list.innerHTML = socialListHtml(allSocialMetrics);
+  if (status) {
+    status.textContent = latest
+      ? 'Última medición de Instagram: ' + new Date(latest.metric_date + 'T12:00:00').toLocaleDateString('es-UY') + '.'
+      : 'Todavía no cargaste mediciones. Cuando creemos Instagram, copiá semanalmente los números de Insights acá.';
+  }
+  setSocialDefaults();
+}
+
+function loadSocialMetrics() {
+  if (!adminToken) return Promise.resolve();
+  var status = document.getElementById('social-status');
+  if (status) status.textContent = 'Cargando métricas sociales…';
+  return fetch(SOCIAL_API, { headers: { 'x-admin-token': adminToken } })
+    .then(function(r) {
+      if (!r.ok) throw new Error('Error ' + r.status);
+      return r.json();
+    })
+    .then(renderSocialMetrics)
+    .catch(function(err) {
+      if (status) status.innerHTML = '<div class="analytics-warning">No se pudieron cargar métricas sociales: ' + esc(err.message) + '</div>';
+    });
+}
+
+function saveSocialMetric(e) {
+  if (e) e.preventDefault();
+  var payload = {
+    metric_date: document.getElementById('social-date').value || localDateInputValue(),
+    channel: document.getElementById('social-channel').value || 'instagram',
+    followers: cleanMetricNumber(document.getElementById('social-followers-input').value),
+    reach: cleanMetricNumber(document.getElementById('social-reach-input').value),
+    profile_visits: cleanMetricNumber(document.getElementById('social-profile-input').value),
+    website_clicks: cleanMetricNumber(document.getElementById('social-web-input').value),
+    posts: cleanMetricNumber(document.getElementById('social-posts-input').value),
+    notes: document.getElementById('social-notes-input').value.trim()
+  };
+  return fetch(SOCIAL_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+    body: JSON.stringify(payload),
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('Error ' + r.status);
+    return r.json();
+  })
+  .then(function(row) {
+    var saved = row && row.id ? row : (row && row.row ? row.row : null);
+    if (saved) allSocialMetrics.unshift(saved);
+    document.getElementById('social-notes-input').value = '';
+    renderSocialMetrics(allSocialMetrics);
+    showToast('Medición social guardada');
+  })
+  .catch(function(err) {
+    showToast('Error al guardar métrica social: ' + err.message);
+  });
 }
 
 function processData(data) {
@@ -1862,6 +2263,10 @@ function renderOwnerRequests() {
   var section = document.getElementById('owner-requests-section');
   var target = document.getElementById('owner-request-list');
   if (!section || !target) return;
+  if (section.dataset.moduleVisible === '0') {
+    section.style.display = 'none';
+    return;
+  }
   if (!allOwnerRequests.length) {
     section.style.display = 'none';
     target.innerHTML = '<div class="owner-request-empty">No hay cambios pendientes enviados por locales.</div>';
