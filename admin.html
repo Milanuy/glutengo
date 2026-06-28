@@ -70,6 +70,21 @@
     .stat-val{font-size:2rem;font-weight:900;line-height:1;margin-bottom:.2rem}
     .stat-lbl{font-size:.78rem;color:var(--gray)}
 
+    /* ── OWNER REQUESTS ── */
+    .owner-requests{background:#fff;border:1px solid var(--border);border-radius:18px;padding:1.2rem 1.3rem;margin:-.25rem 0 1.5rem;box-shadow:0 4px 16px rgba(0,0,0,.03)}
+    .owner-request-list{display:grid;gap:.75rem;margin-top:.9rem}
+    .owner-request-card{border:1px solid var(--border);border-radius:14px;padding:.95rem;background:var(--bg)}
+    .owner-request-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:.65rem}
+    .owner-request-title{font-weight:900;color:var(--green-deep)}
+    .owner-request-meta{font-size:.76rem;color:var(--gray);margin-top:.15rem}
+    .owner-request-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem;margin:.65rem 0}
+    .owner-request-field{background:#fff;border:1px solid var(--border);border-radius:10px;padding:.55rem .65rem}
+    .owner-request-field b{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);margin-bottom:.15rem}
+    .owner-request-field span{font-size:.84rem;color:#111;font-weight:700;line-height:1.35;word-break:break-word}
+    .owner-request-note{font-size:.82rem;color:#374151;line-height:1.45;margin:.55rem 0 0}
+    .owner-request-empty{border:1px dashed var(--border);border-radius:14px;padding:1rem;color:var(--gray);font-size:.86rem;background:#fff}
+    .owner-request-actions{display:flex;gap:.45rem;flex-wrap:wrap;justify-content:flex-end}
+
     /* ── ANALYTICS ── */
     .analytics-section{
       background:#fff;border:1px solid var(--border);border-radius:18px;
@@ -361,6 +376,9 @@
       .top-badge{font-size:.72rem;padding:.25rem .55rem}
       .top-logout{font-size:.72rem;padding:.25rem .55rem}
       .stats{grid-template-columns:repeat(2,1fr)}
+      .owner-request-grid{grid-template-columns:1fr}
+      .owner-request-head{flex-direction:column}
+      .owner-request-actions{justify-content:flex-start}
       .analytics-columns{grid-template-columns:1fr}
       .analytics-controls{justify-content:flex-start}
       .analytics-help-grid{grid-template-columns:1fr}
@@ -459,6 +477,21 @@
       <div class="stat-card"><div class="stat-val" style="color:var(--amber)" id="s-revenue">—</div><div class="stat-lbl">Ingresos estimados / mes</div></div>
       <div class="stat-card"><div class="stat-val" style="color:#92400E" id="s-photo-pending">—</div><div class="stat-lbl">Fotos por revisar</div></div>
     </div>
+
+    <!-- OWNER REQUESTS -->
+    <section class="owner-requests" id="owner-requests-section" style="display:none">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Autogestión de locales</div>
+          <div class="section-title">Cambios enviados por locales</div>
+          <div class="section-sub">El local propone datos, fotos o links. GlutenGo revisa y aprueba antes de publicar.</div>
+        </div>
+        <button class="btn-sm btn-expire" onclick="loadOwnerRequests()">↻ Refrescar</button>
+      </div>
+      <div class="owner-request-list" id="owner-request-list">
+        <div class="owner-request-empty">Cargando cambios pendientes…</div>
+      </div>
+    </section>
 
     <!-- ANALYTICS -->
     <section class="admin-section analytics-section">
@@ -620,9 +653,11 @@
 var API     = '/api/admin-businesses';
 var RATINGS_API = '/api/admin-ratings';
 var ANALYTICS_API = '/api/analytics';
+var OWNER_REQUESTS_API = '/api/admin-owner-requests';
 var adminToken = '';
 var allBiz  = [];
 var allPhotoRatings = [];
+var allOwnerRequests = [];
 var curFilter = 'todos';
 var curSearch = '';
 var analyticsDays = 7;
@@ -645,6 +680,7 @@ function doLogin() {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-app').style.display = 'block';
       processData(data);
+      loadOwnerRequests();
       loadPhotoRatings();
       loadAnalytics();
     })
@@ -1775,6 +1811,127 @@ function setPhotoStatus(id, status) {
     showToast(status === 'approved' ? 'Foto aprobada' : status === 'rejected' ? 'Foto oculta' : 'Foto marcada pendiente');
   })
   .catch(function(err) { showToast('Error: ' + err.message); });
+}
+
+// ── OWNER CHANGE REQUESTS ─────────────────────────────────────────────────
+var OWNER_FIELD_LABELS = {
+  nombre: 'Nombre',
+  tipo: 'Tipo',
+  categoria: 'Categoría',
+  direccion: 'Dirección',
+  barrio: 'Barrio / ciudad',
+  telefono: 'WhatsApp',
+  slug: 'Slug público',
+  description: 'Descripción',
+  lat: 'Latitud',
+  lng: 'Longitud',
+  instagram: 'Instagram',
+  logoUrl: 'Logo',
+  photoUrls: 'Fotos'
+};
+
+function ownerValueLabel(key, value) {
+  if (key === 'tipo') return value === 'exclusivo' ? '100% sin gluten' : 'Opciones SG';
+  if (key === 'photoUrls') {
+    var count = String(value || '').split(/\r?\n|,/).filter(Boolean).length;
+    return count ? count + ' foto' + (count === 1 ? '' : 's') + ' enviada' + (count === 1 ? '' : 's') : 'Sin fotos';
+  }
+  return String(value == null || value === '' ? '—' : value);
+}
+
+function ownerRequestFieldsHtml(req) {
+  var payload = req.payload || {};
+  var pairs = [];
+  Object.keys(payload.public || {}).forEach(function(key) {
+    pairs.push({ key: key, value: payload.public[key] });
+  });
+  Object.keys(payload.config || {}).forEach(function(key) {
+    pairs.push({ key: key, value: payload.config[key] });
+  });
+  if (!pairs.length) {
+    return '<div class="owner-request-field"><b>Sin cambios visibles</b><span>El local envió una nota sin campos nuevos.</span></div>';
+  }
+  return pairs.map(function(item) {
+    var label = OWNER_FIELD_LABELS[item.key] || item.key;
+    var value = ownerValueLabel(item.key, item.value);
+    return '<div class="owner-request-field"><b>' + esc(label) + '</b><span>' + esc(value) + '</span></div>';
+  }).join('');
+}
+
+function renderOwnerRequests() {
+  var section = document.getElementById('owner-requests-section');
+  var target = document.getElementById('owner-request-list');
+  if (!section || !target) return;
+  if (!allOwnerRequests.length) {
+    section.style.display = 'none';
+    target.innerHTML = '<div class="owner-request-empty">No hay cambios pendientes enviados por locales.</div>';
+    return;
+  }
+  section.style.display = '';
+  target.innerHTML = allOwnerRequests.map(function(req) {
+    var business = req.business || {};
+    var note = req.payload && req.payload.note ? '<div class="owner-request-note"><strong>Nota del local:</strong> ' + esc(req.payload.note) + '</div>' : '';
+    var date = req.created_at ? new Date(req.created_at).toLocaleString('es-UY') : 'Sin fecha';
+    return '<article class="owner-request-card">' +
+      '<div class="owner-request-head">' +
+        '<div>' +
+          '<div class="owner-request-title">' + esc(business.nombre || 'Local sin nombre') + '</div>' +
+          '<div class="owner-request-meta">' + esc(req.owner_email || business.email || 'Sin email') + ' · ' + esc(date) + '</div>' +
+        '</div>' +
+        '<div class="owner-request-actions">' +
+          '<button class="btn-sm btn-approve" data-owner-request="' + esc(req.id) + '" data-owner-action="approve" onclick="reviewOwnerRequest(this.dataset.ownerRequest,this.dataset.ownerAction)">Aprobar y aplicar</button>' +
+          '<button class="btn-sm btn-reject" data-owner-request="' + esc(req.id) + '" data-owner-action="reject" onclick="reviewOwnerRequest(this.dataset.ownerRequest,this.dataset.ownerAction)">Rechazar</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="owner-request-grid">' + ownerRequestFieldsHtml(req) + '</div>' +
+      note +
+    '</article>';
+  }).join('');
+}
+
+function loadOwnerRequests() {
+  if (!adminToken) return Promise.resolve();
+  return fetch(OWNER_REQUESTS_API + '?status=pending', { headers: { 'x-admin-token': adminToken } })
+    .then(function(r) {
+      if (!r.ok) throw new Error('Error ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      allOwnerRequests = Array.isArray(data) ? data : [];
+      renderOwnerRequests();
+    })
+    .catch(function(err) {
+      allOwnerRequests = [];
+      renderOwnerRequests();
+      showToast('No se pudieron cargar cambios de locales: ' + err.message);
+    });
+}
+
+function reviewOwnerRequest(id, action) {
+  var label = action === 'approve' ? 'aprobado' : 'rechazado';
+  return fetch(OWNER_REQUESTS_API, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+    body: JSON.stringify({ id: id, action: action }),
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('Error ' + r.status);
+    return r.json();
+  })
+  .then(function(data) {
+    if (data.business) {
+      var idx = allBiz.findIndex(function(b) { return sameId(b.id, data.business.id); });
+      if (idx !== -1) allBiz[idx] = Object.assign(allBiz[idx], data.business);
+    }
+    allOwnerRequests = allOwnerRequests.filter(function(req) { return !sameId(req.id, id); });
+    renderOwnerRequests();
+    renderTable();
+    updateStats();
+    showToast('Cambio ' + label);
+  })
+  .catch(function(err) {
+    showToast('Error: ' + err.message);
+  });
 }
 
 // ── PATCH HELPER ───────────────────────────────────────────────────────────

@@ -44,6 +44,19 @@
   status = 301
   force  = true
 
+# Portal para locales
+[[redirects]]
+  from   = "https://local.glutengo.com.uy/"
+  to     = "/local.html"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "http://local.glutengo.com.uy/"
+  to     = "https://local.glutengo.com.uy/"
+  status = 301
+  force  = true
+
 # Redirect para API interna
 [[redirects]]
   from   = "/api/*"

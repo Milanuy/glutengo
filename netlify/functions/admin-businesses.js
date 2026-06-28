@@ -109,7 +109,9 @@ exports.handler = async function (event) {
       patch.plan = plan;
     }
     if (mensaje !== undefined || admin_notes !== undefined) {
-      patch.mensaje = String(mensaje !== undefined ? mensaje : admin_notes).slice(0, 6000);
+      const cleanNotes = String(mensaje !== undefined ? mensaje : admin_notes).slice(0, 6000);
+      patch.mensaje = cleanNotes;
+      patch.admin_notes = cleanNotes;
     }
     try {
       const res = await fetch(

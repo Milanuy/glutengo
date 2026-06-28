@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi local — GlutenGo</title>
+  <meta name="description" content="Portal para locales registrados en GlutenGo." />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    :root{
+      --green-deep:#0E3D22;
+      --green:#166534;
+      --green-soft:#EAF7EF;
+      --amber:#E8A93C;
+      --cream:#FAF5EC;
+      --ink:#111827;
+      --gray:#6B7280;
+      --border:#E5E7EB;
+      --white:#fff;
+      --red:#991B1B;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--cream);color:var(--ink);line-height:1.5}
+    .top{position:sticky;top:0;z-index:10;background:var(--green-deep);color:#fff;box-shadow:0 3px 18px rgba(0,0,0,.14)}
+    .top-inner{max-width:1100px;margin:0 auto;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .brand{font-family:Georgia,serif;font-size:1.8rem;font-weight:900;color:#fff;text-decoration:none}
+    .brand span{color:var(--amber)}
+    .top-actions{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;justify-content:flex-end}
+    .top-link{color:#D1FAE5;text-decoration:none;font-weight:800;font-size:.86rem}
+    .btn{border:0;border-radius:999px;padding:.74rem 1.05rem;font-weight:900;font-size:.9rem;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.35rem}
+    .btn-primary{background:var(--amber);color:var(--green-deep)}
+    .btn-green{background:var(--green-deep);color:#fff}
+    .btn-soft{background:#fff;color:var(--green-deep);border:1px solid var(--border)}
+    .btn-danger{background:#FEE2E2;color:var(--red)}
+    .page{max-width:1100px;margin:0 auto;padding:2rem 1.25rem 4rem}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:1.25rem;align-items:stretch;margin-bottom:1.25rem}
+    .hero-main,.panel{background:#fff;border:1px solid var(--border);border-radius:20px;padding:1.35rem;box-shadow:0 8px 26px rgba(17,24,39,.05)}
+    .kicker{font-size:.76rem;text-transform:uppercase;letter-spacing:.12em;color:var(--amber);font-weight:900;margin-bottom:.35rem}
+    h1{font-family:Georgia,serif;color:var(--green-deep);font-size:clamp(2rem,5vw,3.5rem);line-height:1;margin-bottom:.75rem}
+    h2{color:var(--green-deep);font-size:1.15rem;margin-bottom:.35rem}
+    p{color:var(--gray)}
+    .status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-top:1rem}
+    .status-card{background:var(--green-soft);border-radius:14px;padding:.85rem}
+    .status-card strong{display:block;color:var(--green-deep);font-size:1.1rem}
+    .status-card span{font-size:.78rem;color:var(--gray);font-weight:800}
+    .login-card{text-align:center;max-width:520px;margin:2rem auto;background:#fff;border:1px solid var(--border);border-radius:22px;padding:2rem;box-shadow:0 12px 34px rgba(17,24,39,.08)}
+    .tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin:1.2rem 0}
+    .tab{border:1px solid var(--border);background:#fff;color:var(--green-deep);border-radius:999px;padding:.5rem .85rem;font-weight:900;cursor:pointer}
+    .tab.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
+    .workspace{display:grid;grid-template-columns:300px 1fr;gap:1rem;align-items:start}
+    .biz-list{display:grid;gap:.65rem}
+    .biz-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:.9rem;text-align:left;cursor:pointer}
+    .biz-card.active{border-color:var(--green);box-shadow:0 0 0 3px rgba(22,101,52,.12)}
+    .biz-card strong{display:block;color:var(--green-deep)}
+    .pill{display:inline-flex;align-items:center;border-radius:999px;padding:.22rem .55rem;background:var(--green-soft);color:var(--green);font-size:.72rem;font-weight:900;margin-top:.45rem}
+    .pill.warn{background:#FEF3C7;color:#92400E}
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem}
+    .field{display:grid;gap:.28rem}
+    .field.full{grid-column:1/-1}
+    label{font-size:.78rem;color:var(--green-deep);font-weight:900}
+    input,select,textarea{width:100%;border:1.5px solid var(--border);border-radius:12px;background:#fff;padding:.75rem .85rem;font:inherit;color:var(--ink)}
+    textarea{min-height:110px;resize:vertical}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green)}
+    .help{font-size:.76rem;color:var(--gray)}
+    .upload-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+    .preview-img{width:72px;height:72px;border-radius:14px;border:1px solid var(--border);object-fit:cover;background:#F3F4F6}
+    .request-list{display:grid;gap:.65rem;margin-top:.8rem}
+    .request-card{border:1px solid var(--border);background:#fff;border-radius:14px;padding:.85rem}
+    .request-card strong{color:var(--green-deep)}
+    .empty{background:#fff;border:1px dashed var(--border);border-radius:16px;padding:1rem;color:var(--gray)}
+    .toast{position:fixed;left:50%;bottom:1rem;transform:translateX(-50%) translateY(120%);background:var(--green-deep);color:#fff;padding:.75rem 1rem;border-radius:999px;font-weight:900;box-shadow:0 8px 26px rgba(0,0,0,.2);transition:.25s;z-index:40}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    .hidden{display:none!important}
+    @media(max-width:860px){
+      .hero,.workspace{grid-template-columns:1fr}
+      .status-grid,.form-grid{grid-template-columns:1fr}
+      .top-inner{padding:.85rem 1rem}
+      .brand{font-size:1.55rem}
+      .page{padding:1.25rem .9rem 4rem}
+      .hero-main,.panel{border-radius:16px;padding:1rem}
+    }
+  </style>
+</head>
+<body data-page="local-portal">
+  <header class="top">
+    <div class="top-inner">
+      <a class="brand" href="/">Gluten<span>Go</span></a>
+      <div class="top-actions">
+        <a class="top-link" href="/negocios.html">Planes</a>
+        <a class="top-link" href="/">Ver guía</a>
+        <button class="btn btn-primary" data-auth="logged-out" onclick="GlutenAuth.signInWithGoogle()">Entrar con Google</button>
+        <button class="btn btn-soft" data-auth="logged-in" style="display:none" onclick="GlutenAuth.signOut()">Cerrar sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="kicker">Portal de locales</div>
+        <h1>Gestioná tu ficha en GlutenGo</h1>
+        <p>Actualizá datos, logo, fotos y contacto. Los cambios quedan pendientes hasta que GlutenGo los revise y apruebe.</p>
+        <div class="status-grid">
+          <div class="status-card"><strong>1</strong><span>Entrás con Gmail</span></div>
+          <div class="status-card"><strong>2</strong><span>Enviás cambios</span></div>
+          <div class="status-card"><strong>3</strong><span>GlutenGo aprueba</span></div>
+        </div>
+      </div>
+      <aside class="panel">
+        <h2>Qué puede hacer el local</h2>
+        <p>Actualizar datos públicos, sumar logo/fotos y dejar notas para revisión. Las campañas, badges y visibilidad siguen aprobándose desde administración.</p>
+      </aside>
+    </section>
+
+    <section id="logged-out" class="login-card" data-auth="logged-out">
+      <h2>Entrá con el Gmail de tu solicitud</h2>
+      <p style="margin:.4rem 0 1.2rem">Si tu local fue registrado con ese correo, vas a ver tus fichas para enviar cambios.</p>
+      <button class="btn btn-primary" onclick="GlutenAuth.signInWithGoogle()">Entrar con Google</button>
+    </section>
+
+    <section id="portal" class="hidden" data-auth="logged-in">
+      <div class="panel" style="margin-bottom:1rem">
+        <div class="kicker">Sesión activa</div>
+        <h2>Hola, <span data-auth-name></span></h2>
+        <p id="owner-summary">Cargando tus locales…</p>
+      </div>
+
+      <div id="no-businesses" class="empty hidden">
+        No encontramos locales vinculados a este Gmail. Si ya completaste la solicitud con otro correo, escribinos a <a href="mailto:hola@glutengo.com.uy">hola@glutengo.com.uy</a> o registrá el local desde <a href="/negocios.html">Planes para negocios</a>.
+      </div>
+
+      <div id="workspace" class="workspace hidden">
+        <aside>
+          <h2>Mis locales</h2>
+          <div id="biz-list" class="biz-list"></div>
+          <div style="margin-top:1rem">
+            <h2>Solicitudes enviadas</h2>
+            <div id="request-list" class="request-list"></div>
+          </div>
+        </aside>
+
+        <section class="panel">
+          <div class="kicker">Cambios pendientes de aprobación</div>
+          <h2 id="form-title">Editar ficha</h2>
+          <p style="margin-bottom:1rem">Guardá una propuesta. La ficha pública no cambia hasta que GlutenGo la apruebe.</p>
+
+          <form id="owner-form" class="form-grid">
+            <div class="field">
+              <label>Nombre público</label>
+              <input id="f-nombre" maxlength="140" />
+            </div>
+            <div class="field">
+              <label>Tipo de oferta</label>
+              <select id="f-tipo">
+                <option value="mixto">Opciones SG</option>
+                <option value="exclusivo">100% sin gluten</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Categoría</label>
+              <select id="f-categoria">
+                <option value="restaurante">Restaurante</option>
+                <option value="cafeteria">Cafetería</option>
+                <option value="panaderia">Panadería</option>
+                <option value="heladeria">Heladería</option>
+                <option value="rotiseria">Rotisería / para llevar</option>
+                <option value="almacen">Almacén / dietética</option>
+                <option value="hotel">Hotel</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>WhatsApp</label>
+              <input id="f-telefono" maxlength="60" placeholder="091 000 000" />
+            </div>
+            <div class="field">
+              <label>Dirección</label>
+              <input id="f-direccion" maxlength="220" />
+            </div>
+            <div class="field">
+              <label>Barrio / ciudad</label>
+              <input id="f-barrio" maxlength="120" />
+            </div>
+            <div class="field">
+              <label>Instagram</label>
+              <input id="f-instagram" maxlength="80" placeholder="@tulocal" />
+            </div>
+            <div class="field">
+              <label>Slug público</label>
+              <input id="f-slug" maxlength="80" />
+              <div class="help">Ejemplo: /lugar.html?slug=mi-local</div>
+            </div>
+            <div class="field">
+              <label>Latitud</label>
+              <input id="f-lat" placeholder="-34.90" />
+            </div>
+            <div class="field">
+              <label>Longitud</label>
+              <input id="f-lng" placeholder="-56.16" />
+            </div>
+            <div class="field full">
+              <label>Descripción pública</label>
+              <textarea id="f-description" maxlength="900" placeholder="Contanos qué ofrece el local, qué opciones sin gluten tiene y qué debería confirmar el usuario antes de ir."></textarea>
+            </div>
+
+            <div class="field full">
+              <label>Logo</label>
+              <div class="upload-row">
+                <img id="logo-preview" class="preview-img" alt="Logo" />
+                <input id="f-logo-url" placeholder="URL del logo o subí un archivo" />
+                <input id="logo-file" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" />
+              </div>
+              <div class="help">Disponible para planes pagos una vez aprobado desde admin.</div>
+            </div>
+
+            <div class="field full">
+              <label>Fotos</label>
+              <textarea id="f-photo-urls" placeholder="Una URL por línea o subí fotos debajo"></textarea>
+              <input id="photo-files" type="file" accept="image/png,image/jpeg,image/webp" multiple />
+              <div class="help">Las fotos quedan pendientes de revisión antes de usarse públicamente.</div>
+            </div>
+
+            <div class="field full">
+              <label>Nota para GlutenGo</label>
+              <textarea id="f-note" maxlength="900" placeholder="Ej: cambiamos horario, sumamos menú nuevo, queremos activar reservas, etc."></textarea>
+            </div>
+
+            <div class="field full">
+              <button type="submit" class="btn btn-green">Enviar cambios a revisión</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/auth.js?v=2.1"></script>
+  <script>
+    var ownerState = { businesses: [], requests: [], selectedId: '', token: '' };
+
+    function showToast(message, danger) {
+      var el = document.getElementById('toast');
+      el.textContent = message;
+      el.style.background = danger ? 'var(--red)' : 'var(--green-deep)';
+      el.classList.add('show');
+      clearTimeout(el._timer);
+      el._timer = setTimeout(function(){ el.classList.remove('show'); }, 3200);
+    }
+
+    function text(id, value) {
+      var el = document.getElementById(id);
+      if (el) el.value = value || '';
+    }
+
+    function esc(value) {
+      return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+        return ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch];
+      });
+    }
+
+    function slugify(value) {
+      return String(value || '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 80);
+    }
+
+    function statusLabel(status) {
+      return {
+        pending: 'Pendiente',
+        pending_payment: 'Aguardando pago',
+        active: 'Publicado',
+        rejected: 'Rechazado',
+        expired: 'Suspendido',
+      }[status] || status || 'Pendiente';
+    }
+
+    function requestStatusLabel(status) {
+      return { pending:'Pendiente', approved:'Aprobado', rejected:'Rechazado' }[status] || status || 'Pendiente';
+    }
+
+    function selectedBusiness() {
+      return ownerState.businesses.find(function(item) { return item.id === ownerState.selectedId; }) || ownerState.businesses[0] || null;
+    }
+
+    function authHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + ownerState.token,
+      };
+    }
+
+    async function loadPortal() {
+      var session = window.GlutenAuth ? await GlutenAuth.getSession() : null;
+      if (!session || !session.access_token) {
+        document.getElementById('portal').classList.add('hidden');
+        return;
+      }
+      ownerState.token = session.access_token;
+      document.getElementById('portal').classList.remove('hidden');
+      document.getElementById('owner-summary').textContent = 'Cargando tus locales…';
+
+      try {
+        var res = await fetch('/api/owner-businesses', { headers: { Authorization: 'Bearer ' + ownerState.token } });
+        if (!res.ok) throw new Error('Error ' + res.status);
+        var data = await res.json();
+        ownerState.businesses = Array.isArray(data.businesses) ? data.businesses : [];
+        ownerState.requests = Array.isArray(data.requests) ? data.requests : [];
+        ownerState.selectedId = ownerState.selectedId || (ownerState.businesses[0] && ownerState.businesses[0].id) || '';
+        renderPortal();
+      } catch (err) {
+        showToast('No se pudo cargar el portal: ' + err.message, true);
+      }
+    }
+
+    function renderPortal() {
+      var has = ownerState.businesses.length > 0;
+      document.getElementById('no-businesses').classList.toggle('hidden', has);
+      document.getElementById('workspace').classList.toggle('hidden', !has);
+      document.getElementById('owner-summary').textContent = has
+        ? 'Tenés ' + ownerState.businesses.length + ' local' + (ownerState.businesses.length === 1 ? '' : 'es') + ' vinculado' + (ownerState.businesses.length === 1 ? '' : 's') + ' a tu Gmail.'
+        : 'No encontramos locales vinculados a este Gmail.';
+      renderBusinessList();
+      renderRequests();
+      fillForm(selectedBusiness());
+    }
+
+    function renderBusinessList() {
+      var target = document.getElementById('biz-list');
+      target.innerHTML = ownerState.businesses.map(function(b) {
+        var active = b.id === ownerState.selectedId ? ' active' : '';
+        var pillClass = b.status === 'active' ? 'pill' : 'pill warn';
+        return '<button type="button" class="biz-card' + active + '" data-id="' + esc(b.id) + '">' +
+          '<strong>' + esc(b.nombre || 'Local sin nombre') + '</strong>' +
+          '<span class="' + pillClass + '">' + esc(statusLabel(b.status)) + '</span>' +
+          '<div class="help" style="margin-top:.35rem">' + esc(b.plan || 'basico') + ' · ' + esc(b.barrio || 'Zona a confirmar') + '</div>' +
+        '</button>';
+      }).join('');
+      target.querySelectorAll('.biz-card').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          ownerState.selectedId = btn.dataset.id;
+          renderPortal();
+        });
+      });
+    }
+
+    function renderRequests() {
+      var target = document.getElementById('request-list');
+      if (!ownerState.requests.length) {
+        target.innerHTML = '<div class="empty">Todavía no enviaste cambios.</div>';
+        return;
+      }
+      target.innerHTML = ownerState.requests.slice(0, 8).map(function(req) {
+        var created = req.created_at ? new Date(req.created_at).toLocaleDateString('es-UY') : 'Sin fecha';
+        var pillClass = req.status === 'pending' ? 'pill warn' : 'pill';
+        return '<div class="request-card">' +
+          '<strong>' + esc(requestStatusLabel(req.status)) + '</strong>' +
+          '<div class="' + pillClass + '">' + esc(created) + '</div>' +
+          (req.payload && req.payload.note ? '<p style="margin-top:.45rem">' + esc(req.payload.note) + '</p>' : '') +
+        '</div>';
+      }).join('');
+    }
+
+    function fillForm(b) {
+      if (!b) return;
+      var cfg = b.config || {};
+      document.getElementById('form-title').textContent = 'Editar ficha de ' + (b.nombre || 'mi local');
+      text('f-nombre', b.nombre);
+      text('f-telefono', b.telefono);
+      text('f-direccion', b.direccion);
+      text('f-barrio', b.barrio);
+      text('f-instagram', cfg.instagram);
+      text('f-slug', cfg.slug || slugify(b.nombre));
+      text('f-lat', cfg.lat);
+      text('f-lng', cfg.lng);
+      text('f-description', cfg.description);
+      text('f-logo-url', cfg.logoUrl);
+      text('f-photo-urls', cfg.photoUrls);
+      text('f-note', '');
+      document.getElementById('f-tipo').value = b.tipo || 'mixto';
+      document.getElementById('f-categoria').value = b.categoria || cfg.category || 'restaurante';
+      updateLogoPreview();
+    }
+
+    function updateLogoPreview() {
+      var img = document.getElementById('logo-preview');
+      var url = document.getElementById('f-logo-url').value.trim();
+      img.style.display = url ? '' : 'none';
+      if (url) img.src = url;
+    }
+
+    function fileToDataUrl(file) {
+      return new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function() { resolve(reader.result); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function uploadFile(kind, file) {
+      var b = selectedBusiness();
+      if (!b) throw new Error('Elegí un local');
+      var dataUrl = await fileToDataUrl(file);
+      var res = await fetch('/api/owner-assets', {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({
+          business_id: b.id,
+          kind: kind,
+          file: { name: file.name, dataUrl: dataUrl },
+        }),
+      });
+      if (!res.ok) {
+        var err = await res.json().catch(function(){ return {}; });
+        throw new Error(err.error || ('Error ' + res.status));
+      }
+      return res.json();
+    }
+
+    document.getElementById('f-logo-url').addEventListener('input', updateLogoPreview);
+    document.getElementById('logo-file').addEventListener('change', async function(e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        showToast('Subiendo logo…');
+        var data = await uploadFile('logo', file);
+        document.getElementById('f-logo-url').value = data.url || '';
+        updateLogoPreview();
+        showToast('Logo cargado. Enviá cambios para revisión.');
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+
+    document.getElementById('photo-files').addEventListener('change', async function(e) {
+      var files = Array.prototype.slice.call(e.target.files || []).slice(0, 8);
+      if (!files.length) return;
+      var current = document.getElementById('f-photo-urls').value.trim();
+      var urls = current ? current.split(/\r?\n/).filter(Boolean) : [];
+      try {
+        showToast('Subiendo fotos…');
+        for (var i = 0; i < files.length; i += 1) {
+          var data = await uploadFile('photo', files[i]);
+          if (data.url) urls.push(data.url);
+        }
+        document.getElementById('f-photo-urls').value = urls.join('\n');
+        showToast('Fotos cargadas. Enviá cambios para revisión.');
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+
+    document.getElementById('owner-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var b = selectedBusiness();
+      if (!b) return;
+      var body = {
+        business_id: b.id,
+        public: {
+          nombre: document.getElementById('f-nombre').value,
+          tipo: document.getElementById('f-tipo').value,
+          categoria: document.getElementById('f-categoria').value,
+          direccion: document.getElementById('f-direccion').value,
+          barrio: document.getElementById('f-barrio').value,
+          telefono: document.getElementById('f-telefono').value,
+        },
+        config: {
+          slug: document.getElementById('f-slug').value,
+          description: document.getElementById('f-description').value,
+          lat: document.getElementById('f-lat').value,
+          lng: document.getElementById('f-lng').value,
+          instagram: document.getElementById('f-instagram').value,
+          logoUrl: document.getElementById('f-logo-url').value,
+          photoUrls: document.getElementById('f-photo-urls').value,
+        },
+        note: document.getElementById('f-note').value,
+      };
+      try {
+        var res = await fetch('/api/owner-businesses', {
+          method: 'POST',
+          headers: authHeaders(),
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+          var err = await res.json().catch(function(){ return {}; });
+          throw new Error(err.error || ('Error ' + res.status));
+        }
+        showToast('Cambios enviados a revisión');
+        await loadPortal();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+
+    window.onGlutenAuthSignIn = function(){ loadPortal(); };
+    window.onGlutenAuthSignOut = function(){
+      ownerState = { businesses: [], requests: [], selectedId: '', token: '' };
+      document.getElementById('portal').classList.add('hidden');
+    };
+
+    setTimeout(loadPortal, 800);
+  </script>
+</body>
+</html>
