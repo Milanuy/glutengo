@@ -123,17 +123,11 @@
     var touch = trafficTouch();
     var first = touch.first || {};
     var last = touch.last || {};
-    var timezone = '';
-    try {
-      timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    } catch (_) {}
     return {
       source_type: first.source_type || touch.current.source_type || 'direct',
       source_name: first.source_name || touch.current.source_name || 'Directo',
       referrer_host: first.referrer_host || touch.current.referrer_host || '',
       landing_path: first.landing_path || touch.current.landing_path || '',
-      timezone: cleanText(timezone, 80),
-      language: cleanText(navigator.language || '', 40),
       utm_source: first.utm_source || last.utm_source || '',
       utm_medium: first.utm_medium || last.utm_medium || '',
       utm_campaign: first.utm_campaign || last.utm_campaign || '',

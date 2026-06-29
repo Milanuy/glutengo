@@ -256,17 +256,11 @@ function sourceFromRow(row, meta) {
 }
 
 function locationFromMeta(meta) {
-  const label = text(meta.geo_label, 180);
-  if (label) return label;
   const city = text(meta.geo_city, 80);
   const region = text(meta.geo_region, 80);
   const country = text(meta.geo_country, 80);
-  const geoParts = [city, region, country].filter(Boolean);
-  if (geoParts.length) return geoParts.join(', ');
-  const timezone = text(meta.timezone, 80);
-  if (timezone) return 'Zona horaria: ' + timezone;
-  const language = text(meta.language, 40);
-  if (language) return 'Idioma navegador: ' + language;
+  if (city) return [city, region, country].filter(Boolean).join(', ');
+  if (region) return region;
   return '';
 }
 
@@ -414,7 +408,7 @@ function summarize(rows, range, filters) {
       }
       if (!countedLocationSessions.has(sessionKey)) {
         countedLocationSessions.add(sessionKey);
-        addCount(locations, locationFromMeta(meta) || 'Ubicación no disponible');
+        addCount(locations, locationFromMeta(meta) || 'Ciudad no disponible');
       }
       const campaign = campaignFromMeta(meta);
       if (campaign) addCount(campaigns, campaign);

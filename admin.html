@@ -696,9 +696,9 @@
           <div class="analytics-note" style="margin-top:.7rem">Usá links con <strong>utm_source</strong>, <strong>utm_medium</strong> y <strong>utm_campaign</strong> para medir posteos, notas de prensa, banners o acuerdos.</div>
         </div>
         <div class="analytics-box">
-          <h4>Ubicación aproximada</h4>
+          <h4>Ciudad o departamento</h4>
           <div class="analytics-list" id="analytics-locations"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
-          <div class="analytics-note" style="margin-top:.7rem">Se muestra solo si el navegador o Netlify entregan una señal general como país, ciudad o zona horaria. No guardamos IP.</div>
+          <div class="analytics-note" style="margin-top:.7rem">Solo se muestra ciudad o departamento si Netlify lo entrega. Si no aparece, no inventamos ubicación. Para barrio exacto habría que pedir permiso de ubicación al usuario.</div>
         </div>
       </div>
       <div class="analytics-box" style="margin:0 0 1rem">
@@ -1145,10 +1145,8 @@ function sourceTypeHint(label) {
 
 function locationHint(label) {
   var raw = String(label || '').toLowerCase();
-  if (raw.indexOf('zona horaria:') === 0) return 'Se usa como señal aproximada cuando no hay ciudad/país disponible.';
-  if (raw.indexOf('idioma navegador:') === 0) return 'Se usa solo como pista secundaria, no como ubicación real.';
-  if (raw.indexOf('no disponible') !== -1) return 'Netlify o el navegador no entregaron una señal de ubicación para esa sesión.';
-  return 'Ubicación general detectada sin guardar IP ni coordenadas precisas.';
+  if (raw.indexOf('no disponible') !== -1) return 'No hubo ciudad/departamento útil para esa sesión.';
+  return 'Ciudad o departamento detectado por Netlify, sin guardar IP.';
 }
 
 function analyticsCampaignRowsHtml(items) {
@@ -1156,14 +1154,6 @@ function analyticsCampaignRowsHtml(items) {
     return '<div class="analytics-row"><span>Sin campañas todavía</span><span>0</span></div>';
   }
   return analyticsRowsHtml(items);
-}
-
-function analyticsAudienceHtml(audience) {
-  var message = audience && audience.message
-    ? audience.message
-    : 'Google login básico entrega nombre, email y foto si el usuario lo permite, pero no edad ni género confiables.';
-  return '<p>' + esc(message) + '</p>' +
-    '<p style="margin-top:.55rem"><strong>Camino recomendado:</strong> agregar un perfil opcional o una pregunta simple luego del login, con consentimiento claro. Eso evita pedir permisos sensibles a Google y mantiene el ingreso más simple.</p>';
 }
 
 function analyticsDailyHtml(items) {
