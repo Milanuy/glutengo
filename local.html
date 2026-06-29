@@ -68,6 +68,27 @@
     .request-list{display:grid;gap:.65rem;margin-top:.8rem}
     .request-card{border:1px solid var(--border);background:#fff;border-radius:14px;padding:.75rem .8rem}
     .request-card strong{color:var(--green-deep)}
+    .owner-report{border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,#fff,#FAFDFB);padding:.9rem;margin-bottom:1rem}
+    .report-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem}
+    .report-head h3{color:var(--green-deep);font-size:1rem;line-height:1.2}
+    .report-controls{display:flex;gap:.38rem;flex-wrap:wrap}
+    .report-period{border:1.5px solid var(--border);background:#fff;color:var(--green-deep);border-radius:999px;padding:.36rem .68rem;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit}
+    .report-period.active{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
+    .report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;margin:.75rem 0}
+    .report-card{background:var(--green-soft);border-radius:12px;padding:.68rem .72rem}
+    .report-card strong{display:block;color:var(--green-deep);font-size:1.2rem;line-height:1}
+    .report-card span{font-size:.72rem;color:var(--gray);font-weight:900}
+    .report-columns{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.75rem}
+    .report-box{border:1px solid var(--border);border-radius:12px;background:#fff;padding:.72rem}
+    .report-box h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gray);margin-bottom:.45rem}
+    .report-row{display:flex;align-items:center;justify-content:space-between;gap:.6rem;font-size:.84rem;margin:.28rem 0}
+    .report-row span:first-child{font-weight:800;color:#111}
+    .report-row span:last-child{font-weight:900;color:var(--green-deep)}
+    .report-day{display:grid;grid-template-columns:70px 1fr 36px;align-items:center;gap:.45rem;font-size:.76rem;color:var(--gray);margin:.32rem 0}
+    .report-bar{height:7px;border-radius:999px;background:#E5E7EB;overflow:hidden}
+    .report-bar i{display:block;height:100%;border-radius:999px;background:var(--green)}
+    .report-status{font-size:.78rem;color:var(--gray);line-height:1.4}
+    .report-copy{font-size:.83rem;color:#14532D;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:.72rem;margin-top:.75rem;line-height:1.45}
     .empty{background:#fff;border:1px dashed var(--border);border-radius:16px;padding:1rem;color:var(--gray)}
     .toast{position:fixed;left:50%;bottom:1rem;transform:translateX(-50%) translateY(120%);background:var(--green-deep);color:#fff;padding:.75rem 1rem;border-radius:999px;font-weight:900;box-shadow:0 8px 26px rgba(0,0,0,.2);transition:.25s;z-index:40}
     .toast.show{transform:translateX(-50%) translateY(0)}
@@ -75,6 +96,7 @@
     @media(max-width:860px){
       .hero,.workspace{grid-template-columns:1fr}
       .status-grid,.form-grid{grid-template-columns:1fr}
+      .report-grid,.report-columns{grid-template-columns:1fr}
       body{font-size:14px}
       .top-inner{padding:.72rem .9rem}
       .brand{font-size:1.42rem}
@@ -151,6 +173,40 @@
         </aside>
 
         <section class="panel">
+          <div class="owner-report">
+            <div class="report-head">
+              <div>
+                <div class="kicker">Reporte del local</div>
+                <h3 id="report-title">Actividad de tu ficha</h3>
+                <p class="report-status" id="report-status">Cargando reporte…</p>
+              </div>
+              <div class="report-controls">
+                <button type="button" class="report-period" data-report-days="7" onclick="setOwnerAnalyticsDays(7,this)">7 días</button>
+                <button type="button" class="report-period active" data-report-days="30" onclick="setOwnerAnalyticsDays(30,this)">30 días</button>
+                <button type="button" class="btn btn-soft" onclick="copyOwnerReport()">Copiar</button>
+              </div>
+            </div>
+            <div class="report-grid">
+              <div class="report-card"><strong id="r-views">—</strong><span>vistas de ficha</span></div>
+              <div class="report-card"><strong id="r-intent">—</strong><span>clics de intención</span></div>
+              <div class="report-card"><strong id="r-rate">—</strong><span>tasa de interés</span></div>
+              <div class="report-card"><strong id="r-whatsapp">—</strong><span>WhatsApp</span></div>
+              <div class="report-card"><strong id="r-instagram">—</strong><span>Instagram</span></div>
+              <div class="report-card"><strong id="r-maps">—</strong><span>cómo llegar</span></div>
+            </div>
+            <div class="report-columns">
+              <div class="report-box">
+                <h4>Clics por canal</h4>
+                <div id="report-channels"><div class="report-row"><span>Sin datos todavía</span><span>0</span></div></div>
+              </div>
+              <div class="report-box">
+                <h4>Movimiento diario</h4>
+                <div id="report-daily"><div class="report-row"><span>Sin datos todavía</span><span>0</span></div></div>
+              </div>
+            </div>
+            <div class="report-copy" id="report-copy">Cuando haya datos, acá vas a ver un resumen listo para entender qué interés generó tu ficha.</div>
+          </div>
+
           <div class="kicker">Cambios pendientes de aprobación</div>
           <h2 id="form-title">Editar ficha</h2>
           <p style="margin-bottom:1rem">Guardá una propuesta. La ficha pública no cambia hasta que GlutenGo la apruebe.</p>
@@ -249,7 +305,8 @@
 
   <script src="/auth.js?v=2.1"></script>
   <script>
-    var ownerState = { businesses: [], requests: [], selectedId: '', token: '' };
+    var OWNER_ANALYTICS_API = '/api/owner-analytics';
+    var ownerState = { businesses: [], requests: [], selectedId: '', token: '', analyticsDays: 30, reports: [] };
 
     function showToast(message, danger) {
       var el = document.getElementById('toast');
@@ -263,6 +320,11 @@
     function text(id, value) {
       var el = document.getElementById(id);
       if (el) el.value = value || '';
+    }
+
+    function setText(id, value) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = value;
     }
 
     function esc(value) {
@@ -294,7 +356,15 @@
     }
 
     function selectedBusiness() {
-      return ownerState.businesses.find(function(item) { return item.id === ownerState.selectedId; }) || ownerState.businesses[0] || null;
+      return ownerState.businesses.find(function(item) { return String(item.id) === String(ownerState.selectedId); }) || ownerState.businesses[0] || null;
+    }
+
+    function selectedReport() {
+      var b = selectedBusiness();
+      if (!b) return null;
+      return ownerState.reports.find(function(item) {
+        return item.business && String(item.business.id) === String(b.id);
+      }) || null;
     }
 
     function authHeaders() {
@@ -322,6 +392,7 @@
         ownerState.requests = Array.isArray(data.requests) ? data.requests : [];
         ownerState.selectedId = ownerState.selectedId || (ownerState.businesses[0] && ownerState.businesses[0].id) || '';
         renderPortal();
+        await loadOwnerAnalytics();
       } catch (err) {
         showToast('No se pudo cargar el portal: ' + err.message, true);
       }
@@ -337,12 +408,13 @@
       renderBusinessList();
       renderRequests();
       fillForm(selectedBusiness());
+      renderOwnerReport();
     }
 
     function renderBusinessList() {
       var target = document.getElementById('biz-list');
       target.innerHTML = ownerState.businesses.map(function(b) {
-        var active = b.id === ownerState.selectedId ? ' active' : '';
+        var active = String(b.id) === String(ownerState.selectedId) ? ' active' : '';
         var pillClass = b.status === 'active' ? 'pill' : 'pill warn';
         return '<button type="button" class="biz-card' + active + '" data-id="' + esc(b.id) + '">' +
           '<strong>' + esc(b.nombre || 'Local sin nombre') + '</strong>' +
@@ -354,6 +426,7 @@
         btn.addEventListener('click', function() {
           ownerState.selectedId = btn.dataset.id;
           renderPortal();
+          loadOwnerAnalytics();
         });
       });
     }
@@ -401,6 +474,132 @@
       var url = document.getElementById('f-logo-url').value.trim();
       img.style.display = url ? '' : 'none';
       if (url) img.src = url;
+    }
+
+    function fmtNum(value) {
+      return Number(value || 0).toLocaleString('es-UY');
+    }
+
+    function fmtPct(value) {
+      return Math.round(Number(value || 0) * 1000) / 10 + '%';
+    }
+
+    function reportRowsHtml(items) {
+      if (!items || !items.length) return '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
+      return items.map(function(item) {
+        return '<div class="report-row"><span>' + esc(item.label) + '</span><span>' + fmtNum(item.count) + '</span></div>';
+      }).join('');
+    }
+
+    function reportDailyHtml(items) {
+      if (!items || !items.length) return '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
+      var max = items.reduce(function(m, item) {
+        return Math.max(m, Number(item.views || 0) + Number(item.clicks || 0));
+      }, 1);
+      return items.slice(-8).map(function(item) {
+        var total = Number(item.views || 0) + Number(item.clicks || 0);
+        var pct = total ? Math.max(4, Math.round((total / max) * 100)) : 0;
+        var label = new Date(item.date + 'T12:00:00').toLocaleDateString('es-UY', { day: '2-digit', month: '2-digit' });
+        return '<div class="report-day">' +
+          '<span>' + esc(label) + '</span>' +
+          '<div class="report-bar"><i style="width:' + pct + '%"></i></div>' +
+          '<strong>' + fmtNum(total) + '</strong>' +
+        '</div>';
+      }).join('');
+    }
+
+    function ownerReportText(report) {
+      var b = selectedBusiness();
+      if (!report || !b) return 'Todavía no hay datos suficientes para este local.';
+      return 'Reporte GlutenGo de ' + (b.nombre || report.business.name || 'tu local') + ' (' + ownerState.analyticsDays + ' días): ' +
+        fmtNum(report.views) + ' vistas de ficha, ' +
+        fmtNum(report.intentClicks) + ' clics de intención y ' +
+        fmtPct(report.interestRate) + ' de tasa de interés. ' +
+        'Detalle: ' + fmtNum(report.whatsapp) + ' WhatsApp, ' +
+        fmtNum(report.instagram) + ' Instagram y ' +
+        fmtNum(report.maps) + ' clics en cómo llegar.';
+    }
+
+    function renderOwnerReport() {
+      var b = selectedBusiness();
+      var report = selectedReport();
+      setText('report-title', b ? 'Actividad de ' + (b.nombre || 'tu ficha') : 'Actividad de tu ficha');
+
+      if (!b) {
+        setText('report-status', 'Elegí un local para ver su reporte.');
+        ['r-views','r-intent','r-rate','r-whatsapp','r-instagram','r-maps'].forEach(function(id){ setText(id, '—'); });
+        document.getElementById('report-channels').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
+        document.getElementById('report-daily').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
+        setText('report-copy', 'Cuando haya datos, acá vas a ver un resumen listo para entender qué interés generó tu ficha.');
+        return;
+      }
+
+      if (!report) {
+        setText('report-status', 'Todavía no hay datos para este período.');
+        ['r-views','r-intent','r-rate','r-whatsapp','r-instagram','r-maps'].forEach(function(id){ setText(id, '0'); });
+        document.getElementById('report-channels').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
+        document.getElementById('report-daily').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
+        setText('report-copy', 'Todavía estamos juntando datos de tu ficha. Cuando haya tráfico, vas a ver vistas, clics y tasa de interés.');
+        return;
+      }
+
+      setText('r-views', fmtNum(report.views));
+      setText('r-intent', fmtNum(report.intentClicks));
+      setText('r-rate', fmtPct(report.interestRate));
+      setText('r-whatsapp', fmtNum(report.whatsapp));
+      setText('r-instagram', fmtNum(report.instagram));
+      setText('r-maps', fmtNum(report.maps));
+      setText('report-status', 'Últimos ' + ownerState.analyticsDays + ' días. Medimos vistas de ficha y acciones reales como WhatsApp, Instagram y cómo llegar.');
+      document.getElementById('report-channels').innerHTML = reportRowsHtml(report.channels);
+      document.getElementById('report-daily').innerHTML = reportDailyHtml(report.daily);
+      setText('report-copy', ownerReportText(report));
+    }
+
+    async function loadOwnerAnalytics() {
+      var b = selectedBusiness();
+      if (!ownerState.token || !b) {
+        renderOwnerReport();
+        return;
+      }
+      setText('report-status', 'Cargando reporte…');
+      try {
+        var url = OWNER_ANALYTICS_API + '?business_id=' + encodeURIComponent(b.id) + '&days=' + encodeURIComponent(ownerState.analyticsDays);
+        var res = await fetch(url, { headers: { Authorization: 'Bearer ' + ownerState.token } });
+        if (!res.ok) throw new Error('Error ' + res.status);
+        var data = await res.json();
+        if (data.pendingMigration) {
+          ownerState.reports = [];
+          renderOwnerReport();
+          setText('report-status', 'Falta activar la tabla de métricas para mostrar reportes.');
+          return;
+        }
+        ownerState.reports = Array.isArray(data.reports) ? data.reports : [];
+        renderOwnerReport();
+      } catch (err) {
+        setText('report-status', 'No se pudo cargar el reporte: ' + err.message);
+      }
+    }
+
+    function setOwnerAnalyticsDays(days, btn) {
+      ownerState.analyticsDays = Number(days) === 7 ? 7 : 30;
+      document.querySelectorAll('.report-period').forEach(function(item) {
+        item.classList.toggle('active', item === btn);
+      });
+      loadOwnerAnalytics();
+    }
+
+    function copyOwnerReport() {
+      var report = selectedReport();
+      var copy = ownerReportText(report);
+      if (!navigator.clipboard) {
+        showToast('No se pudo copiar en este navegador', true);
+        return;
+      }
+      navigator.clipboard.writeText(copy).then(function() {
+        showToast('Reporte copiado');
+      }).catch(function() {
+        showToast('No se pudo copiar el reporte', true);
+      });
     }
 
     function fileToDataUrl(file) {
@@ -509,7 +708,7 @@
 
     window.onGlutenAuthSignIn = function(){ loadPortal(); };
     window.onGlutenAuthSignOut = function(){
-      ownerState = { businesses: [], requests: [], selectedId: '', token: '' };
+      ownerState = { businesses: [], requests: [], selectedId: '', token: '', analyticsDays: 30, reports: [] };
       document.getElementById('portal').classList.add('hidden');
     };
 
