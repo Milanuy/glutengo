@@ -305,6 +305,8 @@ function normalizePublicPlace(place) {
     position: getPlacePosition(place),
     logoUrl: place.logoUrl || '',
     photoUrls: Array.isArray(place.photoUrls) ? place.photoUrls : [],
+    menuUrl: place.menuUrl || '',
+    menuHighlights: place.menuHighlights || '',
     featuredPlacement: place.featuredPlacement || 'none',
     sponsor: place.sponsor || {},
     benefits: place.benefits || {},

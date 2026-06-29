@@ -111,7 +111,8 @@ exports.handler = async function(event) {
   }
 
   const businessId = text(body.business_id || body.businessId, 90);
-  const kind = text(body.kind, 20) === 'logo' ? 'logo' : 'photo';
+  const requestedKind = text(body.kind, 20);
+  const kind = ['logo', 'photo', 'menu'].includes(requestedKind) ? requestedKind : 'photo';
   if (!businessId) return json(400, { error: 'business_id requerido' });
   if (!(await ownsBusiness(businessId, email))) return json(403, { error: 'Este local no esta vinculado a tu email' });
 

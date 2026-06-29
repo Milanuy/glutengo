@@ -25,7 +25,17 @@ const corsHeaders = {
 };
 
 const ALLOWED_PUBLIC_FIELDS = new Set(['nombre', 'tipo', 'categoria', 'direccion', 'barrio', 'telefono']);
-const ALLOWED_CONFIG_FIELDS = new Set(['slug', 'description', 'lat', 'lng', 'instagram', 'logoUrl', 'photoUrls']);
+const ALLOWED_CONFIG_FIELDS = new Set([
+  'slug',
+  'description',
+  'lat',
+  'lng',
+  'instagram',
+  'logoUrl',
+  'photoUrls',
+  'menuUrl',
+  'menuHighlights',
+]);
 
 function json(statusCode, body) {
   return { statusCode, headers: corsHeaders, body: JSON.stringify(body || {}) };
@@ -70,6 +80,14 @@ function parsePhotoUrls(value) {
     .join('\n');
 }
 
+function cleanUrl(value) {
+  const url = text(value, 700);
+  if (!url) return '';
+  if (url.startsWith('/assets/')) return url;
+  if (/^https?:\/\//i.test(url)) return url;
+  return '';
+}
+
 function publicBusiness(row) {
   const cfg = parseNotes(row.admin_notes || row.mensaje);
   return {
@@ -93,6 +111,8 @@ function publicBusiness(row) {
       instagram: cfg.instagram || '',
       logoUrl: cfg.logoUrl || '',
       photoUrls: cfg.photoUrls || '',
+      menuUrl: cfg.menuUrl || '',
+      menuHighlights: cfg.menuHighlights || '',
     },
   };
 }
@@ -119,6 +139,14 @@ function sanitizePayload(body) {
     }
     if (key === 'photoUrls') {
       configFields[key] = parsePhotoUrls(rawConfig[key]);
+      return;
+    }
+    if (key === 'menuUrl') {
+      configFields[key] = cleanUrl(rawConfig[key]);
+      return;
+    }
+    if (key === 'menuHighlights') {
+      configFields[key] = text(rawConfig[key], 1800);
       return;
     }
     configFields[key] = text(rawConfig[key], key === 'description' ? 900 : 500);

@@ -152,6 +152,37 @@
 
     /* DESCRIPCIÓN */
     .desc-text{font-size:.95rem;line-height:1.65;color:#374151}
+    .menu-card h3{
+      font-size:.92rem;color:var(--green-deep);
+      margin:.85rem 0 .45rem;font-weight:800;
+    }
+    .menu-actions{display:flex;gap:.65rem;flex-wrap:wrap;margin-top:.85rem}
+    .menu-link{
+      display:inline-flex;align-items:center;justify-content:center;gap:.45rem;
+      border-radius:999px;background:var(--green-deep);color:#fff;
+      text-decoration:none;font-weight:800;font-size:.88rem;
+      padding:.68rem 1rem;
+    }
+    .menu-link:hover{background:var(--green)}
+    .menu-image-wrap{
+      display:block;margin-top:.85rem;border:1px solid #E5E7EB;
+      border-radius:12px;overflow:hidden;background:#FFFBEB;
+    }
+    .menu-image-wrap img{
+      display:block;width:100%;max-height:460px;object-fit:contain;background:#fff;
+    }
+    .menu-highlight-list{
+      display:grid;gap:.45rem;margin:.65rem 0 0;list-style:none;
+    }
+    .menu-highlight-list li{
+      display:flex;gap:.45rem;align-items:flex-start;
+      color:#374151;font-size:.9rem;line-height:1.45;
+    }
+    .menu-highlight-list li::before{
+      content:"";width:.48rem;height:.48rem;border-radius:50%;
+      background:var(--amber);margin-top:.46rem;flex:0 0 auto;
+    }
+    .menu-note{font-size:.78rem;color:var(--gray);line-height:1.45;margin-top:.75rem}
 
     /* HORARIOS */
     .hours-grid{display:grid;gap:.35rem}
@@ -354,6 +385,18 @@
       });
     }
 
+    function splitLines(value, limit) {
+      return String(value || '')
+        .split(/\r?\n/)
+        .map(function(item) { return item.trim(); })
+        .filter(Boolean)
+        .slice(0, limit || 8);
+    }
+
+    function isImageUrl(value) {
+      return /\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(String(value || '').trim());
+    }
+
     function trackDetail(eventType, metadata) {
       try {
         if (window.GlutenAnalytics && typeof window.GlutenAnalytics.track === 'function') {
@@ -468,6 +511,8 @@
         plan: place.plan || 'basico',
         logoUrl: place.logoUrl || '',
         photoUrls: Array.isArray(place.photoUrls) ? place.photoUrls : [],
+        menuUrl: place.menuUrl || '',
+        menuHighlights: place.menuHighlights || '',
         featuredPlacement: place.featuredPlacement || 'none',
         benefits: place.benefits || {},
         source: place.source || 'admin',
@@ -593,6 +638,37 @@
           <div class="contact-links">${contactHtml}</div>
         </div>` : '';
 
+    const menuUrl = String(lugar.menuUrl || '').trim();
+    const menuHighlights = splitLines(lugar.menuHighlights, 12);
+    const menuHighlightsHtml = menuHighlights.length ? `
+          <h3>Opciones destacadas</h3>
+          <ul class="menu-highlight-list">
+            ${menuHighlights.map(function(item) { return `<li>${escapeHtml(item)}</li>`; }).join('')}
+          </ul>` : '';
+    const menuImageHtml = menuUrl && isImageUrl(menuUrl) ? `
+          <a href="${escapeHtml(menuUrl)}" target="_blank" class="menu-image-wrap" data-detail-analytics="outbound_click" data-analytics-target="menu">
+            <img src="${escapeHtml(menuUrl)}" alt="Menú de ${escapeHtml(lugar.name)}" loading="lazy">
+          </a>` : '';
+    const menuLinkHtml = menuUrl ? `
+          <div class="menu-actions">
+            <a href="${escapeHtml(menuUrl)}" target="_blank" class="menu-link" data-detail-analytics="outbound_click" data-analytics-target="menu">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg>
+              Ver menú completo
+            </a>
+          </div>` : '';
+    const menuSectionHtml = (menuUrl || menuHighlights.length) ? `
+        <!-- MENÚ -->
+        <div class="card menu-card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+            Menú y opciones
+          </h2>
+          ${menuHighlightsHtml}
+          ${menuImageHtml}
+          ${menuLinkHtml}
+          <p class="menu-note">La disponibilidad del menú puede cambiar. Confirmá siempre con el local antes de consumir.</p>
+        </div>` : '';
+
     const mapSectionHtml = hasCoords ? `
         <!-- MAPA -->
         <div class="card">
@@ -672,6 +748,8 @@
           </h2>
           <p class="desc-text">${lugar.desc}</p>
         </div>
+
+        ${menuSectionHtml}
 
         <!-- HORARIOS -->
         <div class="card">

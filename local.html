@@ -132,7 +132,7 @@
       <div class="hero-main">
         <div class="kicker">Portal de locales</div>
         <h1>Gestioná tu ficha en GlutenGo</h1>
-        <p>Actualizá datos, logo, fotos y contacto. Los cambios quedan pendientes hasta que GlutenGo los revise y apruebe.</p>
+        <p>Actualizá datos, logo, fotos, menú y contacto. Los cambios quedan pendientes hasta que GlutenGo los revise y apruebe.</p>
         <div class="status-grid">
           <div class="status-card"><strong>1</strong><span>Entrás con Gmail</span></div>
           <div class="status-card"><strong>2</strong><span>Enviás cambios</span></div>
@@ -141,7 +141,7 @@
       </div>
       <aside class="panel">
         <h2>Qué puede hacer el local</h2>
-        <p>Actualizar datos públicos, sumar logo/fotos y dejar notas para revisión. Las campañas, badges y visibilidad siguen aprobándose desde administración.</p>
+        <p>Actualizar datos públicos, sumar logo, fotos, menú y dejar notas para revisión. Las campañas, badges y visibilidad siguen aprobándose desde administración.</p>
       </aside>
     </section>
 
@@ -193,6 +193,7 @@
               <div class="report-card"><strong id="r-whatsapp">—</strong><span>WhatsApp</span></div>
               <div class="report-card"><strong id="r-instagram">—</strong><span>Instagram</span></div>
               <div class="report-card"><strong id="r-maps">—</strong><span>cómo llegar</span></div>
+              <div class="report-card"><strong id="r-menu">—</strong><span>ver menú</span></div>
             </div>
             <div class="report-columns">
               <div class="report-box">
@@ -285,6 +286,14 @@
               <textarea id="f-photo-urls" placeholder="Una URL por línea o subí fotos debajo"></textarea>
               <input id="photo-files" type="file" accept="image/png,image/jpeg,image/webp" multiple />
               <div class="help">Las fotos quedan pendientes de revisión antes de usarse públicamente.</div>
+            </div>
+
+            <div class="field full">
+              <label>Menú</label>
+              <input id="f-menu-url" placeholder="URL del menú o subí una foto clara" />
+              <input id="menu-file" type="file" accept="image/png,image/jpeg,image/webp" />
+              <textarea id="f-menu-highlights" maxlength="1800" placeholder="Opciones destacadas, una por línea. Ej: brownie sin gluten, chivito apto, pasta sin TACC."></textarea>
+              <div class="help">Podés subir una foto del menú o pegar un link público. Las opciones destacadas ayudan a que el usuario entienda rápido qué puede pedir. GlutenGo lo publica después de revisar la ficha y el plan activo.</div>
             </div>
 
             <div class="field full">
@@ -463,6 +472,8 @@
       text('f-description', cfg.description);
       text('f-logo-url', cfg.logoUrl);
       text('f-photo-urls', cfg.photoUrls);
+      text('f-menu-url', cfg.menuUrl);
+      text('f-menu-highlights', cfg.menuHighlights);
       text('f-note', '');
       document.getElementById('f-tipo').value = b.tipo || 'mixto';
       document.getElementById('f-categoria').value = b.categoria || cfg.category || 'restaurante';
@@ -517,7 +528,8 @@
         fmtPct(report.interestRate) + ' de tasa de interés. ' +
         'Detalle: ' + fmtNum(report.whatsapp) + ' WhatsApp, ' +
         fmtNum(report.instagram) + ' Instagram y ' +
-        fmtNum(report.maps) + ' clics en cómo llegar.';
+        fmtNum(report.maps) + ' clics en cómo llegar' +
+        (Number(report.menu || 0) ? ', más ' + fmtNum(report.menu) + ' clics en menú.' : '.');
     }
 
     function renderOwnerReport() {
@@ -527,7 +539,7 @@
 
       if (!b) {
         setText('report-status', 'Elegí un local para ver su reporte.');
-        ['r-views','r-intent','r-rate','r-whatsapp','r-instagram','r-maps'].forEach(function(id){ setText(id, '—'); });
+        ['r-views','r-intent','r-rate','r-whatsapp','r-instagram','r-maps','r-menu'].forEach(function(id){ setText(id, '—'); });
         document.getElementById('report-channels').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
         document.getElementById('report-daily').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
         setText('report-copy', 'Cuando haya datos, acá vas a ver un resumen listo para entender qué interés generó tu ficha.');
@@ -536,7 +548,7 @@
 
       if (!report) {
         setText('report-status', 'Todavía no hay datos para este período.');
-        ['r-views','r-intent','r-rate','r-whatsapp','r-instagram','r-maps'].forEach(function(id){ setText(id, '0'); });
+        ['r-views','r-intent','r-rate','r-whatsapp','r-instagram','r-maps','r-menu'].forEach(function(id){ setText(id, '0'); });
         document.getElementById('report-channels').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
         document.getElementById('report-daily').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
         setText('report-copy', 'Todavía estamos juntando datos de tu ficha. Cuando haya tráfico, vas a ver vistas, clics y tasa de interés.');
@@ -549,6 +561,7 @@
       setText('r-whatsapp', fmtNum(report.whatsapp));
       setText('r-instagram', fmtNum(report.instagram));
       setText('r-maps', fmtNum(report.maps));
+      setText('r-menu', fmtNum(report.menu));
       setText('report-status', 'Últimos ' + ownerState.analyticsDays + ' días. Medimos vistas de ficha y acciones reales como WhatsApp, Instagram y cómo llegar.');
       document.getElementById('report-channels').innerHTML = reportRowsHtml(report.channels);
       document.getElementById('report-daily').innerHTML = reportDailyHtml(report.daily);
@@ -664,6 +677,19 @@
       }
     });
 
+    document.getElementById('menu-file').addEventListener('change', async function(e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        showToast('Subiendo menú…');
+        var data = await uploadFile('menu', file);
+        document.getElementById('f-menu-url').value = data.url || '';
+        showToast('Menú cargado. Enviá cambios para revisión.');
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+
     document.getElementById('owner-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       var b = selectedBusiness();
@@ -686,6 +712,8 @@
           instagram: document.getElementById('f-instagram').value,
           logoUrl: document.getElementById('f-logo-url').value,
           photoUrls: document.getElementById('f-photo-urls').value,
+          menuUrl: document.getElementById('f-menu-url').value,
+          menuHighlights: document.getElementById('f-menu-highlights').value,
         },
         note: document.getElementById('f-note').value,
       };

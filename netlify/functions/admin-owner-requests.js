@@ -53,6 +53,8 @@ function parseNotes(notes) {
 function sanitizeCfgValue(key, value) {
   if (key === 'photoUrls') return text(value, 4000);
   if (key === 'description') return text(value, 900);
+  if (key === 'menuHighlights') return text(value, 1800);
+  if (key === 'menuUrl') return text(value, 700);
   return text(value, 500);
 }
 

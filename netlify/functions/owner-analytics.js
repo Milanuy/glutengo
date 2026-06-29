@@ -108,6 +108,7 @@ function channelLabel(target) {
     whatsapp: 'WhatsApp',
     instagram: 'Instagram',
     'google-maps': 'Cómo llegar / mapa',
+    menu: 'Ver menú',
     'open-place-card': 'Abrió ficha desde la guía',
     'ver-ficha': 'Abrió ficha desde mapa',
     share: 'Compartir',
@@ -132,6 +133,7 @@ function newReport(business, days) {
     whatsapp: 0,
     instagram: 0,
     maps: 0,
+    menu: 0,
     shares: 0,
     ratings: 0,
     channels: {},
@@ -189,6 +191,7 @@ function summarize(rows, businesses, days) {
       if (meta.target === 'whatsapp') report.whatsapp += 1;
       if (meta.target === 'instagram') report.instagram += 1;
       if (meta.target === 'google-maps') report.maps += 1;
+      if (meta.target === 'menu') report.menu += 1;
       return;
     }
 

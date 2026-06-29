@@ -65,6 +65,10 @@ function parsePhotos(value) {
     .slice(0, 8);
 }
 
+function cleanText(value, limit) {
+  return String(value == null ? '' : value).trim().slice(0, limit || 900);
+}
+
 function parseNumber(value) {
   const raw = String(value == null ? '' : value).trim();
   if (!raw) return null;
@@ -79,6 +83,7 @@ function defaultBenefits(plan) {
     certifiedBadge: plan === 'certificado',
     directContact: paid,
     logo: paid,
+    menu: paid,
     priority: paid,
     homeFeature: false,
     sideBanner: false,
@@ -133,6 +138,8 @@ function toPublicPlace(row) {
     position: Number.isInteger(parsedPosition) && parsedPosition >= 1 ? parsedPosition : 999,
     logoUrl: benefits.logo ? cleanUrl(cfg.logoUrl) : '',
     photoUrls: parsePhotos(cfg.photoUrls),
+    menuUrl: benefits.menu ? cleanUrl(cfg.menuUrl) : '',
+    menuHighlights: benefits.menu ? cleanText(cfg.menuHighlights, 1800) : '',
     featuredPlacement: String(cfg.featuredPlacement || 'none'),
     sponsor: {
       active: cfg.featuredPlacement === 'sponsor' && Boolean(cfg.sponsorPaid),
