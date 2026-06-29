@@ -78,6 +78,44 @@ function metadata(value) {
   return clean;
 }
 
+function headerValue(headers, names) {
+  const source = headers || {};
+  for (const name of names) {
+    const lower = name.toLowerCase();
+    const value = source[name] || source[lower];
+    if (value) return text(decodeURIComponent(String(value)), 120);
+  }
+  return '';
+}
+
+function parseGeoJson(value) {
+  if (!value) return {};
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (_) {
+    return {};
+  }
+}
+
+function geoFromHeaders(headers) {
+  const geoRaw = headerValue(headers, ['x-nf-geo', 'x-geo', 'x-netlify-geo']);
+  const parsed = parseGeoJson(geoRaw);
+  const city = headerValue(headers, ['x-city', 'x-nf-city', 'x-vercel-ip-city']) ||
+    text(parsed.city || parsed.cityName, 80);
+  const region = headerValue(headers, ['x-region', 'x-nf-region', 'x-vercel-ip-country-region']) ||
+    text(parsed.region || parsed.regionName || parsed.subdivision, 80);
+  const country = headerValue(headers, ['x-country', 'x-nf-country', 'x-vercel-ip-country', 'cf-ipcountry']) ||
+    text(parsed.country || parsed.countryCode || parsed.countryName, 80);
+  const parts = [city, region, country].filter(Boolean);
+  return {
+    geo_city: city,
+    geo_region: region,
+    geo_country: country,
+    geo_label: parts.join(', '),
+  };
+}
+
 function missingAnalyticsTable(raw) {
   return /analytics_events|PGRST205|42P01|does not exist|schema cache/i.test(String(raw || ''));
 }
@@ -217,6 +255,21 @@ function sourceFromRow(row, meta) {
   return { type: 'direct', label: 'Directo / sin referencia' };
 }
 
+function locationFromMeta(meta) {
+  const label = text(meta.geo_label, 180);
+  if (label) return label;
+  const city = text(meta.geo_city, 80);
+  const region = text(meta.geo_region, 80);
+  const country = text(meta.geo_country, 80);
+  const geoParts = [city, region, country].filter(Boolean);
+  if (geoParts.length) return geoParts.join(', ');
+  const timezone = text(meta.timezone, 80);
+  if (timezone) return 'Zona horaria: ' + timezone;
+  const language = text(meta.language, 40);
+  if (language) return 'Idioma navegador: ' + language;
+  return '';
+}
+
 function campaignFromMeta(meta) {
   const campaign = text(meta.utm_campaign, 120);
   if (!campaign) return '';
@@ -323,9 +376,11 @@ function summarize(rows, range, filters) {
   const trafficSources = {};
   const sourceTypes = {};
   const campaigns = {};
+  const locations = {};
   const navigationPaths = {};
   const navigationEvents = {};
   const countedSourceSessions = new Set();
+  const countedLocationSessions = new Set();
   const daily = {};
   const today = new Date().toISOString().slice(0, 10);
 
@@ -356,6 +411,10 @@ function summarize(rows, range, filters) {
         countedSourceSessions.add(sessionKey);
         addCount(trafficSources, source.label);
         addCount(sourceTypes, sourceTypeLabel(source.type));
+      }
+      if (!countedLocationSessions.has(sessionKey)) {
+        countedLocationSessions.add(sessionKey);
+        addCount(locations, locationFromMeta(meta) || 'Ubicación no disponible');
       }
       const campaign = campaignFromMeta(meta);
       if (campaign) addCount(campaigns, campaign);
@@ -426,12 +485,9 @@ function summarize(rows, range, filters) {
     trafficSources: topFromMap(trafficSources, 10),
     sourceTypes: topFromMap(sourceTypes, 8),
     campaigns: topFromMap(campaigns, 8),
+    locations: topFromMap(locations, 10),
     navigationPaths: topNavigation(navigationPaths, 18),
     navigationEvents: topFromMap(navigationEvents, 12),
-    audience: {
-      demographicsAvailable: false,
-      message: 'Google login básico entrega identidad de acceso (nombre, email y foto si el usuario lo permite), no edad ni género confiables. Para medir edad/género hay que pedirlo como dato opcional con consentimiento o usar una fuente externa.',
-    },
     daily: Object.keys(daily).sort().map((key) => daily[key]),
     generatedAt: new Date().toISOString(),
   };
@@ -465,7 +521,7 @@ exports.handler = async function(event) {
       session_id: text(body.session_id || body.sessionId, 120) || null,
       referrer: text(body.referrer, 260) || null,
       user_agent: text(event.headers['user-agent'], 260) || null,
-      metadata: metadata(body.metadata),
+      metadata: Object.assign(metadata(body.metadata), geoFromHeaders(event.headers)),
     };
 
     try {
@@ -506,7 +562,7 @@ exports.handler = async function(event) {
       const res = await fetch(url, { headers: sbHeaders() });
       if (!res.ok) {
         const raw = await res.text();
-        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days: range.days, range, totals: {}, daily: [], topPlaces: [], placeStats: [], clicks: [], filters: [], trafficSources: [], sourceTypes: [], campaigns: [], navigationPaths: [], navigationEvents: [] });
+        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days: range.days, range, totals: {}, daily: [], topPlaces: [], placeStats: [], clicks: [], filters: [], trafficSources: [], sourceTypes: [], campaigns: [], locations: [], navigationPaths: [], navigationEvents: [] });
         return json(500, { error: raw });
       }
       const rows = await res.json();

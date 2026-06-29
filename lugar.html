@@ -183,6 +183,16 @@
       background:var(--amber);margin-top:.46rem;flex:0 0 auto;
     }
     .menu-note{font-size:.78rem;color:var(--gray);line-height:1.45;margin-top:.75rem}
+    .menu-empty{
+      border:1px dashed #D1D5DB;
+      background:#FFFBEB;
+      color:#374151;
+      border-radius:12px;
+      padding:.82rem .9rem;
+      font-size:.88rem;
+      line-height:1.5;
+      margin-top:.7rem;
+    }
 
     /* HORARIOS */
     .hours-grid{display:grid;gap:.35rem}
@@ -656,18 +666,23 @@
               Ver menú completo
             </a>
           </div>` : '';
-    const menuSectionHtml = (menuUrl || menuHighlights.length) ? `
+    const menuBodyHtml = (menuUrl || menuHighlights.length)
+      ? `${menuHighlightsHtml}
+          ${menuImageHtml}
+          ${menuLinkHtml}
+          <p class="menu-note">La disponibilidad del menú puede cambiar. Confirmá siempre con el local antes de consumir.</p>`
+      : `<div class="menu-empty">
+          Este local todavía no tiene menú cargado en GlutenGo. Confirmá opciones, precios y protocolo directamente con el local.
+        </div>`;
+    const menuSectionHtml = `
         <!-- MENÚ -->
         <div class="card menu-card">
           <h2>
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
             Menú y opciones
           </h2>
-          ${menuHighlightsHtml}
-          ${menuImageHtml}
-          ${menuLinkHtml}
-          <p class="menu-note">La disponibilidad del menú puede cambiar. Confirmá siempre con el local antes de consumir.</p>
-        </div>` : '';
+          ${menuBodyHtml}
+        </div>`;
 
     const mapSectionHtml = hasCoords ? `
         <!-- MAPA -->

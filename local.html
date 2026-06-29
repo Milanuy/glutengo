@@ -181,8 +181,6 @@
                 <p class="report-status" id="report-status">Cargando reporte…</p>
               </div>
               <div class="report-controls">
-                <button type="button" class="report-period" data-report-days="7" onclick="setOwnerAnalyticsDays(7,this)">7 días</button>
-                <button type="button" class="report-period active" data-report-days="30" onclick="setOwnerAnalyticsDays(30,this)">30 días</button>
                 <button type="button" class="btn btn-soft" onclick="copyOwnerReport()">Copiar</button>
               </div>
             </div>
@@ -272,6 +270,14 @@
             </div>
 
             <div class="field full">
+              <label>Menú</label>
+              <input id="f-menu-url" placeholder="URL del menú o subí una foto clara" />
+              <input id="menu-file" type="file" accept="image/png,image/jpeg,image/webp" />
+              <textarea id="f-menu-highlights" maxlength="1800" placeholder="Opciones destacadas, una por línea. Ej: brownie sin gluten, chivito apto, pasta sin TACC."></textarea>
+              <div class="help">Podés subir una foto del menú o pegar un link público. Las opciones destacadas ayudan a que el usuario entienda rápido qué puede pedir. GlutenGo lo publica después de revisar la ficha y el plan activo.</div>
+            </div>
+
+            <div class="field full">
               <label>Logo</label>
               <div class="upload-row">
                 <img id="logo-preview" class="preview-img" alt="Logo" />
@@ -286,14 +292,6 @@
               <textarea id="f-photo-urls" placeholder="Una URL por línea o subí fotos debajo"></textarea>
               <input id="photo-files" type="file" accept="image/png,image/jpeg,image/webp" multiple />
               <div class="help">Las fotos quedan pendientes de revisión antes de usarse públicamente.</div>
-            </div>
-
-            <div class="field full">
-              <label>Menú</label>
-              <input id="f-menu-url" placeholder="URL del menú o subí una foto clara" />
-              <input id="menu-file" type="file" accept="image/png,image/jpeg,image/webp" />
-              <textarea id="f-menu-highlights" maxlength="1800" placeholder="Opciones destacadas, una por línea. Ej: brownie sin gluten, chivito apto, pasta sin TACC."></textarea>
-              <div class="help">Podés subir una foto del menú o pegar un link público. Las opciones destacadas ayudan a que el usuario entienda rápido qué puede pedir. GlutenGo lo publica después de revisar la ficha y el plan activo.</div>
             </div>
 
             <div class="field full">

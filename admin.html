@@ -135,6 +135,9 @@
     .analytics-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;font-size:.84rem}
     .analytics-row span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#111;font-weight:700}
     .analytics-row span:last-child{color:var(--green-deep);font-weight:900}
+    .analytics-row-block{display:grid;gap:.12rem;border-bottom:1px solid #F3F4F6;padding-bottom:.42rem}
+    .analytics-row-block:last-child{border-bottom:0;padding-bottom:0}
+    .analytics-row-detail{font-size:.72rem;color:var(--gray);line-height:1.35}
     .analytics-insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:0 0 1rem}
     .analytics-mini-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);font-weight:900;margin:.75rem 0 .35rem}
     .analytics-note{color:#374151;font-size:.84rem;line-height:1.48}
@@ -599,12 +602,10 @@
       <div class="section-head">
         <div>
           <div class="section-kicker">Métricas propias</div>
-          <div class="section-title" id="analytics-title">Actividad últimos 7 días</div>
+          <div class="section-title" id="analytics-title">Actividad del mes actual</div>
           <div class="section-sub">Visitas, fichas abiertas y clics guardados en Supabase sin usar herramientas externas.</div>
         </div>
         <div class="analytics-controls">
-          <button class="analytics-period active" onclick="setAnalyticsDays(7,this)">7 días</button>
-          <button class="analytics-period" onclick="setAnalyticsDays(30,this)">30 días</button>
           <button class="btn-sm btn-expire" onclick="loadAnalytics()">↻ Refrescar</button>
         </div>
       </div>
@@ -625,12 +626,12 @@
           <button class="btn-sm btn-approve" onclick="applyAnalyticsRange()">Aplicar rango</button>
           <button class="btn-sm btn-expire" onclick="clearAnalyticsFilters()">Limpiar</button>
         </div>
-        <label style="grid-column:1/-1">Lugar de navegación en la web
+        <label style="grid-column:1/-1">Filtrar por página o ficha
           <select id="analytics-navigation-filter" onchange="setAnalyticsNavigation(this.value)">
             <option value="">Toda la web</option>
           </select>
         </label>
-        <div class="analytics-filter-summary" id="analytics-filter-summary">Mostrando últimos 7 días en toda la web.</div>
+        <div class="analytics-filter-summary" id="analytics-filter-summary">Mostrando el mes actual en toda la web.</div>
       </div>
       <div class="analytics-cards">
         <div class="analytics-card"><strong id="a-pageviews">—</strong><span>visitas a páginas</span></div>
@@ -683,8 +684,9 @@
       </div>
       <div class="analytics-insight-grid">
         <div class="analytics-box">
-          <h4>De dónde ingresaron</h4>
+          <h4>Origen de visitas</h4>
           <div class="analytics-list" id="analytics-sources"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+          <div class="analytics-note" style="margin-top:.7rem">Muestra cómo llegó la persona a GlutenGo. Si aparece "directo", puede ser porque escribió la web, vino desde WhatsApp o el navegador no compartió referencia.</div>
           <div class="analytics-mini-title">Tipo de origen</div>
           <div class="analytics-list" id="analytics-source-types"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
         </div>
@@ -694,10 +696,9 @@
           <div class="analytics-note" style="margin-top:.7rem">Usá links con <strong>utm_source</strong>, <strong>utm_medium</strong> y <strong>utm_campaign</strong> para medir posteos, notas de prensa, banners o acuerdos.</div>
         </div>
         <div class="analytics-box">
-          <h4>Edad y género</h4>
-          <div class="analytics-note" id="analytics-audience">
-            Google login básico no entrega edad ni género. Para medirlo bien, GlutenGo debe pedir esos datos de forma opcional o sumar una fuente externa.
-          </div>
+          <h4>Ubicación aproximada</h4>
+          <div class="analytics-list" id="analytics-locations"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+          <div class="analytics-note" style="margin-top:.7rem">Se muestra solo si el navegador o Netlify entregan una señal general como país, ciudad o zona horaria. No guardamos IP.</div>
         </div>
       </div>
       <div class="analytics-box" style="margin:0 0 1rem">
@@ -723,7 +724,7 @@
         <div class="analytics-report-head">
           <div>
             <strong>Reporte claro por local</strong>
-            <small>La inversión se estima según el plan y el período seleccionado. En 7 días se prorratea la mensualidad.</small>
+            <small>La inversión se estima según el plan y el período seleccionado para calcular CPC. CPR queda preparado para reservas.</small>
           </div>
           <div class="analytics-report-actions">
             <button class="btn-sm btn-approve" onclick="copyPlaceReport()">Copiar reporte</button>
@@ -895,12 +896,16 @@ var allSocialMetrics = [];
 var curFilter = 'todos';
 var curSearch = '';
 var currentAdminModule = 'locales';
-var analyticsDays = 7;
-var analyticsRangeMode = 'days';
-var analyticsRange = { days: 7, from: '', to: '', day: '', month: '' };
+function currentMonthValue() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+var analyticsDays = 30;
+var analyticsRangeMode = 'month';
+var analyticsRange = { days: 0, from: '', to: '', day: '', month: currentMonthValue() };
 var analyticsNavigation = { value: '', path: '', page: '', slug: '' };
 var analyticsNavigationOptions = [];
-var analyticsCurrentRangeLabel = 'últimos 7 días';
+var analyticsCurrentRangeLabel = 'mes actual';
 var analyticsPitch = '';
 var analyticsPlaceStats = [];
 
@@ -1023,6 +1028,7 @@ var CHANNEL_LABELS_ES = {
   'whatsapp': 'WhatsApp',
   'instagram': 'Instagram',
   'google-maps': 'Cómo llegar / mapa',
+  'menu': 'Ver menú',
   'native-share': 'Compartir ficha',
   'copy-link': 'Copiar link',
   'sponsor-live': 'Clic en sponsor activo',
@@ -1101,6 +1107,50 @@ function analyticsRowsHtml(items) {
   }).join('');
 }
 
+function analyticsInsightRowsHtml(items, hintFn) {
+  if (!items || !items.length) {
+    return '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
+  }
+  return items.map(function(item) {
+    var label = channelLabel(item.label);
+    var hint = hintFn ? hintFn(item.label, item) : '';
+    return '<div class="analytics-row-block">' +
+      '<div class="analytics-row"><span title="' + esc(label) + '">' + esc(label) + '</span><span>' + fmtNum(item.count) + '</span></div>' +
+      (hint ? '<div class="analytics-row-detail">' + esc(hint) + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function trafficSourceHint(label) {
+  var raw = String(label || '').toLowerCase();
+  if (!raw || raw === 'sin dato') return 'No llegó suficiente información del navegador.';
+  if (raw.indexOf('directo') !== -1) return 'Escribieron la web, entraron desde favoritos, WhatsApp/app o el navegador ocultó la referencia.';
+  if (raw.indexOf('glutengo') !== -1) return 'Navegación interna entre páginas o fichas de GlutenGo.';
+  if (raw.indexOf('facebook') !== -1 || raw.indexOf('instagram') !== -1 || raw.indexOf('tiktok') !== -1 || raw.indexOf('linkedin') !== -1) return 'Entradas desde redes sociales o links compartidos allí.';
+  if (raw.indexOf('google') !== -1 || raw.indexOf('bing') !== -1 || raw.indexOf('duckduckgo') !== -1) return 'Entradas desde buscadores.';
+  if (raw.indexOf('/') !== -1) return 'Entrada identificada por parámetros UTM de campaña.';
+  return 'Entrada desde un sitio externo o referencia reconocida.';
+}
+
+function sourceTypeHint(label) {
+  var raw = String(label || '').toLowerCase();
+  if (raw.indexOf('directo') !== -1) return 'No siempre significa que la persona escribió la URL; muchas apps no envían referencia.';
+  if (raw.indexOf('redes') !== -1) return 'Facebook, Instagram, TikTok, LinkedIn u otras redes detectadas.';
+  if (raw.indexOf('buscador') !== -1) return 'Google, Bing u otros buscadores.';
+  if (raw.indexOf('campaña') !== -1 || raw.indexOf('utm') !== -1) return 'Links etiquetados con UTM para medir acciones concretas.';
+  if (raw.indexOf('interna') !== -1) return 'Clicks o navegación dentro de GlutenGo.';
+  if (raw.indexOf('externo') !== -1) return 'Otro sitio enlazó hacia GlutenGo.';
+  return '';
+}
+
+function locationHint(label) {
+  var raw = String(label || '').toLowerCase();
+  if (raw.indexOf('zona horaria:') === 0) return 'Se usa como señal aproximada cuando no hay ciudad/país disponible.';
+  if (raw.indexOf('idioma navegador:') === 0) return 'Se usa solo como pista secundaria, no como ubicación real.';
+  if (raw.indexOf('no disponible') !== -1) return 'Netlify o el navegador no entregaron una señal de ubicación para esa sesión.';
+  return 'Ubicación general detectada sin guardar IP ni coordenadas precisas.';
+}
+
 function analyticsCampaignRowsHtml(items) {
   if (!items || !items.length) {
     return '<div class="analytics-row"><span>Sin campañas todavía</span><span>0</span></div>';
@@ -1173,7 +1223,13 @@ function analyticsPeriodLabel(days, range) {
   if (range.mode === 'range' && range.from && range.to) {
     return analyticsDateLabel(range.from) + ' al ' + analyticsDateLabel(range.to);
   }
-  return Number(days) === 30 ? 'últimos 30 días' : 'últimos 7 días';
+  if (range.mode === 'days') return 'últimos ' + (Number(days) || 30) + ' días';
+  return 'mes actual';
+}
+
+function syncAnalyticsInputs() {
+  var month = document.getElementById('analytics-month');
+  if (month && analyticsRangeMode === 'month' && !month.value) month.value = analyticsRange.month || currentMonthValue();
 }
 
 function clearAnalyticsDateInputs() {
@@ -1243,15 +1299,16 @@ function applyAnalyticsRange() {
 }
 
 function clearAnalyticsFilters() {
-  analyticsDays = 7;
-  analyticsRangeMode = 'days';
-  analyticsRange = { days: 7, from: '', to: '', day: '', month: '' };
+  analyticsDays = 30;
+  analyticsRangeMode = 'month';
+  analyticsRange = { days: 0, from: '', to: '', day: '', month: currentMonthValue() };
   analyticsNavigation = { value: '', path: '', page: '', slug: '' };
   clearAnalyticsDateInputs();
+  var month = document.getElementById('analytics-month');
+  if (month) month.value = analyticsRange.month;
   var nav = document.getElementById('analytics-navigation-filter');
   if (nav) nav.value = '';
-  var firstQuick = document.querySelector('.analytics-period');
-  setAnalyticsQuickActive(firstQuick);
+  setAnalyticsQuickActive(null);
   loadAnalytics();
 }
 
@@ -1277,7 +1334,7 @@ function analyticsQueryString() {
     if (analyticsRange.from) params.set('from', analyticsRange.from);
     if (analyticsRange.to) params.set('to', analyticsRange.to);
   } else {
-    params.set('days', analyticsDays || 7);
+    params.set('month', currentMonthValue());
   }
   if (analyticsNavigation.slug) params.set('slug', analyticsNavigation.slug);
   if (analyticsNavigation.path) params.set('path', analyticsNavigation.path);
@@ -1459,12 +1516,12 @@ function renderAnalytics(data) {
     });
     var campaigns = document.getElementById('analytics-campaigns');
     if (campaigns) campaigns.innerHTML = '<div class="analytics-row"><span>Sin campañas todavía</span><span>0</span></div>';
+    var locations = document.getElementById('analytics-locations');
+    if (locations) locations.innerHTML = '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
     var navigation = document.getElementById('analytics-navigation');
     if (navigation) navigation.innerHTML = '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
     updateAnalyticsNavigationOptions([]);
     updateAnalyticsFilterSummary(data || {});
-    var audience = document.getElementById('analytics-audience');
-    if (audience) audience.innerHTML = analyticsAudienceHtml();
     renderPlaceReport([]);
     return;
   }
@@ -1479,13 +1536,13 @@ function renderAnalytics(data) {
   document.getElementById('analytics-top-places').innerHTML = analyticsRowsHtml(data.topPlaces);
   document.getElementById('analytics-clicks').innerHTML = analyticsRowsHtml(data.clicks);
   document.getElementById('analytics-daily').innerHTML = analyticsDailyHtml(data.daily);
-  document.getElementById('analytics-sources').innerHTML = analyticsRowsHtml(data.trafficSources);
-  document.getElementById('analytics-source-types').innerHTML = analyticsRowsHtml(data.sourceTypes);
+  document.getElementById('analytics-sources').innerHTML = analyticsInsightRowsHtml(data.trafficSources, trafficSourceHint);
+  document.getElementById('analytics-source-types').innerHTML = analyticsInsightRowsHtml(data.sourceTypes, sourceTypeHint);
   document.getElementById('analytics-campaigns').innerHTML = analyticsCampaignRowsHtml(data.campaigns);
+  document.getElementById('analytics-locations').innerHTML = analyticsInsightRowsHtml(data.locations, locationHint);
   document.getElementById('analytics-navigation').innerHTML = analyticsRowsHtml(data.navigationPaths);
   updateAnalyticsNavigationOptions(data.navigationPaths);
   updateAnalyticsFilterSummary(data);
-  document.getElementById('analytics-audience').innerHTML = analyticsAudienceHtml(data.audience);
   var graph = document.getElementById('analytics-graph');
   if (graph) graph.innerHTML = analyticsGraphHtml(data.daily);
   renderPlaceReport(data.placeStats);
@@ -1499,6 +1556,7 @@ function renderAnalytics(data) {
 function loadAnalytics() {
   var status = document.getElementById('analytics-status');
   if (status) status.textContent = 'Cargando métricas…';
+  syncAnalyticsInputs();
   var title = document.getElementById('analytics-title');
   if (title) title.textContent = 'Actividad ' + (analyticsCurrentRangeLabel || analyticsPeriodLabel(analyticsDays));
   return fetch(ANALYTICS_API + '?' + analyticsQueryString(), { headers: { 'x-admin-token': adminToken } })
