@@ -124,6 +124,10 @@
     .analytics-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;font-size:.84rem}
     .analytics-row span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#111;font-weight:700}
     .analytics-row span:last-child{color:var(--green-deep);font-weight:900}
+    .analytics-insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:0 0 1rem}
+    .analytics-mini-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);font-weight:900;margin:.75rem 0 .35rem}
+    .analytics-note{color:#374151;font-size:.84rem;line-height:1.48}
+    .analytics-note strong{color:var(--green-deep)}
     .analytics-day{display:grid;grid-template-columns:74px 1fr 42px;align-items:center;gap:.5rem;font-size:.78rem;color:var(--gray)}
     .analytics-bar{height:8px;background:#E5E7EB;border-radius:999px;overflow:hidden}
     .analytics-bar i{display:block;height:100%;background:var(--green);border-radius:999px}
@@ -451,6 +455,7 @@
       .owner-request-head{flex-direction:column}
       .owner-request-actions{justify-content:flex-start}
       .analytics-columns{grid-template-columns:1fr}
+      .analytics-insight-grid{grid-template-columns:1fr}
       .analytics-controls{justify-content:flex-start}
       .analytics-help-grid{grid-template-columns:1fr}
       .analytics-sales-head{align-items:flex-start;flex-direction:column}
@@ -637,6 +642,25 @@
         </div>
         <div id="analytics-graph" class="analytics-graph-bars">
           <div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>
+        </div>
+      </div>
+      <div class="analytics-insight-grid">
+        <div class="analytics-box">
+          <h4>De dónde ingresaron</h4>
+          <div class="analytics-list" id="analytics-sources"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+          <div class="analytics-mini-title">Tipo de origen</div>
+          <div class="analytics-list" id="analytics-source-types"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+        </div>
+        <div class="analytics-box">
+          <h4>Campañas UTM</h4>
+          <div class="analytics-list" id="analytics-campaigns"><div class="analytics-row"><span>Sin campañas todavía</span><span>0</span></div></div>
+          <div class="analytics-note" style="margin-top:.7rem">Usá links con <strong>utm_source</strong>, <strong>utm_medium</strong> y <strong>utm_campaign</strong> para medir posteos, notas de prensa, banners o acuerdos.</div>
+        </div>
+        <div class="analytics-box">
+          <h4>Edad y género</h4>
+          <div class="analytics-note" id="analytics-audience">
+            Google login básico no entrega edad ni género. Para medirlo bien, GlutenGo debe pedir esos datos de forma opcional o sumar una fuente externa.
+          </div>
         </div>
       </div>
       <div class="analytics-columns">
@@ -1030,6 +1054,21 @@ function analyticsRowsHtml(items) {
   }).join('');
 }
 
+function analyticsCampaignRowsHtml(items) {
+  if (!items || !items.length) {
+    return '<div class="analytics-row"><span>Sin campañas todavía</span><span>0</span></div>';
+  }
+  return analyticsRowsHtml(items);
+}
+
+function analyticsAudienceHtml(audience) {
+  var message = audience && audience.message
+    ? audience.message
+    : 'Google login básico entrega nombre, email y foto si el usuario lo permite, pero no edad ni género confiables.';
+  return '<p>' + esc(message) + '</p>' +
+    '<p style="margin-top:.55rem"><strong>Camino recomendado:</strong> agregar un perfil opcional o una pregunta simple luego del login, con consentimiento claro. Eso evita pedir permisos sensibles a Google y mantiene el ingreso más simple.</p>';
+}
+
 function analyticsDailyHtml(items) {
   if (!items || !items.length) return '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
   var max = items.reduce(function(m, item) {
@@ -1100,6 +1139,9 @@ function buildAnalyticsPitch(data, clicks) {
     fmtNum(placeViews) + ' aperturas de fichas de locales. También medimos ' +
     fmtNum(clicks) + ' clics de intención hacia acciones como abrir ficha, WhatsApp, Instagram, mapa, Mercado Pago o botones comerciales.';
   if (top) text += ' La ficha más vista en este período fue ' + top + '.';
+  if (data.trafficSources && data.trafficSources[0]) {
+    text += ' El principal origen de entrada fue ' + data.trafficSources[0].label + '.';
+  }
   text += ' El reporte permite mostrar CPC (costo por clic) por local y dejar preparado CPR (costo por reserva) cuando activemos calendario. Estos datos muestran demanda real de personas buscando opciones sin gluten en Uruguay.';
   return text;
 }
@@ -1217,6 +1259,14 @@ function renderAnalytics(data) {
     setText('analytics-sales-copy', 'Primero hay que aplicar la migración de Supabase para empezar a guardar visitas y clics.');
     var graph = document.getElementById('analytics-graph');
     if (graph) graph.innerHTML = '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
+    ['analytics-sources','analytics-source-types'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.innerHTML = '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
+    });
+    var campaigns = document.getElementById('analytics-campaigns');
+    if (campaigns) campaigns.innerHTML = '<div class="analytics-row"><span>Sin campañas todavía</span><span>0</span></div>';
+    var audience = document.getElementById('analytics-audience');
+    if (audience) audience.innerHTML = analyticsAudienceHtml();
     renderPlaceReport([]);
     return;
   }
@@ -1231,6 +1281,10 @@ function renderAnalytics(data) {
   document.getElementById('analytics-top-places').innerHTML = analyticsRowsHtml(data.topPlaces);
   document.getElementById('analytics-clicks').innerHTML = analyticsRowsHtml(data.clicks);
   document.getElementById('analytics-daily').innerHTML = analyticsDailyHtml(data.daily);
+  document.getElementById('analytics-sources').innerHTML = analyticsRowsHtml(data.trafficSources);
+  document.getElementById('analytics-source-types').innerHTML = analyticsRowsHtml(data.sourceTypes);
+  document.getElementById('analytics-campaigns').innerHTML = analyticsCampaignRowsHtml(data.campaigns);
+  document.getElementById('analytics-audience').innerHTML = analyticsAudienceHtml(data.audience);
   var graph = document.getElementById('analytics-graph');
   if (graph) graph.innerHTML = analyticsGraphHtml(data.daily);
   renderPlaceReport(data.placeStats);

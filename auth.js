@@ -53,11 +53,20 @@
     if (!sb) { alert('Error de configuracion. Contacta al equipo.'); return; }
     // localStorage es mas resiliente que sessionStorage en redirects cross-origin
     try { localStorage.setItem('glutengo_return_to', window.location.href); } catch (e) {}
+    try {
+      if (window.GlutenAnalytics && typeof window.GlutenAnalytics.track === 'function') {
+        window.GlutenAnalytics.track('cta_click', {
+          page: document.body && document.body.dataset ? document.body.dataset.page || '' : '',
+          metadata: { target: 'google-login' }
+        });
+      }
+    } catch (e) {}
     var result = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: window.location.origin,
-        queryParams: { access_type: 'offline', prompt: 'select_account' },
+        scopes: 'openid email profile',
+        queryParams: { prompt: 'select_account' },
       },
     });
     if (result.error) console.error('signInWithGoogle error:', result.error.message);

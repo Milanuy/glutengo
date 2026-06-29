@@ -98,6 +98,60 @@ function topFromMap(map, limit) {
     .slice(0, limit || 8);
 }
 
+function hostFromReferrer(referrer) {
+  if (!referrer) return '';
+  try {
+    return new URL(referrer).hostname.replace(/^www\./, '');
+  } catch (_) {
+    return '';
+  }
+}
+
+function sourceTypeLabel(type) {
+  const labels = {
+    campaign: 'Campañas UTM',
+    social: 'Redes sociales',
+    search: 'Buscadores',
+    referral: 'Sitios externos',
+    direct: 'Directo / sin referencia',
+    internal: 'Navegación interna',
+  };
+  return labels[type] || type || 'Sin dato';
+}
+
+function sourceFromRow(row, meta) {
+  const utmSource = text(meta.utm_source, 80);
+  const utmMedium = text(meta.utm_medium, 80);
+  const sourceName = text(meta.source_name, 120);
+  const sourceType = text(meta.source_type, 80);
+  const refHost = text(meta.referrer_host, 120) || hostFromReferrer(row.referrer || '');
+
+  if (utmSource) {
+    return {
+      type: utmMedium || 'campaign',
+      label: utmSource + (utmMedium ? ' / ' + utmMedium : ''),
+    };
+  }
+  if (sourceName && sourceName !== 'Directo' && sourceName !== 'GlutenGo') {
+    return { type: sourceType || 'referral', label: sourceName };
+  }
+  if (refHost) {
+    if (/instagram|facebook|tiktok|linkedin|twitter|x\.com/.test(refHost)) return { type: 'social', label: refHost };
+    if (/google|bing|yahoo|duckduckgo/.test(refHost)) return { type: 'search', label: refHost };
+    if (/glutengo\.com\.uy|glutengo\.netlify\.app/.test(refHost)) return { type: 'internal', label: 'GlutenGo' };
+    return { type: 'referral', label: refHost };
+  }
+  return { type: 'direct', label: 'Directo / sin referencia' };
+}
+
+function campaignFromMeta(meta) {
+  const campaign = text(meta.utm_campaign, 120);
+  if (!campaign) return '';
+  const source = text(meta.utm_source, 80);
+  const medium = text(meta.utm_medium, 80);
+  return campaign + (source ? ' · ' + source : '') + (medium ? ' / ' + medium : '');
+}
+
 function placeKey(row, meta) {
   return row.slug || meta.slug || meta.local || meta.name || '';
 }
@@ -143,6 +197,10 @@ function summarize(rows, days) {
   const placeStats = {};
   const clicks = {};
   const filters = {};
+  const trafficSources = {};
+  const sourceTypes = {};
+  const campaigns = {};
+  const countedSourceSessions = new Set();
   const daily = {};
   const today = new Date().toISOString().slice(0, 10);
 
@@ -163,6 +221,16 @@ function summarize(rows, days) {
       totals.pageViews += 1;
       daily[date].pageViews += 1;
       if (date === today) totals.todayViews += 1;
+
+      const source = sourceFromRow(row, meta);
+      const sessionKey = row.session_id || ('event-' + (row.id || row.created_at || Math.random()));
+      if (!countedSourceSessions.has(sessionKey)) {
+        countedSourceSessions.add(sessionKey);
+        addCount(trafficSources, source.label);
+        addCount(sourceTypes, sourceTypeLabel(source.type));
+      }
+      const campaign = campaignFromMeta(meta);
+      if (campaign) addCount(campaigns, campaign);
     }
     if (type === 'place_view') {
       totals.placeViews += 1;
@@ -220,6 +288,13 @@ function summarize(rows, days) {
       ),
     clicks: topFromMap(clicks, 10),
     filters: topFromMap(filters, 10),
+    trafficSources: topFromMap(trafficSources, 10),
+    sourceTypes: topFromMap(sourceTypes, 8),
+    campaigns: topFromMap(campaigns, 8),
+    audience: {
+      demographicsAvailable: false,
+      message: 'Google login básico entrega identidad de acceso (nombre, email y foto si el usuario lo permite), no edad ni género confiables. Para medir edad/género hay que pedirlo como dato opcional con consentimiento o usar una fuente externa.',
+    },
     daily: Object.keys(daily).sort().map((key) => daily[key]),
     generatedAt: new Date().toISOString(),
   };
@@ -283,7 +358,7 @@ exports.handler = async function(event) {
     since.setHours(0, 0, 0, 0);
 
     const url = SUPABASE_URL + '/rest/v1/analytics_events' +
-      '?select=event_type,page,path,slug,session_id,created_at,metadata' +
+      '?select=id,event_type,page,path,slug,session_id,referrer,created_at,metadata' +
       '&created_at=gte.' + encodeURIComponent(since.toISOString()) +
       '&order=created_at.desc&limit=5000';
 
@@ -291,7 +366,7 @@ exports.handler = async function(event) {
       const res = await fetch(url, { headers: sbHeaders() });
       if (!res.ok) {
         const raw = await res.text();
-        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days, totals: {}, daily: [], topPlaces: [], placeStats: [], clicks: [], filters: [] });
+        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days, totals: {}, daily: [], topPlaces: [], placeStats: [], clicks: [], filters: [], trafficSources: [], sourceTypes: [], campaigns: [] });
         return json(500, { error: raw });
       }
       const rows = await res.json();
