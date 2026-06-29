@@ -86,6 +86,79 @@ function dayKey(value) {
   return new Date(value).toISOString().slice(0, 10);
 }
 
+function dateOnly(value) {
+  const raw = text(value, 20);
+  return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : '';
+}
+
+function monthOnly(value) {
+  const raw = text(value, 12);
+  return /^\d{4}-\d{2}$/.test(raw) ? raw : '';
+}
+
+function localStart(date) {
+  return new Date(date + 'T00:00:00.000-03:00');
+}
+
+function localEnd(date) {
+  return new Date(date + 'T23:59:59.999-03:00');
+}
+
+function parseDateRange(query) {
+  const month = monthOnly(query.month);
+  const day = dateOnly(query.day);
+  const from = dateOnly(query.from || query.start);
+  const to = dateOnly(query.to || query.end);
+
+  let start;
+  let end;
+  let mode = 'days';
+  let label = '';
+
+  if (month) {
+    const parts = month.split('-').map(Number);
+    const startDate = month + '-01';
+    const endDay = new Date(Date.UTC(parts[0], parts[1], 0)).getUTCDate();
+    const endDate = month + '-' + String(endDay).padStart(2, '0');
+    start = localStart(startDate);
+    end = localEnd(endDate);
+    mode = 'month';
+    label = month;
+  } else if (day) {
+    start = localStart(day);
+    end = localEnd(day);
+    mode = 'day';
+    label = day;
+  } else if (from || to) {
+    start = localStart(from || to);
+    end = localEnd(to || from);
+    if (start > end) {
+      const swap = start;
+      start = end;
+      end = swap;
+    }
+    mode = 'range';
+    label = (from || to) + ' / ' + (to || from);
+  } else {
+    const days = Math.max(1, Math.min(Number(query.days || 7), 90));
+    start = new Date();
+    start.setDate(start.getDate() - days + 1);
+    start.setHours(0, 0, 0, 0);
+    end = new Date();
+    mode = 'days';
+    label = String(days);
+  }
+
+  const maxMs = 90 * 24 * 60 * 60 * 1000;
+  if (end.getTime() - start.getTime() > maxMs) {
+    end = new Date(start.getTime() + maxMs);
+    end.setHours(23, 59, 59, 999);
+  }
+
+  const days = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)));
+  return { start, end, days, mode, label };
+}
+
 function addCount(map, key, amount) {
   const safeKey = key || 'sin dato';
   map[safeKey] = (map[safeKey] || 0) + (amount || 1);
@@ -152,6 +225,56 @@ function campaignFromMeta(meta) {
   return campaign + (source ? ' · ' + source : '') + (medium ? ' / ' + medium : '');
 }
 
+function pathLabel(row, meta) {
+  const path = row.path || '';
+  if (row.slug || meta.name || meta.local) return 'Ficha: ' + (meta.name || meta.local || row.slug);
+  if (path === '/' || path === '/index.html') return 'Home / mapa';
+  if (path === '/negocios.html') return 'Página para locales';
+  if (path === '/local.html') return 'Portal Mi local';
+  if (path === '/admin.html') return 'Admin';
+  if (path === '/lugar.html') return 'Ficha de local';
+  if (path === '/gracias.html') return 'Gracias / registro enviado';
+  if (path === '/bienvenido.html') return 'Bienvenida';
+  return path || row.page || 'Sin dato';
+}
+
+function navigationKey(row, meta) {
+  const slug = row.slug || meta.slug || '';
+  if (slug) return 'slug:' + slug;
+  if (row.path) return 'path:' + row.path;
+  if (row.page) return 'page:' + row.page;
+  return 'unknown';
+}
+
+function addNavigation(map, row, meta) {
+  const key = navigationKey(row, meta);
+  if (!map[key]) {
+    map[key] = {
+      label: pathLabel(row, meta),
+      count: 0,
+      path: row.path || '',
+      page: row.page || '',
+      slug: row.slug || meta.slug || '',
+      value: key,
+    };
+  }
+  map[key].count += 1;
+}
+
+function topNavigation(map, limit) {
+  return Object.keys(map)
+    .map((key) => map[key])
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+    .slice(0, limit || 12);
+}
+
+function matchesNavigationFilter(row, meta, filters) {
+  if (filters.path && row.path !== filters.path) return false;
+  if (filters.page && row.page !== filters.page) return false;
+  if (filters.slug && row.slug !== filters.slug && meta.slug !== filters.slug) return false;
+  return true;
+}
+
 function placeKey(row, meta) {
   return row.slug || meta.slug || meta.local || meta.name || '';
 }
@@ -180,7 +303,7 @@ function ensurePlace(stats, row, meta) {
   return stats[key];
 }
 
-function summarize(rows, days) {
+function summarize(rows, range, filters) {
   const sessions = new Set();
   const totals = {
     pageViews: 0,
@@ -196,26 +319,31 @@ function summarize(rows, days) {
   const topPlaces = {};
   const placeStats = {};
   const clicks = {};
-  const filters = {};
+  const filterStats = {};
   const trafficSources = {};
   const sourceTypes = {};
   const campaigns = {};
+  const navigationPaths = {};
+  const navigationEvents = {};
   const countedSourceSessions = new Set();
   const daily = {};
   const today = new Date().toISOString().slice(0, 10);
 
-  for (let i = days - 1; i >= 0; i -= 1) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
+  for (let i = 0; i < range.days; i += 1) {
+    const d = new Date(range.start.getTime());
+    d.setUTCDate(d.getUTCDate() + i);
     daily[d.toISOString().slice(0, 10)] = { date: d.toISOString().slice(0, 10), pageViews: 0, placeViews: 0, clicks: 0 };
   }
 
   rows.forEach((row) => {
     const type = row.event_type || '';
     const meta = row.metadata || {};
+    if (!matchesNavigationFilter(row, meta, filters || {})) return;
     const date = dayKey(row.created_at);
     if (row.session_id) sessions.add(row.session_id);
     if (!daily[date]) daily[date] = { date, pageViews: 0, placeViews: 0, clicks: 0 };
+    addCount(navigationEvents, pathLabel(row, meta));
+    addNavigation(navigationPaths, row, meta);
 
     if (type === 'page_view') {
       totals.pageViews += 1;
@@ -269,13 +397,20 @@ function summarize(rows, days) {
       const place = ensurePlace(placeStats, row, meta);
       if (place) place.shares += 1;
     }
-    if (type === 'filter_use') addCount(filters, meta.label || meta.filter || 'filtro');
+    if (type === 'filter_use') addCount(filterStats, meta.label || meta.filter || 'filtro');
   });
 
   totals.uniqueSessions = sessions.size;
 
   return {
-    days,
+    days: range.days,
+    range: {
+      mode: range.mode,
+      label: range.label,
+      from: range.start.toISOString().slice(0, 10),
+      to: range.end.toISOString().slice(0, 10),
+      navigation: filters || {},
+    },
     totals,
     topPlaces: topFromMap(topPlaces, 10),
     placeStats: Object.keys(placeStats)
@@ -287,10 +422,12 @@ function summarize(rows, days) {
         a.label.localeCompare(b.label)
       ),
     clicks: topFromMap(clicks, 10),
-    filters: topFromMap(filters, 10),
+    filters: topFromMap(filterStats, 10),
     trafficSources: topFromMap(trafficSources, 10),
     sourceTypes: topFromMap(sourceTypes, 8),
     campaigns: topFromMap(campaigns, 8),
+    navigationPaths: topNavigation(navigationPaths, 18),
+    navigationEvents: topFromMap(navigationEvents, 12),
     audience: {
       demographicsAvailable: false,
       message: 'Google login básico entrega identidad de acceso (nombre, email y foto si el usuario lo permite), no edad ni género confiables. Para medir edad/género hay que pedirlo como dato opcional con consentimiento o usar una fuente externa.',
@@ -352,25 +489,28 @@ exports.handler = async function(event) {
     const token = event.headers['x-admin-token'] || '';
     if (token !== ADMIN_PASS) return unauthorized();
     const query = event.queryStringParameters || {};
-    const days = Math.max(1, Math.min(Number(query.days || 7), 60));
-    const since = new Date();
-    since.setDate(since.getDate() - days + 1);
-    since.setHours(0, 0, 0, 0);
+    const range = parseDateRange(query);
+    const filters = {
+      path: text(query.path, 160),
+      page: text(query.page, 80),
+      slug: text(query.slug, 120),
+    };
 
     const url = SUPABASE_URL + '/rest/v1/analytics_events' +
       '?select=id,event_type,page,path,slug,session_id,referrer,created_at,metadata' +
-      '&created_at=gte.' + encodeURIComponent(since.toISOString()) +
+      '&created_at=gte.' + encodeURIComponent(range.start.toISOString()) +
+      '&created_at=lte.' + encodeURIComponent(range.end.toISOString()) +
       '&order=created_at.desc&limit=5000';
 
     try {
       const res = await fetch(url, { headers: sbHeaders() });
       if (!res.ok) {
         const raw = await res.text();
-        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days, totals: {}, daily: [], topPlaces: [], placeStats: [], clicks: [], filters: [], trafficSources: [], sourceTypes: [], campaigns: [] });
+        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days: range.days, range, totals: {}, daily: [], topPlaces: [], placeStats: [], clicks: [], filters: [], trafficSources: [], sourceTypes: [], campaigns: [], navigationPaths: [], navigationEvents: [] });
         return json(500, { error: raw });
       }
       const rows = await res.json();
-      return json(200, summarize(Array.isArray(rows) ? rows : [], days));
+      return json(200, summarize(Array.isArray(rows) ? rows : [], range, filters));
     } catch (err) {
       return json(500, { error: err.message });
     }

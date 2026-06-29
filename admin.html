@@ -117,6 +117,17 @@
       cursor:pointer;font-family:inherit;
     }
     .analytics-period.active{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+    .analytics-filter-panel{
+      display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr auto;gap:.65rem;align-items:end;
+      border:1px solid var(--border);background:var(--bg);border-radius:14px;padding:.85rem;margin:.8rem 0 1rem;
+    }
+    .analytics-filter-panel label{display:grid;gap:.25rem;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#4B5563}
+    .analytics-filter-panel input,.analytics-filter-panel select{
+      border:1.5px solid var(--border);border-radius:10px;background:#fff;color:#111;
+      padding:.55rem .65rem;font:inherit;font-size:.82rem;font-weight:700;min-width:0;
+    }
+    .analytics-filter-actions{display:flex;gap:.4rem;flex-wrap:wrap}
+    .analytics-filter-summary{grid-column:1/-1;color:var(--gray);font-size:.78rem;line-height:1.45}
     .analytics-columns{display:grid;grid-template-columns:1.2fr .9fr .9fr;gap:1rem}
     .analytics-box{border:1px solid var(--border);border-radius:14px;padding:.9rem;background:#fff}
     .analytics-box h4{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);margin-bottom:.6rem}
@@ -457,6 +468,8 @@
       .analytics-columns{grid-template-columns:1fr}
       .analytics-insight-grid{grid-template-columns:1fr}
       .analytics-controls{justify-content:flex-start}
+      .analytics-filter-panel{grid-template-columns:1fr}
+      .analytics-filter-actions{justify-content:flex-start}
       .analytics-help-grid{grid-template-columns:1fr}
       .analytics-sales-head{align-items:flex-start;flex-direction:column}
       .analytics-report-head{align-items:flex-start;flex-direction:column}
@@ -595,6 +608,30 @@
           <button class="btn-sm btn-expire" onclick="loadAnalytics()">↻ Refrescar</button>
         </div>
       </div>
+      <div class="analytics-filter-panel">
+        <label>Mes
+          <input id="analytics-month" type="month" onchange="setAnalyticsMonth(this.value)" />
+        </label>
+        <label>Día puntual
+          <input id="analytics-day" type="date" onchange="setAnalyticsDay(this.value)" />
+        </label>
+        <label>Desde
+          <input id="analytics-from" type="date" />
+        </label>
+        <label>Hasta
+          <input id="analytics-to" type="date" />
+        </label>
+        <div class="analytics-filter-actions">
+          <button class="btn-sm btn-approve" onclick="applyAnalyticsRange()">Aplicar rango</button>
+          <button class="btn-sm btn-expire" onclick="clearAnalyticsFilters()">Limpiar</button>
+        </div>
+        <label style="grid-column:1/-1">Lugar de navegación en la web
+          <select id="analytics-navigation-filter" onchange="setAnalyticsNavigation(this.value)">
+            <option value="">Toda la web</option>
+          </select>
+        </label>
+        <div class="analytics-filter-summary" id="analytics-filter-summary">Mostrando últimos 7 días en toda la web.</div>
+      </div>
       <div class="analytics-cards">
         <div class="analytics-card"><strong id="a-pageviews">—</strong><span>visitas a páginas</span></div>
         <div class="analytics-card"><strong id="a-placeviews">—</strong><span>fichas abiertas</span></div>
@@ -662,6 +699,11 @@
             Google login básico no entrega edad ni género. Para medirlo bien, GlutenGo debe pedir esos datos de forma opcional o sumar una fuente externa.
           </div>
         </div>
+      </div>
+      <div class="analytics-box" style="margin:0 0 1rem">
+        <h4>Lugar preciso de navegación</h4>
+        <div class="analytics-list" id="analytics-navigation"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+        <div class="analytics-note" style="margin-top:.7rem">Usá este bloque para saber qué páginas o fichas concentraron navegación dentro del período filtrado.</div>
       </div>
       <div class="analytics-columns">
         <div class="analytics-box">
@@ -854,6 +896,11 @@ var curFilter = 'todos';
 var curSearch = '';
 var currentAdminModule = 'locales';
 var analyticsDays = 7;
+var analyticsRangeMode = 'days';
+var analyticsRange = { days: 7, from: '', to: '', day: '', month: '' };
+var analyticsNavigation = { value: '', path: '', page: '', slug: '' };
+var analyticsNavigationOptions = [];
+var analyticsCurrentRangeLabel = 'últimos 7 días';
 var analyticsPitch = '';
 var analyticsPlaceStats = [];
 
@@ -1112,21 +1159,165 @@ function analyticsGraphHtml(items) {
   }).join('');
 }
 
-function analyticsPeriodLabel(days) {
+function analyticsDateLabel(value) {
+  if (!value) return '';
+  return new Date(value + 'T12:00:00').toLocaleDateString('es-UY');
+}
+
+function analyticsPeriodLabel(days, range) {
+  range = range || {};
+  if (range.mode === 'month' && range.from) {
+    return 'mes ' + new Date(range.from + 'T12:00:00').toLocaleDateString('es-UY', { month: 'long', year: 'numeric' });
+  }
+  if (range.mode === 'day' && range.from) return 'día ' + analyticsDateLabel(range.from);
+  if (range.mode === 'range' && range.from && range.to) {
+    return analyticsDateLabel(range.from) + ' al ' + analyticsDateLabel(range.to);
+  }
   return Number(days) === 30 ? 'últimos 30 días' : 'últimos 7 días';
+}
+
+function clearAnalyticsDateInputs() {
+  ['analytics-month','analytics-day','analytics-from','analytics-to'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+}
+
+function setAnalyticsQuickActive(btn) {
+  document.querySelectorAll('.analytics-period').forEach(function(item) {
+    item.classList.toggle('active', item === btn);
+  });
 }
 
 function setAnalyticsDays(days, btn) {
   analyticsDays = Number(days) === 30 ? 30 : 7;
-  document.querySelectorAll('.analytics-period').forEach(function(item) {
-    item.classList.toggle('active', item === btn);
-  });
+  analyticsRangeMode = 'days';
+  analyticsRange = { days: analyticsDays, from: '', to: '', day: '', month: '' };
+  clearAnalyticsDateInputs();
+  setAnalyticsQuickActive(btn);
   loadAnalytics();
+}
+
+function setAnalyticsMonth(value) {
+  if (!value) return;
+  analyticsRangeMode = 'month';
+  analyticsRange = { days: 0, from: '', to: '', day: '', month: value };
+  var day = document.getElementById('analytics-day');
+  var from = document.getElementById('analytics-from');
+  var to = document.getElementById('analytics-to');
+  if (day) day.value = '';
+  if (from) from.value = '';
+  if (to) to.value = '';
+  setAnalyticsQuickActive(null);
+  loadAnalytics();
+}
+
+function setAnalyticsDay(value) {
+  if (!value) return;
+  analyticsRangeMode = 'day';
+  analyticsRange = { days: 1, from: value, to: value, day: value, month: '' };
+  var month = document.getElementById('analytics-month');
+  var from = document.getElementById('analytics-from');
+  var to = document.getElementById('analytics-to');
+  if (month) month.value = '';
+  if (from) from.value = value;
+  if (to) to.value = value;
+  setAnalyticsQuickActive(null);
+  loadAnalytics();
+}
+
+function applyAnalyticsRange() {
+  var from = document.getElementById('analytics-from');
+  var to = document.getElementById('analytics-to');
+  var fromValue = from ? from.value : '';
+  var toValue = to ? to.value : '';
+  if (!fromValue && !toValue) return showToast('Elegí una fecha desde o hasta');
+  analyticsRangeMode = 'range';
+  analyticsRange = { days: 0, from: fromValue, to: toValue || fromValue, day: '', month: '' };
+  var month = document.getElementById('analytics-month');
+  var day = document.getElementById('analytics-day');
+  if (month) month.value = '';
+  if (day) day.value = '';
+  setAnalyticsQuickActive(null);
+  loadAnalytics();
+}
+
+function clearAnalyticsFilters() {
+  analyticsDays = 7;
+  analyticsRangeMode = 'days';
+  analyticsRange = { days: 7, from: '', to: '', day: '', month: '' };
+  analyticsNavigation = { value: '', path: '', page: '', slug: '' };
+  clearAnalyticsDateInputs();
+  var nav = document.getElementById('analytics-navigation-filter');
+  if (nav) nav.value = '';
+  var firstQuick = document.querySelector('.analytics-period');
+  setAnalyticsQuickActive(firstQuick);
+  loadAnalytics();
+}
+
+function setAnalyticsNavigation(value) {
+  var option = (analyticsNavigationOptions || []).find(function(item) { return item.value === value; });
+  if (option && option.slug) {
+    analyticsNavigation = { value: option.value || '', path: '', page: '', slug: option.slug || '' };
+  } else if (option) {
+    analyticsNavigation = { value: option.value || '', path: option.path || '', page: option.page || '', slug: '' };
+  } else {
+    analyticsNavigation = { value: '', path: '', page: '', slug: '' };
+  }
+  loadAnalytics();
+}
+
+function analyticsQueryString() {
+  var params = new URLSearchParams();
+  if (analyticsRangeMode === 'month' && analyticsRange.month) {
+    params.set('month', analyticsRange.month);
+  } else if (analyticsRangeMode === 'day' && analyticsRange.day) {
+    params.set('day', analyticsRange.day);
+  } else if (analyticsRangeMode === 'range' && (analyticsRange.from || analyticsRange.to)) {
+    if (analyticsRange.from) params.set('from', analyticsRange.from);
+    if (analyticsRange.to) params.set('to', analyticsRange.to);
+  } else {
+    params.set('days', analyticsDays || 7);
+  }
+  if (analyticsNavigation.slug) params.set('slug', analyticsNavigation.slug);
+  if (analyticsNavigation.path) params.set('path', analyticsNavigation.path);
+  if (analyticsNavigation.page) params.set('page', analyticsNavigation.page);
+  return params.toString();
+}
+
+function updateAnalyticsNavigationOptions(items) {
+  var select = document.getElementById('analytics-navigation-filter');
+  if (!select) return;
+  var previous = analyticsNavigation.value || select.value || '';
+  analyticsNavigationOptions = Array.isArray(items) ? items : [];
+  var options = ['<option value="">Toda la web</option>'].concat(analyticsNavigationOptions.map(function(item) {
+    var value = item.value || (item.slug ? 'slug:' + item.slug : item.path ? 'path:' + item.path : item.page ? 'page:' + item.page : item.label);
+    item.value = value;
+    return '<option value="' + esc(value) + '">' + esc(item.label || value) + ' · ' + fmtNum(item.count) + '</option>';
+  }));
+  select.innerHTML = options.join('');
+  if (previous && analyticsNavigationOptions.some(function(item) { return item.value === previous; })) {
+    select.value = previous;
+  } else {
+    select.value = '';
+    analyticsNavigation = { value: '', path: '', page: '', slug: '' };
+  }
+}
+
+function updateAnalyticsFilterSummary(data) {
+  var el = document.getElementById('analytics-filter-summary');
+  if (!el) return;
+  var range = data && data.range ? data.range : {};
+  var label = analyticsPeriodLabel(data && data.days ? data.days : analyticsDays, range);
+  var nav = analyticsNavigation.value
+    ? ((analyticsNavigationOptions || []).find(function(item) { return item.value === analyticsNavigation.value; }) || {}).label || 'lugar seleccionado'
+    : 'toda la web';
+  el.textContent = 'Mostrando ' + label + ' en ' + nav + '.';
 }
 
 function buildAnalyticsPitch(data, clicks) {
   var t = data.totals || {};
-  var period = analyticsPeriodLabel(data.days || analyticsDays);
+  var period = analyticsPeriodLabel(data.days || analyticsDays, data.range);
   var pageViews = Number(t.pageViews || 0);
   var placeViews = Number(t.placeViews || 0);
   var sessions = Number(t.uniqueSessions || 0);
@@ -1175,7 +1366,7 @@ function renderPlaceReport(items) {
 
 function placeReportText(limit) {
   if (!analyticsPlaceStats.length) return '';
-  var period = analyticsPeriodLabel(analyticsDays);
+  var period = analyticsCurrentRangeLabel || analyticsPeriodLabel(analyticsDays);
   var rows = analyticsPlaceStats.slice(0, limit || 20).map(function(item, index) {
     return (index + 1) + '. ' + (item.label || item.slug || 'Ficha sin nombre') +
       ' — ' + fmtNum(item.views) + ' vistas de ficha, ' +
@@ -1229,7 +1420,7 @@ function downloadPlaceCsv() {
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
   a.href = url;
-  a.download = 'glutengo-reporte-locales-' + analyticsDays + 'd.csv';
+  a.download = 'glutengo-reporte-locales-' + (analyticsCurrentRangeLabel || analyticsDays + 'd').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() + '.csv';
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -1248,7 +1439,10 @@ function copyAnalyticsPitch() {
 function renderAnalytics(data) {
   var status = document.getElementById('analytics-status');
   var title = document.getElementById('analytics-title');
-  if (title) title.textContent = 'Actividad ' + analyticsPeriodLabel((data && data.days) || analyticsDays);
+  var rangeLabel = analyticsPeriodLabel((data && data.days) || analyticsDays, data && data.range);
+  analyticsCurrentRangeLabel = rangeLabel;
+  if (data && data.days) analyticsDays = Number(data.days) || analyticsDays;
+  if (title) title.textContent = 'Actividad ' + rangeLabel;
   if (!data || data.pendingMigration) {
     if (status) {
       status.innerHTML = '<div class="analytics-warning">Falta aplicar la migración <strong>0006_first_party_analytics.sql</strong> en Supabase. La web ya está preparada; cuando exista la tabla, las métricas empiezan a entrar.</div>';
@@ -1265,6 +1459,10 @@ function renderAnalytics(data) {
     });
     var campaigns = document.getElementById('analytics-campaigns');
     if (campaigns) campaigns.innerHTML = '<div class="analytics-row"><span>Sin campañas todavía</span><span>0</span></div>';
+    var navigation = document.getElementById('analytics-navigation');
+    if (navigation) navigation.innerHTML = '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
+    updateAnalyticsNavigationOptions([]);
+    updateAnalyticsFilterSummary(data || {});
     var audience = document.getElementById('analytics-audience');
     if (audience) audience.innerHTML = analyticsAudienceHtml();
     renderPlaceReport([]);
@@ -1284,6 +1482,9 @@ function renderAnalytics(data) {
   document.getElementById('analytics-sources').innerHTML = analyticsRowsHtml(data.trafficSources);
   document.getElementById('analytics-source-types').innerHTML = analyticsRowsHtml(data.sourceTypes);
   document.getElementById('analytics-campaigns').innerHTML = analyticsCampaignRowsHtml(data.campaigns);
+  document.getElementById('analytics-navigation').innerHTML = analyticsRowsHtml(data.navigationPaths);
+  updateAnalyticsNavigationOptions(data.navigationPaths);
+  updateAnalyticsFilterSummary(data);
   document.getElementById('analytics-audience').innerHTML = analyticsAudienceHtml(data.audience);
   var graph = document.getElementById('analytics-graph');
   if (graph) graph.innerHTML = analyticsGraphHtml(data.daily);
@@ -1299,8 +1500,8 @@ function loadAnalytics() {
   var status = document.getElementById('analytics-status');
   if (status) status.textContent = 'Cargando métricas…';
   var title = document.getElementById('analytics-title');
-  if (title) title.textContent = 'Actividad ' + analyticsPeriodLabel(analyticsDays);
-  return fetch(ANALYTICS_API + '?days=' + encodeURIComponent(analyticsDays), { headers: { 'x-admin-token': adminToken } })
+  if (title) title.textContent = 'Actividad ' + (analyticsCurrentRangeLabel || analyticsPeriodLabel(analyticsDays));
+  return fetch(ANALYTICS_API + '?' + analyticsQueryString(), { headers: { 'x-admin-token': adminToken } })
     .then(function(r) {
       if (!r.ok) throw new Error('Error ' + r.status);
       return r.json();
