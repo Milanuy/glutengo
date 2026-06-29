@@ -39,12 +39,32 @@
       white-space:nowrap;
     }
     .header-cta:hover{opacity:.9}
+    .mobile-header-cta{display:none}
     @media(max-width:560px){
-      .site-header{padding:.75rem 1rem}
+      .site-header{
+        display:grid;grid-template-columns:auto auto;gap:.55rem .75rem;
+        align-items:center;padding:.72rem 1rem .68rem;
+      }
       .logo{font-size:1.25rem}
-      .header-link{display:none}
-      .header-nav{gap:.75rem}
-      .header-cta{font-size:.78rem;padding:.48rem .8rem}
+      .mobile-header-cta{
+        display:inline-flex;align-items:center;justify-content:center;justify-self:end;
+        background:var(--amber);color:var(--green-deep);
+        font-weight:800;font-size:.8rem;
+        padding:.52rem .82rem;border-radius:10px;
+        text-decoration:none;white-space:nowrap;
+      }
+      .header-nav{
+        grid-column:1/-1;width:100%;display:flex;gap:.4rem;overflow-x:auto;
+        padding:.05rem 0 .08rem;scrollbar-width:none;
+      }
+      .header-nav::-webkit-scrollbar{display:none}
+      .header-link{
+        display:inline-flex;align-items:center;justify-content:center;
+        color:#fff;font-size:.78rem;font-weight:800;white-space:nowrap;
+        padding:.38rem .62rem;border:1px solid rgba(255,255,255,.18);
+        background:rgba(255,255,255,.08);border-radius:999px;
+      }
+      .header-nav .header-cta{display:none}
     }
 
     /* HERO */
@@ -509,6 +529,7 @@
   <!-- HEADER -->
   <header class="site-header">
     <a href="/" class="logo">Gluten<span>Go</span></a>
+    <a href="#form-registro" class="mobile-header-cta">Registrar →</a>
     <nav class="header-nav">
       <a href="#como-funciona" class="header-link">Cómo funciona</a>
       <a href="#planes" class="header-link">Planes</a>

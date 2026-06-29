@@ -85,6 +85,7 @@
       font-weight:700;opacity:1!important;
     }
     .nav-cta:hover{background:#d4941f!important}
+    .mobile-nav-cta{display:none}
 
     /* ─── HERO ───────────────────────────────────────────────── */
     .hero{
@@ -646,7 +647,29 @@
 
     /* ─── RESPONSIVE ─────────────────────────────────────────── */
     @media(max-width:600px){
-      .nav-links .nav-link:not(.nav-cta){display:none}
+      .site-header{
+        display:grid;grid-template-columns:auto auto;gap:.55rem .75rem;
+        align-items:center;padding:.72rem 1rem .68rem;
+      }
+      .logo{font-size:1.28rem}
+      .mobile-nav-cta{
+        display:inline-flex;align-items:center;justify-content:center;justify-self:end;
+        background:var(--amber);color:var(--green-deep);
+        text-decoration:none;font-size:.84rem;font-weight:800;
+        padding:.52rem .92rem;border-radius:10px;white-space:nowrap;
+      }
+      .nav-links{
+        grid-column:1/-1;width:100%;display:flex;gap:.4rem;overflow-x:auto;
+        padding:.05rem 0 .08rem;scrollbar-width:none;
+      }
+      .nav-links::-webkit-scrollbar{display:none}
+      .nav-link{
+        display:inline-flex!important;align-items:center;justify-content:center;
+        white-space:nowrap;font-size:.78rem;font-weight:800;
+        padding:.38rem .62rem;border:1px solid rgba(255,255,255,.18);
+        background:rgba(255,255,255,.08);opacity:1;border-radius:999px;
+      }
+      .nav-links .nav-cta{display:none!important}
       .stats-strip{gap:0}
       .stat strong{font-size:1.4rem}
       .home-slot-section{padding:.85rem 1rem 0}
@@ -662,6 +685,7 @@
   <!-- ── HEADER ──────────────────────────────────────────────── -->
   <header class="site-header">
     <a href="/" class="logo">Gluten<span>Go</span></a>
+    <a href="#cuenta" class="mobile-nav-cta">Entrar →</a>
     <nav class="nav-links">
       <a href="#mapa" class="nav-link">Mapa</a>
       <a href="#directorio" class="nav-link">Lugares</a>
