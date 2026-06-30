@@ -3,7 +3,7 @@
   var SESSION_KEY = 'glutengo_analytics_session_v1';
   var FIRST_TOUCH_KEY = 'glutengo_analytics_first_touch_v1';
   var LAST_TOUCH_KEY = 'glutengo_analytics_last_touch_v1';
-  var MAX_META_KEYS = 24;
+  var MAX_META_KEYS = 40;
   var MAX_META_VALUE = 280;
   var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
 

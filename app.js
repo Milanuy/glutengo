@@ -176,6 +176,60 @@ function formatSponsorTarget(filter) {
   return filter || 'esta sección';
 }
 
+function filterInterestKind(filter) {
+  if (!filter || filter === 'todos') return 'general';
+  if (filter === 'exclusivo' || filter === 'mixto') return 'offer';
+  if (filter.indexOf('cat:') === 0) return 'category';
+  if (filter.indexOf('moment:') === 0) return 'moment';
+  if (filter.indexOf('dept:') === 0 || filter === 'Online') return 'department';
+  return 'zone';
+}
+
+function filterInterestLabel(filter) {
+  if (!filter || filter === 'todos') return 'Todos';
+  if (filter === 'exclusivo') return '100% GF';
+  if (filter === 'mixto') return 'Opciones SG';
+  if (filter.indexOf('cat:') === 0) return formatCategory(filter.replace('cat:', ''));
+  if (filter.indexOf('dept:') === 0) return filter.replace('dept:', '');
+  return formatSponsorTarget(filter);
+}
+
+function filterInterestMeta(filter) {
+  var kind = filterInterestKind(filter);
+  return {
+    filter: filter || 'todos',
+    group: kind,
+    interest_kind: kind,
+    interest_label: filterInterestLabel(filter),
+    interest_value: filter || 'todos'
+  };
+}
+
+function directoryContextMetadata(filters, q, resultCount) {
+  filters = normalizeDirFilters(filters || dirFilters);
+  return {
+    offer_filter: filters.offer,
+    offer_label: filterInterestLabel(filters.offer),
+    category_filter: filters.category,
+    category_label: filterInterestLabel(filters.category),
+    moment_filter: filters.moment,
+    moment_label: filterInterestLabel(filters.moment),
+    zone_filter: filters.zone,
+    zone_label: filterInterestLabel(filters.zone),
+    department_filter: filters.department,
+    department_label: filterInterestLabel(filters.department),
+    search_active: !!q,
+    result_count: Number(resultCount || 0)
+  };
+}
+
+function directoryContextAttrs(filters, q, resultCount) {
+  var meta = directoryContextMetadata(filters, q, resultCount);
+  return Object.keys(meta).map(function(key) {
+    return 'data-analytics-' + key.replace(/_/g, '-') + '="' + escapeHtml(meta[key]) + '"';
+  }).join(' ');
+}
+
 function sponsorSlotParam(filter) {
   return String(filter || 'todos')
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -223,7 +277,19 @@ function analyticsMetaFromEl(el) {
     label: el.getAttribute('data-analytics-label') || '',
     name: el.getAttribute('data-analytics-name') || '',
     tipo: el.getAttribute('data-analytics-tipo') || '',
-    category: el.getAttribute('data-analytics-category') || ''
+    category: el.getAttribute('data-analytics-category') || '',
+    offer_filter: el.getAttribute('data-analytics-offer-filter') || '',
+    offer_label: el.getAttribute('data-analytics-offer-label') || '',
+    category_filter: el.getAttribute('data-analytics-category-filter') || '',
+    category_label: el.getAttribute('data-analytics-category-label') || '',
+    moment_filter: el.getAttribute('data-analytics-moment-filter') || '',
+    moment_label: el.getAttribute('data-analytics-moment-label') || '',
+    zone_filter: el.getAttribute('data-analytics-zone-filter') || '',
+    zone_label: el.getAttribute('data-analytics-zone-label') || '',
+    department_filter: el.getAttribute('data-analytics-department-filter') || '',
+    department_label: el.getAttribute('data-analytics-department-label') || '',
+    search_active: el.getAttribute('data-analytics-search-active') || '',
+    result_count: el.getAttribute('data-analytics-result-count') || ''
   };
 }
 
@@ -601,7 +667,7 @@ function setMapFilter(btn, filter){
   });
   trackAnalytics('filter_use', {
     page: 'home',
-    metadata: { filter: filter, group: 'map', label: formatSponsorTarget(filter) }
+    metadata: Object.assign({ source: 'map' }, filterInterestMeta(filter))
   });
 }
 
@@ -757,6 +823,7 @@ function buildDir(filter, q){
   filtered = sortPlacesForDisplay(filtered);
   var sponsorFilter = sponsorFilterFromDirFilters(activeFilters);
   var sponsor = findSponsorForFilter(sponsorFilter);
+  var contextAttrs = directoryContextAttrs(activeFilters, q, filtered.length);
   var sponsorHtml = sponsorCardHtml(sponsor, sponsorFilter) || (!q ? availableSponsorCardHtml(sponsorFilter) : '');
 
   grid.innerHTML = sponsorHtml + filtered.map(function(l){
@@ -767,7 +834,8 @@ function buildDir(filter, q){
     return '<a href="/lugar.html?slug='+encodeURIComponent(l.slug)+'" class="dir-card '+escapeHtml(l.tipo)+'" ' +
       'data-analytics-event="place_card" data-analytics-source="directorio" ' +
       'data-analytics-slug="' + escapeHtml(l.slug) + '" data-analytics-name="' + escapeHtml(l.name) + '" ' +
-      'data-analytics-tipo="' + escapeHtml(l.tipo) + '" data-analytics-category="' + escapeHtml(l.category) + '">' +
+      'data-analytics-tipo="' + escapeHtml(l.tipo) + '" data-analytics-category="' + escapeHtml(l.category) + '" ' +
+      contextAttrs + '>' +
       '<div class="dc-header">' +
         '<span class="dc-name" style="display:flex;align-items:center;gap:.4rem">' +
           visual + escapeHtml(l.name) +
@@ -793,14 +861,15 @@ function setDirFilter(btn, filter){
   }
   updateDirChipState();
   buildDir(dirFilters, searchTerm);
+  var meta = filterInterestMeta(filter);
+  var context = directoryContextMetadata(dirFilters, searchTerm, 0);
   trackAnalytics('filter_use', {
     page: 'home',
-    metadata: {
-      filter: filter,
-      group: filter === 'todos' ? 'all' : dirFilterGroup(filter),
-      label: formatSponsorTarget(filter),
+    metadata: Object.assign(meta, context, {
+      group: filter === 'todos' ? 'all' : meta.group,
+      label: meta.interest_label,
       active: JSON.stringify(previous) !== JSON.stringify(dirFilters)
-    }
+    })
   });
 }
 

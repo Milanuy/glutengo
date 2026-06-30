@@ -202,6 +202,10 @@
                 <h4>Movimiento diario</h4>
                 <div id="report-daily"><div class="report-row"><span>Sin datos todavía</span><span>0</span></div></div>
               </div>
+              <div class="report-box">
+                <h4>Búsquedas que abrieron tu ficha</h4>
+                <div id="report-contexts"><div class="report-row"><span>Sin datos todavía</span><span>0</span></div></div>
+              </div>
             </div>
             <div class="report-copy" id="report-copy">Cuando haya datos, acá vas a ver un resumen listo para entender qué interés generó tu ficha.</div>
           </div>
@@ -527,7 +531,10 @@
         'Detalle: ' + fmtNum(report.whatsapp) + ' WhatsApp, ' +
         fmtNum(report.instagram) + ' Instagram y ' +
         fmtNum(report.maps) + ' clics en cómo llegar' +
-        (Number(report.menu || 0) ? ', más ' + fmtNum(report.menu) + ' clics en menú.' : '.');
+        (Number(report.menu || 0) ? ', más ' + fmtNum(report.menu) + ' clics en menú.' : '.') +
+        (report.contexts && report.contexts.length
+          ? ' Búsquedas que empujaron aperturas: ' + report.contexts.slice(0, 4).map(function(item) { return item.label; }).join(', ') + '.'
+          : '');
     }
 
     function renderOwnerReport() {
@@ -540,6 +547,7 @@
         ['r-views','r-intent','r-rate','r-whatsapp','r-instagram','r-maps','r-menu'].forEach(function(id){ setText(id, '—'); });
         document.getElementById('report-channels').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
         document.getElementById('report-daily').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
+        document.getElementById('report-contexts').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
         setText('report-copy', 'Cuando haya datos, acá vas a ver un resumen listo para entender qué interés generó tu ficha.');
         return;
       }
@@ -549,6 +557,7 @@
         ['r-views','r-intent','r-rate','r-whatsapp','r-instagram','r-maps','r-menu'].forEach(function(id){ setText(id, '0'); });
         document.getElementById('report-channels').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
         document.getElementById('report-daily').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
+        document.getElementById('report-contexts').innerHTML = '<div class="report-row"><span>Sin datos todavía</span><span>0</span></div>';
         setText('report-copy', 'Todavía estamos juntando datos de tu ficha. Cuando haya tráfico, vas a ver vistas, clics y tasa de interés.');
         return;
       }
@@ -563,6 +572,7 @@
       setText('report-status', 'Últimos ' + ownerState.analyticsDays + ' días. Medimos vistas de ficha y acciones reales como WhatsApp, Instagram y cómo llegar.');
       document.getElementById('report-channels').innerHTML = reportRowsHtml(report.channels);
       document.getElementById('report-daily').innerHTML = reportDailyHtml(report.daily);
+      document.getElementById('report-contexts').innerHTML = reportRowsHtml(report.contexts);
       setText('report-copy', ownerReportText(report));
     }
 

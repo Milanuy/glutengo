@@ -701,6 +701,30 @@
           <div class="analytics-note" style="margin-top:.7rem">Solo se muestra ciudad o departamento si Netlify lo entrega. Si no aparece, no inventamos ubicación. Para barrio exacto habría que pedir permiso de ubicación al usuario.</div>
         </div>
       </div>
+      <div class="analytics-insight-grid">
+        <div class="analytics-box">
+          <h4>Barrios buscados</h4>
+          <div class="analytics-list" id="analytics-interest-zones"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+          <div class="analytics-note" style="margin-top:.7rem">Sale de filtros reales de la guía. Sirve para saber dónde hay demanda y vender visibilidad por barrio.</div>
+        </div>
+        <div class="analytics-box">
+          <h4>Departamentos buscados</h4>
+          <div class="analytics-list" id="analytics-interest-departments"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+          <div class="analytics-note" style="margin-top:.7rem">Mide qué departamentos eligieron las personas, no dónde estaba físicamente el usuario.</div>
+        </div>
+        <div class="analytics-box">
+          <h4>Categorías y momentos</h4>
+          <div class="analytics-mini-title">Categorías</div>
+          <div class="analytics-list" id="analytics-interest-categories"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+          <div class="analytics-mini-title">Momentos</div>
+          <div class="analytics-list" id="analytics-interest-moments"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+        </div>
+        <div class="analytics-box">
+          <h4>Zonas con fichas abiertas</h4>
+          <div class="analytics-list" id="analytics-place-zones"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
+          <div class="analytics-note" style="margin-top:.7rem">Muestra de qué zonas son los locales que efectivamente abrieron en ficha.</div>
+        </div>
+      </div>
       <div class="analytics-box" style="margin:0 0 1rem">
         <h4>Lugar preciso de navegación</h4>
         <div class="analytics-list" id="analytics-navigation"><div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div></div>
@@ -1043,6 +1067,17 @@ var CHANNEL_LABELS_ES = {
   'open': 'Abrir llamado comercial'
 };
 
+Object.assign(CHANNEL_LABELS_ES, {
+  restaurante: 'Restaurante',
+  cafeteria: 'Cafetería',
+  panaderia: 'Panadería',
+  heladeria: 'Heladería',
+  rotiseria: 'Para llevar',
+  almacen: 'Almacén',
+  hotel: 'Hotel',
+  otro: 'Otro'
+});
+
 var PLAN_PRICES = { basico: 0, verificado: 590, certificado: 1590 };
 var PLAN_SHORT_LABELS = { basico: 'Básico', verificado: 'Verificado', certificado: 'Certificado' };
 
@@ -1380,6 +1415,14 @@ function buildAnalyticsPitch(data, clicks) {
   if (data.trafficSources && data.trafficSources[0]) {
     text += ' El principal origen de entrada fue ' + data.trafficSources[0].label + '.';
   }
+  if (data.interestZones && data.interestZones[0]) {
+    text += ' La zona más buscada fue ' + data.interestZones[0].label + '.';
+  } else if (data.interestDepartments && data.interestDepartments[0]) {
+    text += ' El departamento más buscado fue ' + data.interestDepartments[0].label + '.';
+  }
+  if (data.interestCategories && data.interestCategories[0]) {
+    text += ' La categoría con más intención fue ' + channelLabel(data.interestCategories[0].label) + '.';
+  }
   text += ' El reporte permite mostrar CPC (costo por clic) por local y dejar preparado CPR (costo por reserva) cuando activemos calendario. Estos datos muestran demanda real de personas buscando opciones sin gluten en Uruguay.';
   return text;
 }
@@ -1500,7 +1543,7 @@ function renderAnalytics(data) {
     setText('analytics-sales-copy', 'Primero hay que aplicar la migración de Supabase para empezar a guardar visitas y clics.');
     var graph = document.getElementById('analytics-graph');
     if (graph) graph.innerHTML = '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
-    ['analytics-sources','analytics-source-types'].forEach(function(id) {
+    ['analytics-sources','analytics-source-types','analytics-interest-zones','analytics-interest-departments','analytics-interest-categories','analytics-interest-moments','analytics-place-zones'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.innerHTML = '<div class="analytics-row"><span>Sin datos todavía</span><span>0</span></div>';
     });
@@ -1530,6 +1573,11 @@ function renderAnalytics(data) {
   document.getElementById('analytics-source-types').innerHTML = analyticsInsightRowsHtml(data.sourceTypes, sourceTypeHint);
   document.getElementById('analytics-campaigns').innerHTML = analyticsCampaignRowsHtml(data.campaigns);
   document.getElementById('analytics-locations').innerHTML = analyticsInsightRowsHtml(data.locations, locationHint);
+  document.getElementById('analytics-interest-zones').innerHTML = analyticsRowsHtml(data.interestZones);
+  document.getElementById('analytics-interest-departments').innerHTML = analyticsRowsHtml(data.interestDepartments);
+  document.getElementById('analytics-interest-categories').innerHTML = analyticsRowsHtml(data.interestCategories);
+  document.getElementById('analytics-interest-moments').innerHTML = analyticsRowsHtml(data.interestMoments);
+  document.getElementById('analytics-place-zones').innerHTML = analyticsRowsHtml(data.placeZones);
   document.getElementById('analytics-navigation').innerHTML = analyticsRowsHtml(data.navigationPaths);
   updateAnalyticsNavigationOptions(data.navigationPaths);
   updateAnalyticsFilterSummary(data);

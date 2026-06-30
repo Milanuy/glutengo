@@ -60,7 +60,7 @@ function text(value, limit) {
 function metadata(value) {
   const clean = {};
   if (!value || typeof value !== 'object' || Array.isArray(value)) return clean;
-  Object.keys(value).slice(0, 24).forEach((key) => {
+  Object.keys(value).slice(0, 40).forEach((key) => {
     const safeKey = text(key, 60);
     if (!safeKey) return;
     const item = value[key];
@@ -207,6 +207,36 @@ function topFromMap(map, limit) {
     .map((key) => ({ label: key, count: map[key] }))
     .sort((a, b) => b.count - a.count)
     .slice(0, limit || 8);
+}
+
+function cleanInterestLabel(value) {
+  const label = text(value, 120);
+  if (!label || label === 'Todos' || label === 'todos') return '';
+  return label;
+}
+
+function collectFilterInterest(meta, buckets) {
+  const kind = text(meta.interest_kind || meta.group, 40);
+  const label = cleanInterestLabel(meta.interest_label || meta.label || meta.filter);
+  if (!label) return;
+  if (kind === 'zone') addCount(buckets.zones, label);
+  if (kind === 'department') addCount(buckets.departments, label);
+  if (kind === 'category') addCount(buckets.categories, label);
+  if (kind === 'moment') addCount(buckets.moments, label);
+  if (kind === 'offer') addCount(buckets.offers, label);
+}
+
+function collectPlaceContext(meta, buckets) {
+  const zone = cleanInterestLabel(meta.zone_label || meta.zone_filter);
+  const department = cleanInterestLabel(meta.department_label || meta.department_filter);
+  const category = cleanInterestLabel(meta.category_label || meta.category_filter);
+  const moment = cleanInterestLabel(meta.moment_label || meta.moment_filter);
+  const offer = cleanInterestLabel(meta.offer_label || meta.offer_filter);
+  if (zone) addCount(buckets.zones, zone);
+  if (department) addCount(buckets.departments, department);
+  if (category) addCount(buckets.categories, category);
+  if (moment) addCount(buckets.moments, moment);
+  if (offer) addCount(buckets.offers, offer);
 }
 
 function hostFromReferrer(referrer) {
@@ -371,6 +401,13 @@ function summarize(rows, range, filters) {
   const sourceTypes = {};
   const campaigns = {};
   const locations = {};
+  const interestZones = {};
+  const interestDepartments = {};
+  const interestCategories = {};
+  const interestMoments = {};
+  const interestOffers = {};
+  const placeZones = {};
+  const placeCategories = {};
   const navigationPaths = {};
   const navigationEvents = {};
   const countedSourceSessions = new Set();
@@ -417,6 +454,8 @@ function summarize(rows, range, filters) {
       totals.placeViews += 1;
       daily[date].placeViews += 1;
       addCount(topPlaces, meta.name || row.slug || 'Ficha sin nombre');
+      if (meta.zone) addCount(placeZones, meta.zone);
+      if (meta.category) addCount(placeCategories, meta.category);
       const place = ensurePlace(placeStats, row, meta);
       if (place) place.views += 1;
     }
@@ -450,7 +489,25 @@ function summarize(rows, range, filters) {
       const place = ensurePlace(placeStats, row, meta);
       if (place) place.shares += 1;
     }
-    if (type === 'filter_use') addCount(filterStats, meta.label || meta.filter || 'filtro');
+    if (type === 'filter_use') {
+      addCount(filterStats, meta.label || meta.filter || 'filtro');
+      collectFilterInterest(meta, {
+        zones: interestZones,
+        departments: interestDepartments,
+        categories: interestCategories,
+        moments: interestMoments,
+        offers: interestOffers,
+      });
+    }
+    if (type === 'cta_click' && row.slug) {
+      collectPlaceContext(meta, {
+        zones: interestZones,
+        departments: interestDepartments,
+        categories: interestCategories,
+        moments: interestMoments,
+        offers: interestOffers,
+      });
+    }
   });
 
   totals.uniqueSessions = sessions.size;
@@ -480,6 +537,13 @@ function summarize(rows, range, filters) {
     sourceTypes: topFromMap(sourceTypes, 8),
     campaigns: topFromMap(campaigns, 8),
     locations: topFromMap(locations, 10),
+    interestZones: topFromMap(interestZones, 10),
+    interestDepartments: topFromMap(interestDepartments, 10),
+    interestCategories: topFromMap(interestCategories, 8),
+    interestMoments: topFromMap(interestMoments, 8),
+    interestOffers: topFromMap(interestOffers, 5),
+    placeZones: topFromMap(placeZones, 10),
+    placeCategories: topFromMap(placeCategories, 8),
     navigationPaths: topNavigation(navigationPaths, 18),
     navigationEvents: topFromMap(navigationEvents, 12),
     daily: Object.keys(daily).sort().map((key) => daily[key]),
@@ -556,7 +620,7 @@ exports.handler = async function(event) {
       const res = await fetch(url, { headers: sbHeaders() });
       if (!res.ok) {
         const raw = await res.text();
-        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days: range.days, range, totals: {}, daily: [], topPlaces: [], placeStats: [], clicks: [], filters: [], trafficSources: [], sourceTypes: [], campaigns: [], locations: [], navigationPaths: [], navigationEvents: [] });
+        if (missingAnalyticsTable(raw)) return json(200, { pendingMigration: true, days: range.days, range, totals: {}, daily: [], topPlaces: [], placeStats: [], clicks: [], filters: [], trafficSources: [], sourceTypes: [], campaigns: [], locations: [], interestZones: [], interestDepartments: [], interestCategories: [], interestMoments: [], interestOffers: [], placeZones: [], placeCategories: [], navigationPaths: [], navigationEvents: [] });
         return json(500, { error: raw });
       }
       const rows = await res.json();

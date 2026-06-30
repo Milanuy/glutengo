@@ -115,6 +115,27 @@ function channelLabel(target) {
   }[target] || target || 'Otro clic';
 }
 
+function addCount(map, key) {
+  const safeKey = text(key, 120);
+  if (!safeKey || safeKey === 'Todos' || safeKey === 'todos') return;
+  map[safeKey] = (map[safeKey] || 0) + 1;
+}
+
+function topFromMap(map, limit) {
+  return Object.keys(map)
+    .map((key) => ({ label: key, count: map[key] }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+    .slice(0, limit || 8);
+}
+
+function collectListingContext(report, meta) {
+  addCount(report.contexts, meta.zone_label || meta.zone_filter);
+  addCount(report.contexts, meta.department_label || meta.department_filter);
+  addCount(report.contexts, meta.category_label || meta.category_filter);
+  addCount(report.contexts, meta.moment_label || meta.moment_filter);
+  addCount(report.contexts, meta.offer_label || meta.offer_filter);
+}
+
 function newReport(business, days) {
   const daily = {};
   for (let i = days - 1; i >= 0; i -= 1) {
@@ -137,6 +158,7 @@ function newReport(business, days) {
     shares: 0,
     ratings: 0,
     channels: {},
+    contexts: {},
     daily,
   };
 }
@@ -148,6 +170,7 @@ function finalizeReport(report) {
     .map((key) => ({ label: channelLabel(key), count: report.channels[key] }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 8);
+  report.contexts = topFromMap(report.contexts, 8);
   report.daily = Object.keys(report.daily).sort().map((key) => report.daily[key]);
   return report;
 }
@@ -181,6 +204,7 @@ function summarize(rows, businesses, days) {
       report.listingClicks += 1;
       report.daily[date].clicks += 1;
       addChannel(report, meta.target || 'open-place-card');
+      collectListingContext(report, meta);
       return;
     }
 
