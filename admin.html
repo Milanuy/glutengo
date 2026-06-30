@@ -217,6 +217,16 @@
     .social-profile-note{font-size:.78rem;color:#4B5563;line-height:1.45;margin-top:.2rem;max-width:520px}
     .social-profile-actions{display:flex;gap:.45rem;flex-wrap:wrap;justify-content:flex-end}
     .social-profile-actions a{text-decoration:none}
+    .social-bio-link{
+      margin-top:.55rem;display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;
+      font-size:.76rem;color:#374151;line-height:1.35;
+    }
+    .social-bio-link b{color:var(--green-deep);font-size:.72rem;text-transform:uppercase;letter-spacing:.05em}
+    .social-bio-link code{
+      background:rgba(255,255,255,.74);border:1px solid rgba(17,24,39,.08);
+      border-radius:999px;padding:.18rem .48rem;color:#111827;font-size:.72rem;
+      max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
     .social-method{
       display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.7rem;margin:.7rem 0 1rem;
     }
@@ -826,10 +836,15 @@
             <span class="social-profile-kicker">Perfil oficial</span>
             <strong class="social-profile-handle" id="social-profile-handle">@glutengo.uy</strong>
             <p class="social-profile-note" id="social-profile-note">Usá este bloque para revisar el perfil, cargar números de Insights y entender si Instagram está trayendo visitas reales hacia GlutenGo.</p>
+            <p class="social-bio-link">
+              <b>Link para bio</b>
+              <code id="social-bio-link">https://glutengo.com.uy/?utm_source=instagram&utm_medium=social&utm_campaign=perfil_instagram</code>
+            </p>
           </div>
         </div>
         <div class="social-profile-actions">
           <a class="btn-sm btn-approve" id="social-profile-link" href="https://www.instagram.com/glutengo.uy/" target="_blank" rel="noopener">Abrir Instagram</a>
+          <button class="btn-sm btn-approve" type="button" onclick="copyInstagramBioLink()">Copiar link bio</button>
           <a class="btn-sm btn-expire" href="https://business.facebook.com/latest/insights" target="_blank" rel="noopener">Abrir Insights</a>
         </div>
       </div>
@@ -972,6 +987,7 @@ var SOCIAL_API = '/api/admin-social-metrics';
 var INSTAGRAM_PROFILE = {
   handle: 'glutengo.uy',
   url: 'https://www.instagram.com/glutengo.uy/',
+  bioUrl: 'https://glutengo.com.uy/?utm_source=instagram&utm_medium=social&utm_campaign=perfil_instagram',
 };
 var adminToken = '';
 var allBiz  = [];
@@ -1690,8 +1706,10 @@ function setSocialDefaults() {
   if (dateEl && !dateEl.value) dateEl.value = localDateInputValue();
   var handle = document.getElementById('social-profile-handle');
   var link = document.getElementById('social-profile-link');
+  var bio = document.getElementById('social-bio-link');
   if (handle) handle.textContent = '@' + INSTAGRAM_PROFILE.handle;
   if (link) link.href = INSTAGRAM_PROFILE.url;
+  if (bio) bio.textContent = INSTAGRAM_PROFILE.bioUrl;
 }
 
 function cleanMetricNumber(value) {
@@ -1785,6 +1803,15 @@ function copySocialSummary() {
     showToast('Resumen de Instagram copiado');
   }).catch(function() {
     showToast('No se pudo copiar el resumen');
+  });
+}
+
+function copyInstagramBioLink() {
+  if (!navigator.clipboard) return showToast('No se pudo copiar en este navegador');
+  navigator.clipboard.writeText(INSTAGRAM_PROFILE.bioUrl).then(function() {
+    showToast('Link de bio copiado');
+  }).catch(function() {
+    showToast('No se pudo copiar el link');
   });
 }
 

@@ -12,6 +12,7 @@ GlutenGo combina impacto social, tecnologia simple y una necesidad cotidiana: la
 
 - Plataforma: GlutenGo
 - Web: https://glutengo.com.uy
+- Instagram: https://www.instagram.com/glutengo.uy/
 - Contacto: hola@glutengo.com.uy
 - WhatsApp: 091 721 325
 - Fundador: Andres Maurano
