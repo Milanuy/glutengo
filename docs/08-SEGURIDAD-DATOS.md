@@ -10,6 +10,8 @@ Documento operativo interno. No es una certificacion legal externa; es la base d
 - Los cambios enviados desde "Mi local" requieren login con Google y quedan pendientes de aprobacion.
 - Las metricas propias son anonimas: no guardan IP, nombre, email ni usuario autenticado.
 - Las funciones usan `SUPABASE_SERVICE_ROLE_KEY` solo en backend; nunca se expone en el navegador.
+- Las tablas propias de `public` no quedan consultables directamente con la `anon key`; la informacion publica se expone por funciones Netlify que filtran campos seguros.
+- Las RPC de `public` no quedan ejecutables por `anon`/`authenticated` salvo que se habilite explicitamente una necesidad.
 - El dominio canonico usa HTTPS y Netlify fuerza headers basicos de seguridad.
 
 ## Datos personales minimos
@@ -32,3 +34,9 @@ Documento operativo interno. No es una certificacion legal externa; es la base d
 - Revisar reglas RLS y permisos de Supabase cada vez que se agregue una tabla nueva.
 - Definir una politica publica de privacidad y terminos de uso antes de escalar fuerte.
 - Revisar backups/exportaciones periodicas de datos criticos.
+
+## Nota sobre Supabase Advisor
+
+El 30/06/2026 se aplico `supabase/migrations/0009_lock_down_public_table_access.sql` para cerrar el acceso directo a tablas propias desde PostgREST con `anon`.
+
+Despues del cierre, el unico error restante del asesor puede aparecer sobre `public.spatial_ref_sys`, tabla de referencia EPSG creada por PostGIS. Esa tabla no contiene datos de usuarios, locales ni metricas de GlutenGo. Supabase no permite aplicarle RLS desde el SQL Editor porque pertenece a la extension. Si en el futuro se reestructura la base, conviene crear/mover PostGIS al esquema `extensions` para evitar ese aviso.
