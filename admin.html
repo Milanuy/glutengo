@@ -199,6 +199,30 @@
     .social-card strong{display:block;font-size:1.5rem;line-height:1;color:var(--green-deep);margin-bottom:.24rem}
     .social-card span{display:block;font-size:.76rem;color:var(--gray);font-weight:800}
     .social-card small{display:block;margin-top:.35rem;font-size:.72rem;color:#15803D;font-weight:900}
+    .social-profile-card{
+      display:flex;align-items:center;justify-content:space-between;gap:1rem;
+      border:1px solid #FBCFE8;background:linear-gradient(135deg,#FFF7ED,#FDF2F8);
+      border-radius:16px;padding:1rem;margin:.95rem 0 1rem;
+    }
+    .social-profile-main{display:flex;align-items:center;gap:.85rem;min-width:0}
+    .social-avatar{
+      width:48px;height:48px;border-radius:16px;
+      background:linear-gradient(135deg,#E1306C,#F77737);
+      color:#fff;display:flex;align-items:center;justify-content:center;
+      font-weight:900;letter-spacing:.02em;box-shadow:0 8px 22px rgba(225,48,108,.22);
+      flex-shrink:0;
+    }
+    .social-profile-kicker{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#9D174D;font-weight:900;margin-bottom:.08rem}
+    .social-profile-handle{display:block;color:var(--green-deep);font-size:1.05rem;font-weight:900;line-height:1.2}
+    .social-profile-note{font-size:.78rem;color:#4B5563;line-height:1.45;margin-top:.2rem;max-width:520px}
+    .social-profile-actions{display:flex;gap:.45rem;flex-wrap:wrap;justify-content:flex-end}
+    .social-profile-actions a{text-decoration:none}
+    .social-method{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.7rem;margin:.7rem 0 1rem;
+    }
+    .social-method-card{border:1px solid var(--border);border-radius:14px;background:#fff;padding:.8rem .9rem}
+    .social-method-card b{display:block;color:var(--green-deep);font-size:.82rem;margin-bottom:.24rem}
+    .social-method-card p{font-size:.76rem;color:var(--gray);line-height:1.45}
     .social-form{
       display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem;
       border:1px solid var(--border);border-radius:14px;background:var(--bg);
@@ -483,6 +507,8 @@
       .social-form .wide,.social-form .full{grid-column:1}
       .social-chart-row{grid-template-columns:78px 1fr 48px}
       .social-item-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .social-profile-card{align-items:flex-start;flex-direction:column}
+      .social-profile-actions{width:100%;justify-content:flex-start}
       .stat-card{padding:1rem}
       .stat-val{font-size:1.55rem}
       .filters{gap:.4rem}
@@ -785,11 +811,42 @@
         <div>
           <div class="section-kicker">Redes y comunidad</div>
           <div class="section-title">Instagram y canales sociales</div>
-          <div class="section-sub">Cargá una foto semanal de números desde Insights: seguidores, alcance, visitas al perfil y clics al sitio. Sirve para saber si la red trae demanda hacia GlutenGo.</div>
+          <div class="section-sub">El Instagram de GlutenGo ya está activo. Acá centralizamos snapshots de Insights y los cruzamos con visitas que llegan a la web desde redes.</div>
         </div>
-        <button class="btn-sm btn-expire" onclick="loadSocialMetrics()">↻ Refrescar redes</button>
+        <div class="analytics-report-actions">
+          <button class="btn-sm btn-approve" onclick="copySocialSummary()">Copiar resumen</button>
+          <button class="btn-sm btn-expire" onclick="loadSocialMetrics()">↻ Refrescar redes</button>
+        </div>
       </div>
       <div id="social-status" class="analytics-status">Cargando métricas sociales…</div>
+      <div class="social-profile-card">
+        <div class="social-profile-main">
+          <div class="social-avatar">IG</div>
+          <div>
+            <span class="social-profile-kicker">Perfil oficial</span>
+            <strong class="social-profile-handle" id="social-profile-handle">@glutengo.uy</strong>
+            <p class="social-profile-note" id="social-profile-note">Usá este bloque para revisar el perfil, cargar números de Insights y entender si Instagram está trayendo visitas reales hacia GlutenGo.</p>
+          </div>
+        </div>
+        <div class="social-profile-actions">
+          <a class="btn-sm btn-approve" id="social-profile-link" href="https://www.instagram.com/glutengo.uy/" target="_blank" rel="noopener">Abrir Instagram</a>
+          <a class="btn-sm btn-expire" href="https://business.facebook.com/latest/insights" target="_blank" rel="noopener">Abrir Insights</a>
+        </div>
+      </div>
+      <div class="social-method">
+        <div class="social-method-card">
+          <b>Datos de Instagram</b>
+          <p>Seguidores, alcance, visitas al perfil, clics al sitio y publicaciones. Se cargan desde Insights como snapshot semanal o diario.</p>
+        </div>
+        <div class="social-method-card">
+          <b>Datos de la web</b>
+          <p>GlutenGo ya mide entradas desde Instagram/Facebook cuando el navegador o los UTM lo informan. Eso aparece en Métricas → Origen de visitas.</p>
+        </div>
+        <div class="social-method-card">
+          <b>Automatización pendiente</b>
+          <p>Para traer Insights automáticamente hay que conectar una cuenta profesional de Instagram con Meta y generar un token de acceso.</p>
+        </div>
+      </div>
       <div class="social-summary">
         <div class="social-card"><strong id="social-followers">—</strong><span>seguidores</span><small id="social-followers-delta">sin comparación</small></div>
         <div class="social-card"><strong id="social-reach">—</strong><span>alcance del snapshot</span><small id="social-reach-delta">sin comparación</small></div>
@@ -912,6 +969,10 @@ var RATINGS_API = '/api/admin-ratings';
 var ANALYTICS_API = '/api/analytics';
 var OWNER_REQUESTS_API = '/api/admin-owner-requests';
 var SOCIAL_API = '/api/admin-social-metrics';
+var INSTAGRAM_PROFILE = {
+  handle: 'glutengo.uy',
+  url: 'https://www.instagram.com/glutengo.uy/',
+};
 var adminToken = '';
 var allBiz  = [];
 var allPhotoRatings = [];
@@ -1627,6 +1688,10 @@ function localDateInputValue(value) {
 function setSocialDefaults() {
   var dateEl = document.getElementById('social-date');
   if (dateEl && !dateEl.value) dateEl.value = localDateInputValue();
+  var handle = document.getElementById('social-profile-handle');
+  var link = document.getElementById('social-profile-link');
+  if (handle) handle.textContent = '@' + INSTAGRAM_PROFILE.handle;
+  if (link) link.href = INSTAGRAM_PROFILE.url;
 }
 
 function cleanMetricNumber(value) {
@@ -1699,8 +1764,33 @@ function socialListHtml(rows) {
   }).join('');
 }
 
+function socialSummaryText(latest) {
+  if (!latest) {
+    return 'Instagram de GlutenGo ya está activo. Todavía falta cargar el primer snapshot de Insights para tener seguidores, alcance, visitas al perfil y clics al sitio dentro del admin.';
+  }
+  var date = latest.metric_date ? new Date(latest.metric_date + 'T12:00:00').toLocaleDateString('es-UY') : 'último snapshot';
+  return 'Instagram GlutenGo (' + date + '): ' +
+    fmtNum(latest.followers) + ' seguidores, ' +
+    fmtNum(latest.reach) + ' de alcance, ' +
+    fmtNum(latest.profile_visits) + ' visitas al perfil, ' +
+    fmtNum(latest.website_clicks) + ' clics al sitio y ' +
+    fmtNum(latest.posts) + ' publicaciones registradas.';
+}
+
+function copySocialSummary() {
+  var latest = latestSocialRows('instagram')[0] || null;
+  var text = socialSummaryText(latest);
+  if (!navigator.clipboard) return showToast('No se pudo copiar en este navegador');
+  navigator.clipboard.writeText(text).then(function() {
+    showToast('Resumen de Instagram copiado');
+  }).catch(function() {
+    showToast('No se pudo copiar el resumen');
+  });
+}
+
 function renderSocialMetrics(data) {
   var status = document.getElementById('social-status');
+  setSocialDefaults();
   if (data && data.pendingMigration) {
     if (status) status.innerHTML = '<div class="analytics-warning">Falta aplicar la migración <strong>0008_social_metrics.sql</strong> en Supabase. El módulo ya está preparado; cuando exista la tabla, vas a poder guardar mediciones de Instagram.</div>';
     ['social-followers','social-reach','social-profile','social-web'].forEach(function(id) { setText(id, '—'); });
@@ -1731,7 +1821,7 @@ function renderSocialMetrics(data) {
   if (status) {
     status.textContent = latest
       ? 'Última medición de Instagram: ' + new Date(latest.metric_date + 'T12:00:00').toLocaleDateString('es-UY') + '.'
-      : 'Todavía no cargaste mediciones. Cuando creemos Instagram, copiá semanalmente los números de Insights acá.';
+      : 'Instagram ya está activo. Cargá el primer snapshot de Insights para empezar a ver evolución en el admin.';
   }
   setSocialDefaults();
 }
