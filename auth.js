@@ -112,6 +112,9 @@
       document.querySelectorAll('[data-auth-name]').forEach(function (el) {
         el.textContent = name;
       });
+      document.querySelectorAll('[data-auth-email]').forEach(function (el) {
+        el.textContent = user.email || '';
+      });
       document.querySelectorAll('[data-auth-avatar]').forEach(function (el) {
         if (picture) { el.src = picture; el.style.display = ''; }
       });

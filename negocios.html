@@ -7,6 +7,7 @@
   <meta name="description" content="Registrá tu restaurante, cafetería o panadería en GlutenGo y llegá a la comunidad celíaca de Uruguay con una ficha clara, verificable y sin comisiones por visita." />
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#166534" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700..900;1,9..144,700..900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     :root{
@@ -433,6 +434,23 @@
     .form-header{margin-bottom:2rem}
     .form-title{font-family:'Fraunces',Georgia,serif;font-size:1.8rem;font-weight:900;color:var(--green-deep);margin-bottom:.4rem}
     .form-subtitle{color:var(--gray);font-size:.93rem;line-height:1.55}
+    .form-auth-check{
+      display:flex;align-items:center;justify-content:space-between;gap:1rem;
+      border:1px solid #BBF7D0;background:#F0FDF4;border-radius:14px;
+      padding:.9rem 1rem;margin:-.7rem 0 1.35rem;color:#14532D;
+    }
+    .form-auth-check.warning{border-color:#FDE68A;background:#FFFBEB;color:#78350F}
+    .form-auth-copy{font-size:.83rem;line-height:1.45}
+    .form-auth-copy strong{display:block;color:var(--green-deep);font-size:.9rem;margin-bottom:.12rem}
+    .form-auth-action{
+      border:none;border-radius:10px;background:var(--green);color:#fff;
+      font-family:inherit;font-size:.84rem;font-weight:800;padding:.62rem .9rem;
+      cursor:pointer;white-space:nowrap;
+    }
+    @media(max-width:540px){
+      .form-auth-check{align-items:stretch;flex-direction:column}
+      .form-auth-action{width:100%}
+    }
 
     .form-row{display:grid;gap:1rem;margin-bottom:1rem}
     .form-row.cols-2{grid-template-columns:1fr 1fr}
@@ -928,6 +946,20 @@
           </p>
         </div>
 
+        <div class="form-auth-check warning" data-auth="logged-out">
+          <div class="form-auth-copy">
+            <strong>Primero entrá con Google</strong>
+            Validamos el correo antes de guardar la solicitud para evitar registros falsos y cuidar la calidad de la guía.
+          </div>
+          <button type="button" class="form-auth-action" onclick="GlutenAuth.signInWithGoogle()">Entrar con Google</button>
+        </div>
+        <div class="form-auth-check" data-auth="logged-in" style="display:none">
+          <div class="form-auth-copy">
+            <strong>Solicitud vinculada a tu cuenta</strong>
+            Vamos a usar este correo verificado para contactarte: <span data-auth-email></span>
+          </div>
+        </div>
+
         <form id="negocio-form" onsubmit="handleNegocio(event)" novalidate>
 
           <div class="form-row">
@@ -972,8 +1004,8 @@
 
           <div class="form-row cols-2">
             <div class="field">
-              <label for="email">Email de contacto *</label>
-              <input type="email" id="email" name="email" placeholder="tu@local.com o Gmail" required maxlength="200" />
+              <label for="email">Email verificado *</label>
+              <input type="email" id="email" name="email" placeholder="Entrá con Google para validar el correo" required maxlength="200" readonly />
             </div>
             <div class="field">
               <label for="telefono">Teléfono / WhatsApp</label>
@@ -1152,7 +1184,37 @@
   </footer>
 
   <script src="/analytics.js?v=1.0"></script>
+  <script src="/auth.js?v=2.2"></script>
   <script>
+  var negocioAuthUser = null;
+
+  function syncBusinessAuth(user) {
+    negocioAuthUser = user || null;
+    var email = user && user.email ? user.email : '';
+    var emailInput = document.getElementById('email');
+    var submit = document.getElementById('btn-submit');
+    if (emailInput) emailInput.value = email;
+    if (submit) {
+      submit.disabled = !email;
+      submit.textContent = email ? 'Enviar solicitud →' : 'Entrá con Google para enviar';
+    }
+  }
+
+  function initBusinessAuthState() {
+    if (!window.GlutenAuth || typeof GlutenAuth.getCurrentUser !== 'function') {
+      syncBusinessAuth(null);
+      return;
+    }
+    GlutenAuth.getCurrentUser().then(syncBusinessAuth).catch(function(){ syncBusinessAuth(null); });
+  }
+
+  window.onGlutenAuthSignIn = function(user) {
+    syncBusinessAuth(user);
+  };
+  window.onGlutenAuthSignOut = function() {
+    syncBusinessAuth(null);
+  };
+
   function trackBiz(eventType, metadata) {
     try {
       if (window.GlutenAnalytics && typeof window.GlutenAnalytics.track === 'function') {
@@ -1178,17 +1240,25 @@
     if (!wasOpen) item.classList.add('open');
   }
 
-  function handleNegocio(e) {
+  async function handleNegocio(e) {
     e.preventDefault();
     var form = e.target;
     var btn = document.getElementById('btn-submit');
+    var session = window.GlutenAuth && typeof GlutenAuth.getSession === 'function'
+      ? await GlutenAuth.getSession()
+      : null;
+    if (!session || !session.access_token || !session.user || !session.user.email) {
+      alert('Para enviar una solicitud tenés que entrar con Google. Así validamos el correo y evitamos registros falsos.');
+      if (window.GlutenAuth && typeof GlutenAuth.signInWithGoogle === 'function') GlutenAuth.signInWithGoogle();
+      return;
+    }
     var data = {
       nombre:    form.nombre.value.trim(),
       tipo:      form.tipo.value,
       categoria: form.categoria.value,
       direccion: form.direccion.value.trim(),
       barrio:    form.barrio.value.trim(),
-      email:     form.email.value.trim(),
+      email:     session.user.email,
       telefono:  form.telefono.value.trim(),
       plan:      (form.querySelector('input[name="plan"]:checked') || {}).value || 'basico',
       mensaje:   form.mensaje.value.trim(),
@@ -1201,7 +1271,10 @@
     btn.textContent = 'Enviando…';
     fetch('/api/negocio', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + session.access_token
+      },
       body: JSON.stringify(data),
     })
     .then(function(r){
@@ -1263,6 +1336,8 @@
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(function(){});
   }
+
+  initBusinessAuthState();
   </script>
 
 </body>

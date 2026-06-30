@@ -8,6 +8,7 @@
  */
 
 const SUPABASE_URL   = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const SUPABASE_KEY   =
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
   process.env.SUPABASE_SERVICE_KEY ||
@@ -40,6 +41,9 @@ const PLANES = {
   verificado: { label: 'Verificado ($590/mes)',   precio: '$590 UYU/mes' },
   certificado:{ label: 'Certificado ($1.590/mes)', precio: '$1.590 UYU/mes' },
 };
+
+const VALID_TIPOS = new Set(['exclusivo', 'mixto']);
+const VALID_CATEGORIAS = new Set(['restaurante', 'cafeteria', 'panaderia', 'heladeria', 'almacen', 'rotiseria', 'hotel', 'otro']);
 
 const PLAN_PRESETS = {
   basico: {
@@ -113,6 +117,63 @@ function slugify(value) {
     .toLowerCase().replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 80);
+}
+
+function json(statusCode, body, headers) {
+  return { statusCode, headers, body: JSON.stringify(body || {}) };
+}
+
+function cleanText(value, limit) {
+  return String(value == null ? '' : value).trim().slice(0, limit || 180);
+}
+
+function authToken(event) {
+  const raw = event.headers.authorization || event.headers.Authorization || '';
+  const match = String(raw).match(/^Bearer\s+(.+)$/i);
+  return match ? match[1].trim() : '';
+}
+
+async function currentUser(event) {
+  const token = authToken(event);
+  if (!token) return null;
+  const res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+    headers: {
+      apikey: SUPABASE_ANON_KEY || SUPABASE_KEY,
+      Authorization: 'Bearer ' + token,
+    },
+  });
+  if (!res.ok) return null;
+  const user = await res.json();
+  return user && user.email ? user : null;
+}
+
+function isVerifiedGoogleUser(user) {
+  if (!user || !user.email) return false;
+  const app = user.app_metadata || {};
+  const meta = user.user_metadata || {};
+  const providers = Array.isArray(app.providers) ? app.providers : [];
+  const provider = String(app.provider || '').toLowerCase();
+  const hasGoogle = provider === 'google' || providers.indexOf('google') !== -1;
+  const verified = Boolean(user.email_confirmed_at || user.confirmed_at || meta.email_verified === true);
+  return hasGoogle && verified;
+}
+
+async function recentSubmissionCount(email) {
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const url = SUPABASE_URL + '/rest/v1/businesses' +
+    '?select=id' +
+    '&email=eq.' + encodeURIComponent(email) +
+    '&created_at=gte.' + encodeURIComponent(since) +
+    '&limit=6';
+  const res = await fetch(url, {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: 'Bearer ' + SUPABASE_KEY,
+    },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const rows = await res.json();
+  return Array.isArray(rows) ? rows.length : 0;
 }
 
 function buildInitialConfig(data) {
@@ -255,7 +316,8 @@ function buildAutoReply(data) {
 exports.handler = async function (event) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json',
   };
 
@@ -268,25 +330,49 @@ exports.handler = async function (event) {
   }
 
   if (!SUPABASE_URL || !SUPABASE_KEY) {
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: 'Supabase no configurado' }),
-    };
+    return json(500, { error: 'Supabase no configurado' }, corsHeaders);
   }
+
+  const user = await currentUser(event);
+  if (!isVerifiedGoogleUser(user)) {
+    return json(401, {
+      error: 'Para enviar una solicitud tenés que entrar con Google. Así validamos que el correo exista y evitamos solicitudes falsas.'
+    }, corsHeaders);
+  }
+
+  const verifiedEmail = cleanText(user.email, 200).toLowerCase();
 
   let data;
   try {
     data = JSON.parse(event.body || '{}');
   } catch (_) {
-    return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'JSON inválido' }) };
+    return json(400, { error: 'JSON inválido' }, corsHeaders);
   }
 
-  const { nombre, tipo, categoria, direccion, barrio, email, telefono, plan, mensaje } = data;
+  const { nombre, tipo, categoria, direccion, barrio, telefono, plan, mensaje } = data;
+  const cleanNombre = cleanText(nombre, 120);
+  const cleanTipo = VALID_TIPOS.has(tipo) ? tipo : '';
+  const cleanCategoria = VALID_CATEGORIAS.has(categoria) ? categoria : 'otro';
+  const cleanDireccion = cleanText(direccion, 200);
+  const cleanBarrio = cleanText(barrio, 100);
+  const cleanTelefono = cleanText(telefono, 50);
+  const cleanMensaje = cleanText(mensaje, 800);
   const selectedPlan = PLANES[plan] ? plan : 'basico';
 
-  if (!nombre || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'nombre y email son requeridos' }) };
+  if (cleanNombre.length < 3 || !cleanTipo) {
+    return json(400, { error: 'Completá nombre del local y tipo de oferta.' }, corsHeaders);
+  }
+
+  try {
+    const recentCount = await recentSubmissionCount(verifiedEmail);
+    if (recentCount >= 5) {
+      return json(429, {
+        error: 'Recibimos varias solicitudes desde esta cuenta en las últimas 24 horas. Escribinos por WhatsApp si necesitás cargar más locales.'
+      }, corsHeaders);
+    }
+  } catch (err) {
+    console.error('Rate limit negocio error:', err.message);
+    return json(500, { error: 'No pudimos validar la solicitud. Intentá de nuevo en unos minutos.' }, corsHeaders);
   }
 
   const results = { saved: false, notified: false, replied: false };
@@ -302,25 +388,27 @@ exports.handler = async function (event) {
         Prefer: 'return=minimal',
       },
       body: JSON.stringify({
-        nombre:    nombre.trim(),
-        tipo:      tipo || 'mixto',
-        direccion: (direccion || '').trim(),
-        barrio:    (barrio || '').trim(),
-        email:     email.toLowerCase().trim(),
-        telefono:  (telefono || '').trim(),
+        nombre:    cleanNombre,
+        tipo:      cleanTipo,
+        direccion: cleanDireccion,
+        barrio:    cleanBarrio,
+        email:     verifiedEmail,
+        telefono:  cleanTelefono,
         plan:      selectedPlan,
         status:    selectedPlan === 'basico' ? 'pending' : 'pending_payment',
         mensaje: JSON.stringify(buildInitialConfig({
-          nombre,
-          categoria,
-          mensaje,
+          nombre: cleanNombre,
+          categoria: cleanCategoria,
+          mensaje: cleanMensaje + '\n\nSolicitud enviada con Google verificado: ' + verifiedEmail,
           plan: selectedPlan,
         })),
       }),
     });
-    results.saved = sbRes.ok;
+    if (!sbRes.ok) throw new Error(await sbRes.text());
+    results.saved = true;
   } catch (err) {
     console.error('Supabase negocio error:', err.message);
+    return json(500, { error: 'No pudimos guardar la solicitud. Intentá de nuevo en unos minutos.' }, corsHeaders);
   }
 
   // ── 2. Emails opcionales. Por defecto no se envian: el flujo vive en admin.html.
@@ -333,8 +421,8 @@ exports.handler = async function (event) {
         body: JSON.stringify({
           from: FROM_EMAIL,
           to: [ADMIN_EMAIL],
-          subject: 'Nuevo negocio en GlutenGo: ' + nombre,
-          html: buildAdminEmail({ nombre, tipo, direccion, barrio, email, telefono, plan: selectedPlan, mensaje }),
+          subject: 'Nuevo negocio en GlutenGo: ' + cleanNombre,
+          html: buildAdminEmail({ nombre: cleanNombre, tipo: cleanTipo, direccion: cleanDireccion, barrio: cleanBarrio, email: verifiedEmail, telefono: cleanTelefono, plan: selectedPlan, mensaje: cleanMensaje }),
         }),
       });
       results.notified = adminRes.ok;
@@ -346,9 +434,9 @@ exports.handler = async function (event) {
         body: JSON.stringify({
           from: FROM_EMAIL,
           reply_to: ADMIN_EMAIL,
-          to: [email.toLowerCase().trim()],
+          to: [verifiedEmail],
           subject: 'Recibimos tu solicitud para GlutenGo',
-          html: buildAutoReply({ nombre, tipo, plan: selectedPlan, mensaje }),
+          html: buildAutoReply({ nombre: cleanNombre, tipo: cleanTipo, plan: selectedPlan, mensaje: cleanMensaje }),
         }),
       });
       results.replied = replyRes.ok;
@@ -365,6 +453,6 @@ exports.handler = async function (event) {
   return {
     statusCode: 200,
     headers: corsHeaders,
-    body: JSON.stringify({ ok: true, plan: selectedPlan, mp_link, ...results }),
+    body: JSON.stringify({ ok: true, plan: selectedPlan, email: verifiedEmail, mp_link, ...results }),
   };
 };
