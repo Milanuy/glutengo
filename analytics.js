@@ -66,6 +66,7 @@
   function sourceFromHost(host) {
     var clean = String(host || '').replace(/^www\./, '').toLowerCase();
     if (!clean) return { type: 'direct', name: 'Directo' };
+    if (/wa\.me|whatsapp/.test(clean)) return { type: 'share', name: 'WhatsApp' };
     if (/instagram|facebook|tiktok|linkedin|twitter|x\.com/.test(clean)) return { type: 'social', name: clean };
     if (/google|bing|yahoo|duckduckgo/.test(clean)) return { type: 'search', name: clean };
     if (sameSite(clean)) return { type: 'internal', name: 'GlutenGo' };
@@ -186,8 +187,39 @@
     click: function(target, metadata) {
       var meta = Object.assign({ target: target || '' }, metadata || {});
       track('cta_click', { metadata: meta });
+    },
+    outbound: function(target, metadata) {
+      var meta = Object.assign({ target: target || '' }, metadata || {});
+      track('outbound_click', { metadata: meta });
     }
   };
+
+  function outboundTargetFromHref(href) {
+    if (!href) return '';
+    if (/^mailto:/i.test(href)) return 'email';
+    if (/^tel:/i.test(href)) return 'phone';
+    try {
+      var url = new URL(href, location.href);
+      var host = url.hostname.replace(/^www\./, '').toLowerCase();
+      if (/wa\.me|whatsapp\.com/.test(host)) return 'whatsapp';
+      if (/instagram\.com/.test(host)) return 'instagram';
+      return '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  function outboundHostFromHref(href) {
+    try {
+      return new URL(href, location.href).hostname.replace(/^www\./, '').toLowerCase();
+    } catch (_) {
+      return '';
+    }
+  }
+
+  function compactLinkText(el) {
+    return cleanText((el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' '), 120);
+  }
 
   document.addEventListener('DOMContentLoaded', function() {
     if (document.documentElement.dataset.analyticsAuto === 'off') return;
@@ -196,4 +228,29 @@
       metadata: { title: document.title || '' }
     });
   });
+
+  document.addEventListener('click', function(e) {
+    var anchor = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!anchor) return;
+    if (
+      anchor.hasAttribute('data-no-auto-analytics') ||
+      anchor.hasAttribute('data-detail-analytics') ||
+      anchor.hasAttribute('data-upgrade-track') ||
+      anchor.hasAttribute('data-analytics-event')
+    ) return;
+
+    var href = anchor.getAttribute('href') || '';
+    var target = anchor.getAttribute('data-analytics-target') || outboundTargetFromHref(href);
+    if (!target) return;
+    track('outbound_click', {
+      page: document.body && document.body.dataset ? document.body.dataset.page || '' : '',
+      slug: anchor.getAttribute('data-analytics-slug') || '',
+      metadata: {
+        target: target,
+        source: anchor.getAttribute('data-outbound-source') || anchor.getAttribute('data-analytics-source') || 'auto-link',
+        destination_host: outboundHostFromHref(href),
+        link_text: compactLinkText(anchor)
+      }
+    });
+  }, true);
 })();

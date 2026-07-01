@@ -304,12 +304,65 @@ function sourceTypeLabel(type) {
   const labels = {
     campaign: 'Campañas UTM',
     social: 'Redes sociales',
+    share: 'Compartidos / mensajería',
+    whatsapp: 'WhatsApp / mensajería',
+    message: 'Mensajería',
     search: 'Buscadores',
     referral: 'Sitios externos',
     direct: 'Directo / sin referencia',
     internal: 'Navegación interna',
   };
   return labels[type] || type || 'Sin dato';
+}
+
+function friendlySourceName(value) {
+  const raw = text(value, 120);
+  const clean = raw.replace(/^www\./, '').toLowerCase();
+  if (!clean) return '';
+  if (/wa\.me|whatsapp/.test(clean)) return 'WhatsApp';
+  if (/instagram|l\.instagram/.test(clean) || clean === 'ig') return 'Instagram';
+  if (/facebook|fb\.com|lm\.facebook/.test(clean)) return 'Facebook';
+  if (/tiktok/.test(clean)) return 'TikTok';
+  if (/linkedin/.test(clean)) return 'LinkedIn';
+  if (/twitter|x\.com/.test(clean)) return 'X / Twitter';
+  if (/google/.test(clean)) return 'Google';
+  if (/bing/.test(clean)) return 'Bing';
+  if (/glutengo/.test(clean)) return 'GlutenGo';
+  return raw;
+}
+
+function friendlyMedium(value) {
+  const clean = text(value, 80).toLowerCase();
+  const labels = {
+    social: 'social',
+    share: 'compartido',
+    shared: 'compartido',
+    whatsapp: 'WhatsApp',
+    message: 'mensaje',
+    direct: 'directo',
+    bio: 'bio',
+    story: 'historia',
+    post: 'post',
+    cpc: 'pago',
+    paid: 'pago',
+    organic: 'orgánico',
+    email: 'email',
+  };
+  return labels[clean] || value;
+}
+
+function sourceLabelFromParts(source, medium) {
+  const name = friendlySourceName(source) || text(source, 80);
+  const med = friendlyMedium(medium);
+  return name + (med ? ' / ' + med : '');
+}
+
+function sourceTypeFromParts(source, medium) {
+  const raw = [source, medium].join(' ').toLowerCase();
+  if (/whatsapp|wa\.me/.test(raw)) return 'share';
+  if (/instagram|facebook|tiktok|linkedin|twitter|x\.com/.test(raw)) return 'social';
+  if (/share|message|mensaje/.test(raw)) return 'share';
+  return text(medium, 80) || 'campaign';
 }
 
 function sourceFromRow(row, meta) {
@@ -321,20 +374,38 @@ function sourceFromRow(row, meta) {
 
   if (utmSource) {
     return {
-      type: utmMedium || 'campaign',
-      label: utmSource + (utmMedium ? ' / ' + utmMedium : ''),
+      type: sourceTypeFromParts(utmSource, utmMedium),
+      label: sourceLabelFromParts(utmSource, utmMedium),
     };
   }
   if (sourceName && sourceName !== 'Directo' && sourceName !== 'GlutenGo') {
-    return { type: sourceType || 'referral', label: sourceName };
+    return { type: sourceType || 'referral', label: friendlySourceName(sourceName) || sourceName };
   }
   if (refHost) {
-    if (/instagram|facebook|tiktok|linkedin|twitter|x\.com/.test(refHost)) return { type: 'social', label: refHost };
-    if (/google|bing|yahoo|duckduckgo/.test(refHost)) return { type: 'search', label: refHost };
+    if (/wa\.me|whatsapp/.test(refHost)) return { type: 'share', label: 'WhatsApp' };
+    if (/instagram|facebook|tiktok|linkedin|twitter|x\.com/.test(refHost)) return { type: 'social', label: friendlySourceName(refHost) || refHost };
+    if (/google|bing|yahoo|duckduckgo/.test(refHost)) return { type: 'search', label: friendlySourceName(refHost) || refHost };
     if (/glutengo\.com\.uy|glutengo\.netlify\.app/.test(refHost)) return { type: 'internal', label: 'GlutenGo' };
-    return { type: 'referral', label: refHost };
+    return { type: 'referral', label: friendlySourceName(refHost) || refHost };
   }
   return { type: 'direct', label: 'Directo / sin referencia' };
+}
+
+function sourcePlatform(row, meta, source) {
+  const raw = [
+    meta.utm_source,
+    meta.utm_medium,
+    meta.source_name,
+    meta.referrer_host,
+    row.referrer,
+    source && source.label,
+    source && source.type,
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (/wa\.me|whatsapp/.test(raw)) return 'whatsapp';
+  if (/instagram|l\.instagram|ig\b/.test(raw)) return 'instagram';
+  if (/facebook|fb\.com|lm\.facebook/.test(raw)) return 'facebook';
+  if (/tiktok/.test(raw)) return 'tiktok';
+  return '';
 }
 
 function locationFromMeta(meta) {
@@ -351,7 +422,7 @@ function campaignFromMeta(meta) {
   if (!campaign) return '';
   const source = text(meta.utm_source, 80);
   const medium = text(meta.utm_medium, 80);
-  return campaign + (source ? ' · ' + source : '') + (medium ? ' / ' + medium : '');
+  return campaign + (source ? ' · ' + friendlySourceName(source) : '') + (medium ? ' / ' + friendlyMedium(medium) : '');
 }
 
 function pathLabel(row, meta) {
@@ -443,6 +514,11 @@ function summarize(rows, range, filters) {
     mpClicks: 0,
     ratingSubmits: 0,
     placeReports: 0,
+    instagramVisits: 0,
+    whatsappVisits: 0,
+    socialVisits: 0,
+    instagramClicks: 0,
+    whatsappClicks: 0,
     todayViews: 0,
     uniqueSessions: 0,
   };
@@ -498,6 +574,10 @@ function summarize(rows, range, filters) {
         countedSourceSessions.add(sessionKey);
         addCount(trafficSources, source.label);
         addCount(sourceTypes, sourceTypeLabel(source.type));
+        const platform = sourcePlatform(row, meta, source);
+        if (source.type === 'social') totals.socialVisits += 1;
+        if (platform === 'instagram') totals.instagramVisits += 1;
+        if (platform === 'whatsapp') totals.whatsappVisits += 1;
       }
       if (!countedLocationSessions.has(sessionKey)) {
         countedLocationSessions.add(sessionKey);
@@ -519,6 +599,8 @@ function summarize(rows, range, filters) {
       totals.outboundClicks += 1;
       daily[date].clicks += 1;
       addCount(clicks, meta.target || 'click externo');
+      if (meta.target === 'whatsapp') totals.whatsappClicks += 1;
+      if (meta.target === 'instagram') totals.instagramClicks += 1;
       const place = ensurePlace(placeStats, row, meta);
       if (place) {
         place.contactClicks += 1;

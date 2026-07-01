@@ -227,6 +227,12 @@
       border-radius:999px;padding:.18rem .48rem;color:#111827;font-size:.72rem;
       max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
     }
+    .social-link-kit{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem;margin:.9rem 0 1rem}
+    .social-link-card{border:1px solid var(--border);border-radius:14px;background:#fff;padding:.85rem .95rem;display:grid;gap:.42rem}
+    .social-link-card b{color:var(--green-deep);font-size:.82rem}
+    .social-link-card p{color:var(--gray);font-size:.75rem;line-height:1.42}
+    .social-link-card code{display:block;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.5rem .55rem;white-space:normal;word-break:break-all;color:#374151;font-size:.7rem;font-weight:800}
+    .social-link-card button{justify-self:start}
     .social-method{
       display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.7rem;margin:.7rem 0 1rem;
     }
@@ -676,6 +682,10 @@
         <div class="analytics-card"><strong id="a-clicks">—</strong><span>clics medidos</span></div>
         <div class="analytics-card"><strong id="a-forms">—</strong><span>solicitudes enviadas</span></div>
         <div class="analytics-card"><strong id="a-ratings">—</strong><span>valoraciones nuevas</span></div>
+        <div class="analytics-card"><strong id="a-instagram-visits">—</strong><span>visitas desde Instagram</span></div>
+        <div class="analytics-card"><strong id="a-whatsapp-visits">—</strong><span>visitas desde WhatsApp</span></div>
+        <div class="analytics-card"><strong id="a-instagram-clicks">—</strong><span>clics a Instagram</span></div>
+        <div class="analytics-card"><strong id="a-whatsapp-clicks">—</strong><span>clics a WhatsApp</span></div>
       </div>
       <div id="analytics-status" class="analytics-status">Cargando métricas…</div>
       <div class="analytics-help-grid">
@@ -848,6 +858,9 @@
           <a class="btn-sm btn-expire" href="https://business.facebook.com/latest/insights" target="_blank" rel="noopener">Abrir Insights</a>
         </div>
       </div>
+      <div class="social-link-kit" id="social-link-kit">
+        <div class="analytics-row"><span>Cargando links medibles…</span><span></span></div>
+      </div>
       <div class="social-method">
         <div class="social-method-card">
           <b>Datos de Instagram</b>
@@ -855,7 +868,7 @@
         </div>
         <div class="social-method-card">
           <b>Datos de la web</b>
-          <p>GlutenGo ya mide entradas desde Instagram/Facebook cuando el navegador o los UTM lo informan. Eso aparece en Métricas → Origen de visitas.</p>
+          <p>GlutenGo mide entradas con UTM y clics reales hacia WhatsApp/Instagram. Usá los links de arriba para que admin sepa de dónde vino cada visita.</p>
         </div>
         <div class="social-method-card">
           <b>Automatización pendiente</b>
@@ -996,6 +1009,28 @@ var INSTAGRAM_PROFILE = {
   handle: 'glutengo.uy',
   url: 'https://www.instagram.com/glutengo.uy/',
   bioUrl: 'https://glutengo.com.uy/?utm_source=instagram&utm_medium=social&utm_campaign=perfil_instagram',
+};
+var SOCIAL_CAMPAIGN_LINKS = {
+  instagramBio: {
+    label: 'Instagram bio',
+    note: 'Dejalo fijo en el perfil para medir entradas desde la bio.',
+    url: 'https://glutengo.com.uy/?utm_source=instagram&utm_medium=social&utm_campaign=perfil_instagram'
+  },
+  instagramLaunch: {
+    label: 'Instagram post o story',
+    note: 'Usalo en historias, posteos o stickers de link del lanzamiento.',
+    url: 'https://glutengo.com.uy/?utm_source=instagram&utm_medium=social&utm_campaign=post_lanzamiento'
+  },
+  whatsappCommunity: {
+    label: 'WhatsApp comunidad',
+    note: 'Para compartir GlutenGo en grupos o conversaciones con usuarios.',
+    url: 'https://glutengo.com.uy/?utm_source=whatsapp&utm_medium=share&utm_campaign=comunidad_whatsapp'
+  },
+  whatsappBusinesses: {
+    label: 'WhatsApp locales',
+    note: 'Para mandar a negocios que quieran registrarse o contratar.',
+    url: 'https://glutengo.com.uy/negocios.html?utm_source=whatsapp&utm_medium=direct&utm_campaign=locales_whatsapp#form-registro'
+  }
 };
 var adminToken = '';
 var allBiz  = [];
@@ -1138,6 +1173,9 @@ var CHANNEL_LABELS_ES = {
   'ver-ficha': 'Ver ficha desde mapa',
   'whatsapp': 'WhatsApp',
   'instagram': 'Instagram',
+  'instagram-public': 'Instagram',
+  'email': 'Email',
+  'phone': 'Teléfono',
   'google-maps': 'Cómo llegar / mapa',
   'menu': 'Ver menú',
   'native-share': 'Compartir ficha',
@@ -1247,6 +1285,8 @@ function trafficSourceHint(label) {
   var raw = String(label || '').toLowerCase();
   if (!raw || raw === 'sin dato') return 'No llegó suficiente información del navegador.';
   if (raw.indexOf('directo') !== -1) return 'Escribieron la web, entraron desde favoritos, WhatsApp/app o el navegador ocultó la referencia.';
+  if (raw.indexOf('whatsapp') !== -1) return 'Entradas desde links compartidos por WhatsApp con UTM o referencia detectable.';
+  if (raw.indexOf('instagram') !== -1) return 'Entradas desde Instagram, idealmente usando el link de bio o links de campañas con UTM.';
   if (raw.indexOf('glutengo') !== -1) return 'Navegación interna entre páginas o fichas de GlutenGo.';
   if (raw.indexOf('facebook') !== -1 || raw.indexOf('instagram') !== -1 || raw.indexOf('tiktok') !== -1 || raw.indexOf('linkedin') !== -1) return 'Entradas desde redes sociales o links compartidos allí.';
   if (raw.indexOf('google') !== -1 || raw.indexOf('bing') !== -1 || raw.indexOf('duckduckgo') !== -1) return 'Entradas desde buscadores.';
@@ -1257,6 +1297,7 @@ function trafficSourceHint(label) {
 function sourceTypeHint(label) {
   var raw = String(label || '').toLowerCase();
   if (raw.indexOf('directo') !== -1) return 'No siempre significa que la persona escribió la URL; muchas apps no envían referencia.';
+  if (raw.indexOf('mensajería') !== -1 || raw.indexOf('whatsapp') !== -1 || raw.indexOf('compartido') !== -1) return 'Links compartidos por WhatsApp u otros canales de mensajería.';
   if (raw.indexOf('redes') !== -1) return 'Facebook, Instagram, TikTok, LinkedIn u otras redes detectadas.';
   if (raw.indexOf('buscador') !== -1) return 'Google, Bing u otros buscadores.';
   if (raw.indexOf('campaña') !== -1 || raw.indexOf('utm') !== -1) return 'Links etiquetados con UTM para medir acciones concretas.';
@@ -1624,7 +1665,7 @@ function renderAnalytics(data) {
     if (status) {
       status.innerHTML = '<div class="analytics-warning">Falta aplicar la migración <strong>0006_first_party_analytics.sql</strong> en Supabase. La web ya está preparada; cuando exista la tabla, las métricas empiezan a entrar.</div>';
     }
-    ['a-pageviews','a-placeviews','a-sessions','a-clicks','a-forms','a-ratings'].forEach(function(id){ setText(id, '—'); });
+    ['a-pageviews','a-placeviews','a-sessions','a-clicks','a-forms','a-ratings','a-instagram-visits','a-whatsapp-visits','a-instagram-clicks','a-whatsapp-clicks'].forEach(function(id){ setText(id, '—'); });
     analyticsPitch = '';
     analyticsPlaceStats = [];
     setText('analytics-sales-copy', 'Primero hay que aplicar la migración de Supabase para empezar a guardar visitas y clics.');
@@ -1653,6 +1694,10 @@ function renderAnalytics(data) {
   setText('a-clicks', fmtNum(clicks));
   setText('a-forms', fmtNum(t.businessForms));
   setText('a-ratings', fmtNum(t.ratingSubmits));
+  setText('a-instagram-visits', fmtNum(t.instagramVisits));
+  setText('a-whatsapp-visits', fmtNum(t.whatsappVisits));
+  setText('a-instagram-clicks', fmtNum(t.instagramClicks));
+  setText('a-whatsapp-clicks', fmtNum(t.whatsappClicks));
   document.getElementById('analytics-top-places').innerHTML = analyticsRowsHtml(data.topPlaces);
   document.getElementById('analytics-clicks').innerHTML = analyticsRowsHtml(data.clicks);
   document.getElementById('analytics-daily').innerHTML = analyticsDailyHtml(data.daily);
@@ -1720,6 +1765,7 @@ function setSocialDefaults() {
   if (handle) handle.textContent = '@' + INSTAGRAM_PROFILE.handle;
   if (link) link.href = INSTAGRAM_PROFILE.url;
   if (bio) bio.textContent = INSTAGRAM_PROFILE.bioUrl;
+  renderSocialCampaignLinks();
 }
 
 function cleanMetricNumber(value) {
@@ -1817,9 +1863,28 @@ function copySocialSummary() {
 }
 
 function copyInstagramBioLink() {
-  if (!navigator.clipboard) return showToast('No se pudo copiar en este navegador');
-  navigator.clipboard.writeText(INSTAGRAM_PROFILE.bioUrl).then(function() {
-    showToast('Link de bio copiado');
+  copySocialCampaignLink('instagramBio');
+}
+
+function renderSocialCampaignLinks() {
+  var target = document.getElementById('social-link-kit');
+  if (!target) return;
+  target.innerHTML = Object.keys(SOCIAL_CAMPAIGN_LINKS).map(function(key) {
+    var item = SOCIAL_CAMPAIGN_LINKS[key];
+    return '<article class="social-link-card">' +
+      '<b>' + esc(item.label) + '</b>' +
+      '<p>' + esc(item.note) + '</p>' +
+      '<code>' + esc(item.url) + '</code>' +
+      '<button class="btn-sm btn-approve" type="button" onclick="copySocialCampaignLink(\'' + esc(key) + '\')">Copiar link</button>' +
+    '</article>';
+  }).join('');
+}
+
+function copySocialCampaignLink(key) {
+  var item = SOCIAL_CAMPAIGN_LINKS[key] || SOCIAL_CAMPAIGN_LINKS.instagramBio;
+  if (!item || !navigator.clipboard) return showToast('No se pudo copiar en este navegador');
+  navigator.clipboard.writeText(item.url).then(function() {
+    showToast('Link medible copiado: ' + item.label);
   }).catch(function() {
     showToast('No se pudo copiar el link');
   });
