@@ -62,6 +62,25 @@ function missingAnalyticsTable(raw) {
   return /analytics_events|PGRST205|42P01|does not exist|schema cache/i.test(String(raw || ''));
 }
 
+function isInternalAnalyticsEvent(row, meta) {
+  const data = [
+    row && row.page,
+    row && row.path,
+    row && row.slug,
+    row && row.session_id,
+    row && row.referrer,
+    meta && meta.title,
+    meta && meta.source,
+    meta && meta.source_name,
+    meta && meta.landing_path,
+    meta && meta.utm_campaign,
+    meta && meta.utm_content,
+    meta && meta.target,
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  return /(^|\W)(codex|security-check|migration-check|localtest|qa-check|uy-tz-fix|count-check)(\W|$)|localhost|127\.0\.0\.1/.test(data);
+}
+
 function authToken(event) {
   const raw = event.headers.authorization || event.headers.Authorization || '';
   const match = String(raw).match(/^Bearer\s+(.+)$/i);
@@ -217,6 +236,7 @@ function summarize(rows, businesses, days) {
 
   rows.forEach((row) => {
     const meta = row.metadata || {};
+    if (isInternalAnalyticsEvent(row, meta)) return;
     const slug = row.slug || meta.slug || '';
     const report = bySlug[slug];
     if (!report) return;

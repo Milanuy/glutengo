@@ -122,6 +122,25 @@ function missingAnalyticsTable(raw) {
   return /analytics_events|PGRST205|42P01|does not exist|schema cache/i.test(String(raw || ''));
 }
 
+function isInternalAnalyticsEvent(row, meta) {
+  const data = [
+    row && row.page,
+    row && row.path,
+    row && row.slug,
+    row && row.session_id,
+    row && row.referrer,
+    meta && meta.title,
+    meta && meta.source,
+    meta && meta.source_name,
+    meta && meta.landing_path,
+    meta && meta.utm_campaign,
+    meta && meta.utm_content,
+    meta && meta.target,
+  ].filter(Boolean).join(' ').toLowerCase();
+
+  return /(^|\W)(codex|security-check|migration-check|localtest|qa-check|uy-tz-fix|count-check)(\W|$)|localhost|127\.0\.0\.1/.test(data);
+}
+
 function pad2(value) {
   return String(value).padStart(2, '0');
 }
@@ -456,6 +475,10 @@ function summarize(rows, range, filters) {
   rows.forEach((row) => {
     const type = row.event_type || '';
     const meta = row.metadata || {};
+    if (isInternalAnalyticsEvent(row, meta)) {
+      totals.internalEventsExcluded = (totals.internalEventsExcluded || 0) + 1;
+      return;
+    }
     if (!matchesNavigationFilter(row, meta, filters || {})) return;
     const date = dayKey(row.created_at);
     if (row.session_id) sessions.add(row.session_id);
