@@ -213,16 +213,16 @@
     <section class="hero">
       <div class="hero-main">
         <div class="kicker">Portal de locales</div>
-        <h1>Gestioná tu ficha en GlutenGo</h1>
-        <p>Actualizá datos, logo, fotos, menú y contacto. Los cambios quedan pendientes hasta que GlutenGo los revise y apruebe.</p>
+        <h1>Gestioná tu ficha</h1>
+        <p>En GlutenGo actualizás datos, logo, fotos, menú y contacto. Revisamos cada cambio antes de publicarlo.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#contratar">Contratar Verificado</a>
           <a class="btn btn-soft" href="/negocios.html#planes">Comparar planes</a>
         </div>
         <div class="status-grid">
-          <div class="status-card"><strong>1</strong><span>Entrás con Gmail</span></div>
+          <div class="status-card"><strong>1</strong><span>Entrás con Google</span></div>
           <div class="status-card"><strong>2</strong><span>Enviás cambios</span></div>
-          <div class="status-card"><strong>3</strong><span>GlutenGo aprueba</span></div>
+          <div class="status-card"><strong>3</strong><span>Revisamos y publicamos</span></div>
         </div>
       </div>
       <aside class="upgrade-card" id="contratar">
@@ -245,7 +245,7 @@
     </section>
 
     <section id="logged-out" class="login-card" data-auth="logged-out">
-      <h2>Entrá con el Gmail de tu solicitud</h2>
+      <h2>Entrá con el correo de tu solicitud</h2>
       <p style="margin:.4rem 0 1.2rem">Si tu local fue registrado con ese correo, vas a ver tus fichas para enviar cambios.</p>
       <button class="btn btn-primary" onclick="GlutenAuth.signInWithGoogle()">Entrar con Google</button>
     </section>
@@ -258,7 +258,7 @@
       </div>
 
       <div id="no-businesses" class="empty hidden">
-        No encontramos locales vinculados a este Gmail. Si todavía no registraste tu local, podés iniciar el alta desde
+        No encontramos locales vinculados a este correo. Si todavía no registraste tu local, podés iniciar el alta desde
         <a href="/negocios.html#form-registro">Planes para negocios</a> o contratar Verificado desde el botón superior.
         Si ya completaste la solicitud con otro correo, escribinos a <a href="mailto:hola@glutengo.com.uy">hola@glutengo.com.uy</a>.
       </div>
@@ -607,8 +607,8 @@
       document.getElementById('no-businesses').classList.toggle('hidden', has);
       document.getElementById('workspace').classList.toggle('hidden', !has);
       document.getElementById('owner-summary').textContent = has
-        ? 'Tenés ' + ownerState.businesses.length + ' local' + (ownerState.businesses.length === 1 ? '' : 'es') + ' vinculado' + (ownerState.businesses.length === 1 ? '' : 's') + ' a tu Gmail.'
-        : 'No encontramos locales vinculados a este Gmail.';
+        ? 'Tenés ' + ownerState.businesses.length + ' local' + (ownerState.businesses.length === 1 ? '' : 'es') + ' vinculado' + (ownerState.businesses.length === 1 ? '' : 's') + ' a tu correo.'
+        : 'No encontramos locales vinculados a este correo.';
       renderBusinessList();
       renderRequests();
       fillForm(selectedBusiness());
