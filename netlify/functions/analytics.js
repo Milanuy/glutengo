@@ -442,6 +442,7 @@ function summarize(rows, range, filters) {
     businessForms: 0,
     mpClicks: 0,
     ratingSubmits: 0,
+    placeReports: 0,
     todayViews: 0,
     uniqueSessions: 0,
   };
@@ -527,6 +528,10 @@ function summarize(rows, range, filters) {
       }
     }
     if (type === 'cta_click') {
+      if (meta.kind === 'place_report') {
+        totals.placeReports += 1;
+        return;
+      }
       totals.ctaClicks += 1;
       daily[date].clicks += 1;
       addCount(clicks, meta.target || 'cta');

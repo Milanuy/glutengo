@@ -261,6 +261,25 @@ function escapeHtml(value) {
   });
 }
 
+var FAVORITES_KEY = 'glutengo_favoritos_v1';
+
+function readFavoriteSlugs() {
+  try {
+    var parsed = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed.filter(Boolean).slice(0, 80) : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function favoritePlaces() {
+  var slugs = readFavoriteSlugs();
+  if (!slugs.length) return [];
+  var bySlug = {};
+  lugares.forEach(function(place) { bySlug[place.slug] = place; });
+  return slugs.map(function(slug) { return bySlug[slug]; }).filter(Boolean);
+}
+
 function trackAnalytics(eventType, options) {
   try {
     if (window.GlutenAnalytics && typeof window.GlutenAnalytics.track === 'function') {
@@ -377,6 +396,8 @@ function normalizePublicPlace(place) {
     sponsor: place.sponsor || {},
     benefits: place.benefits || {},
     source: place.source || 'admin',
+    created_at: place.created_at || '',
+    updated_at: place.updated_at || '',
   };
 }
 
@@ -816,7 +837,7 @@ function buildDir(filter, q){
   });
 
   if(!filtered.length){
-    grid.innerHTML = '<div id="dir-empty">' + emptyStateSvg() + '<p>Ningún lugar encontrado para ese filtro.</p></div>';
+    grid.innerHTML = directoryEmptyHtml(activeFilters, q);
     return;
   }
 
@@ -827,25 +848,81 @@ function buildDir(filter, q){
   var sponsorHtml = sponsorCardHtml(sponsor, sponsorFilter) || (!q ? availableSponsorCardHtml(sponsorFilter) : '');
 
   grid.innerHTML = sponsorHtml + filtered.map(function(l){
-    var iconColor = l.tipo === 'exclusivo' ? '#166534' : '#D97706';
-    var iconSvg   = getCatSVG(l.category, iconColor);
-    var visual = placeLogoHtml(l, 'dc-brand-logo') ||
-      '<span class="dc-category-icon">' + iconSvg + '</span>';
-    return '<a href="/lugar.html?slug='+encodeURIComponent(l.slug)+'" class="dir-card '+escapeHtml(l.tipo)+'" ' +
-      'data-analytics-event="place_card" data-analytics-source="directorio" ' +
-      'data-analytics-slug="' + escapeHtml(l.slug) + '" data-analytics-name="' + escapeHtml(l.name) + '" ' +
-      'data-analytics-tipo="' + escapeHtml(l.tipo) + '" data-analytics-category="' + escapeHtml(l.category) + '" ' +
-      contextAttrs + '>' +
-      '<div class="dc-header">' +
-        '<span class="dc-name" style="display:flex;align-items:center;gap:.4rem">' +
-          visual + escapeHtml(l.name) +
-        '</span>' +
-        '<span class="dc-badge '+escapeHtml(l.tipo)+'">'+(l.tipo==='exclusivo'?'100% GF':'Opciones SG')+'</span>' +
-      '</div>' +
-      '<div class="dc-meta"><span>'+escapeHtml(l.neighborhood)+'</span><span class="dc-sep">·</span><span>'+escapeHtml(formatCategory(l.category))+'</span></div>' +
-      '<p class="dc-desc">'+escapeHtml(l.desc)+'</p>' +
-      '<span class="dc-cta">Ver ficha <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>' +
-    '</a>';
+    return placeCardHtml(l, 'directorio', contextAttrs);
+  }).join('');
+}
+
+function placeCardHtml(l, source, extraAttrs) {
+  var iconColor = l.tipo === 'exclusivo' ? '#166534' : '#D97706';
+  var iconSvg   = getCatSVG(l.category, iconColor);
+  var visual = placeLogoHtml(l, 'dc-brand-logo') ||
+    '<span class="dc-category-icon">' + iconSvg + '</span>';
+  return '<a href="/lugar.html?slug='+encodeURIComponent(l.slug)+'" class="dir-card '+escapeHtml(l.tipo)+'" ' +
+    'data-analytics-event="place_card" data-analytics-source="' + escapeHtml(source || 'directorio') + '" ' +
+    'data-analytics-slug="' + escapeHtml(l.slug) + '" data-analytics-name="' + escapeHtml(l.name) + '" ' +
+    'data-analytics-tipo="' + escapeHtml(l.tipo) + '" data-analytics-category="' + escapeHtml(l.category) + '" ' +
+    (extraAttrs || '') + '>' +
+    '<div class="dc-header">' +
+      '<span class="dc-name" style="display:flex;align-items:center;gap:.4rem">' +
+        visual + escapeHtml(l.name) +
+      '</span>' +
+      '<span class="dc-badge '+escapeHtml(l.tipo)+'">'+(l.tipo==='exclusivo'?'100% GF':'Opciones SG')+'</span>' +
+    '</div>' +
+    '<div class="dc-meta"><span>'+escapeHtml(l.neighborhood)+'</span><span class="dc-sep">·</span><span>'+escapeHtml(formatCategory(l.category))+'</span></div>' +
+    '<p class="dc-desc">'+escapeHtml(l.desc)+'</p>' +
+    '<span class="dc-cta">Ver ficha <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></span>' +
+  '</a>';
+}
+
+function activeFilterText(filters, q) {
+  var labels = [];
+  ['offer', 'category', 'moment', 'zone', 'department'].forEach(function(key) {
+    if (filters[key] && filters[key] !== 'todos') labels.push(filterInterestLabel(filters[key]));
+  });
+  if (q) labels.push('"' + q + '"');
+  return labels.length ? labels.join(' + ') : 'esta búsqueda';
+}
+
+function fallbackPlaces(filters, q) {
+  var relaxed = Object.assign({}, filters);
+  var attempts = [];
+  if (relaxed.offer === 'exclusivo') {
+    attempts.push(Object.assign({}, relaxed, { offer: 'mixto' }));
+  }
+  if (relaxed.zone !== 'todos') attempts.push(Object.assign({}, relaxed, { zone: 'todos' }));
+  if (relaxed.department !== 'todos') attempts.push(Object.assign({}, relaxed, { department: 'todos' }));
+  attempts.push(Object.assign(defaultDirFilters(), { category: relaxed.category, moment: relaxed.moment }));
+  attempts.push(defaultDirFilters());
+
+  for (var i = 0; i < attempts.length; i++) {
+    var found = lugares.filter(function(l) {
+      if (q && (
+        l.name.toLowerCase().indexOf(q) === -1 &&
+        l.neighborhood.toLowerCase().indexOf(q) === -1 &&
+        l.desc.toLowerCase().indexOf(q) === -1 &&
+        formatCategory(l.category).toLowerCase().indexOf(q) === -1
+      )) return false;
+      return matchesDirFilters(l, attempts[i]);
+    });
+    if (found.length) return sortPlacesForDisplay(found).slice(0, 3);
+  }
+  return [];
+}
+
+function directoryEmptyHtml(filters, q) {
+  var suggestions = fallbackPlaces(filters, q);
+  var html = '<div id="dir-empty">' +
+    emptyStateSvg('#D97706') +
+    '<h3>No encontramos resultados para ' + escapeHtml(activeFilterText(filters, q)) + '</h3>' +
+    '<p>Podés relajar el filtro o mirar alternativas cercanas. La guía crece con reportes de la comunidad y altas de locales.</p>' +
+    '<div class="empty-actions">' +
+      '<button type="button" class="empty-action" onclick="clearDirFilters()">Ver todos</button>' +
+      (filters.offer === 'exclusivo' ? "<button type=\"button\" class=\"empty-action ghost\" onclick=\"applyDirPreset('mixto')\">Ver Opciones SG</button>" : '') +
+    '</div>' +
+  '</div>';
+  if (!suggestions.length) return html;
+  return html + suggestions.map(function(l) {
+    return placeCardHtml(l, 'directorio-sugerencias', '');
   }).join('');
 }
 
@@ -888,10 +965,70 @@ function filterDir(){
   }
 }
 
+function clearDirFilters() {
+  dirFilters = defaultDirFilters();
+  dirFilter = 'todos';
+  searchTerm = '';
+  var input = document.getElementById('hero-search');
+  if (input) input.value = '';
+  updateDirChipState();
+  buildDir(dirFilters, searchTerm);
+  trackAnalytics('filter_use', {
+    page: 'home',
+    metadata: { source: 'empty-state', target: 'clear-filters', label: 'Ver todos' }
+  });
+}
+
+function applyDirPreset(filter) {
+  dirFilters = defaultDirFilters();
+  if (filter && filter !== 'todos') dirFilters[dirFilterGroup(filter)] = filter;
+  dirFilter = sponsorFilterFromDirFilters(dirFilters);
+  updateDirChipState();
+  buildDir(dirFilters, searchTerm);
+  trackAnalytics('filter_use', {
+    page: 'home',
+    metadata: Object.assign({ source: 'empty-state' }, filterInterestMeta(filter))
+  });
+}
+
 function scrollToDir(e){
   if(e.key === 'Enter'){
     document.getElementById('directorio').scrollIntoView({behavior:'smooth'});
   }
+}
+
+function buildFavorites() {
+  var section = document.getElementById('favoritos-section');
+  var grid = document.getElementById('favoritos-grid');
+  if (!section || !grid) return;
+  var favs = favoritePlaces();
+  if (!favs.length) {
+    section.hidden = true;
+    grid.innerHTML = '';
+    return;
+  }
+  section.hidden = false;
+  grid.innerHTML = favs.slice(0, 6).map(function(l) {
+    return placeCardHtml(l, 'favoritos', '');
+  }).join('');
+}
+
+function buildNewPlaces() {
+  var grid = document.getElementById('nuevos-grid');
+  if (!grid) return;
+  var withDates = lugares.filter(function(l) { return l.created_at || l.updated_at; });
+  var list = (withDates.length ? withDates : lugares.slice(-10))
+    .slice()
+    .sort(function(a, b) {
+      var ad = Date.parse(a.created_at || a.updated_at || '') || 0;
+      var bd = Date.parse(b.created_at || b.updated_at || '') || 0;
+      if (ad || bd) return bd - ad;
+      return 0;
+    });
+  if (!withDates.length) list = lugares.slice(-10).reverse();
+  grid.innerHTML = list.slice(0, 6).map(function(l) {
+    return placeCardHtml(l, 'nuevos', '');
+  }).join('');
 }
 
 // ────────────────────────────────────────────────────
@@ -904,6 +1041,8 @@ function initApp() {
     try { updateStats(); } catch(e){ console.error('Stats error:', e); }
     try { initMap(); } catch(e){ console.error('Map error:', e); }
     try { buildRail(); } catch(e){ console.error('Rail error:', e); }
+    try { buildFavorites(); } catch(e){ console.error('Favorites error:', e); }
+    try { buildNewPlaces(); } catch(e){ console.error('New places error:', e); }
     try { buildDir(dirFilters,''); updateDirChipState(); } catch(e){ console.error('Dir error:', e); }
   } else {
     console.error('data.js no cargó o lugares está vacío');

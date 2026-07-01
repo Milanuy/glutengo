@@ -503,7 +503,26 @@
     #dir-empty{
       grid-column:1/-1;text-align:center;
       padding:3rem 1rem;color:var(--gray);
+      background:#fff;border:1px dashed var(--border);
+      border-radius:16px;box-shadow:0 5px 18px rgba(17,24,39,.035);
     }
+    #dir-empty h3{font-size:1.08rem;color:var(--green-deep);margin:.65rem 0 .35rem}
+    #dir-empty p{max-width:520px;margin:0 auto;color:var(--gray);font-size:.9rem;line-height:1.55}
+    .empty-actions{display:flex;gap:.55rem;justify-content:center;flex-wrap:wrap;margin-top:1rem}
+    .empty-action{
+      border:0;border-radius:999px;background:var(--green-deep);color:#fff;
+      padding:.62rem 1rem;font-weight:900;font-family:inherit;cursor:pointer;
+    }
+    .empty-action.ghost{background:var(--green-light);color:var(--green-deep)}
+
+    .user-list-section{
+      background:var(--cream);
+      padding:2.2rem 1.25rem .6rem;
+    }
+    .user-list-section[hidden]{display:none}
+    .user-list-section + .user-list-section{padding-top:1.3rem}
+    .compact-grid{max-width:980px}
+    .compact-grid .dir-card{min-height:0}
 
     /* ─── CÓMO FUNCIONA ──────────────────────────────────────── */
     .how-section{background:#fff}
@@ -793,6 +812,26 @@
     </div>
   </section>
 
+  <!-- ── FAVORITOS DEL USUARIO ─────────────────────────────────── -->
+  <section class="user-list-section" id="favoritos-section" hidden>
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-label">Guardados</span>
+      <h2 class="section-title">Tus favoritos</h2>
+      <p class="section-sub">Locales que guardaste en este dispositivo para volver rápido.</p>
+    </div>
+    <div class="dir-grid compact-grid" id="favoritos-grid"></div>
+  </section>
+
+  <!-- ── NUEVOS EN GLUTENGO ────────────────────────────────────── -->
+  <section class="user-list-section" id="nuevos">
+    <div class="section-header" data-aos="fade-up">
+      <span class="section-label">Nuevos en GlutenGo</span>
+      <h2 class="section-title">Últimos lugares sumados</h2>
+      <p class="section-sub">Opciones recientes para descubrir, revisar y ayudar a mantener actualizadas.</p>
+    </div>
+    <div class="dir-grid compact-grid" id="nuevos-grid"></div>
+  </section>
+
   <!-- ── GUÍA DE LUGARES ──────────────────────────────────────── -->
   <section class="section dir-section" id="directorio">
     <div class="section-header" data-aos="fade-up">
@@ -1042,9 +1081,9 @@
   <!-- ── DATA + SCRIPTS ────────────────────────────────────────── -->
   <script src="/data.js?v=2.8"></script>
   <script src="/analytics.js?v=1.0"></script>
-  <script src="/app.js?v=3.4"></script>
+  <script src="/app.js?v=3.5"></script>
   <script src="/auth.js?v=2.1"></script>
-  <script src="/business-cta.js?v=2.3"></script>
+  <script src="/business-cta.js?v=2.5"></script>
 
 </body>
 </html>

@@ -6,6 +6,13 @@
 
   if (location.pathname.indexOf('negocios.html') !== -1) return;
 
+  var isPlacePage = location.pathname.indexOf('lugar.html') !== -1;
+  if (isPlacePage) return;
+
+  var isHomePage = location.pathname === '/' ||
+    location.pathname.endsWith('/index.html') ||
+    location.pathname === '';
+
   function read(key) {
     try { return localStorage.getItem(key); } catch (_) { return null; }
   }
@@ -175,16 +182,18 @@
     analyticsTarget: 'registrar-local-flotante'
   });
 
-  wireCard({
-    create: createVisibilityCard,
-    dismissKey: VISIBILITY_DISMISS_KEY,
-    sessionKey: VISIBILITY_SESSION_KEY,
-    delay: 6200,
-    seenDelay: 9000,
-    compactDelay: 3400,
-    compactSeenDelay: 5200,
-    scrollY: 760,
-    compactScrollY: 420,
-    analyticsTarget: 'banner-flotante-disponible'
-  });
+  if (isHomePage && !isPlacePage) {
+    wireCard({
+      create: createVisibilityCard,
+      dismissKey: VISIBILITY_DISMISS_KEY,
+      sessionKey: VISIBILITY_SESSION_KEY,
+      delay: 6200,
+      seenDelay: 9000,
+      compactDelay: 3400,
+      compactSeenDelay: 5200,
+      scrollY: 760,
+      compactScrollY: 420,
+      analyticsTarget: 'banner-flotante-disponible'
+    });
+  }
 })();

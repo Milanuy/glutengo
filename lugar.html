@@ -100,6 +100,37 @@
       font-size:.82rem;line-height:1.5;
     }
     .source-alert strong{color:#fff}
+    .hero-actions{
+      display:flex;gap:.55rem;flex-wrap:wrap;margin-top:1rem;
+    }
+    .hero-action{
+      border:1px solid rgba(255,255,255,.22);
+      background:rgba(255,255,255,.1);
+      color:#fff;text-decoration:none;border-radius:999px;
+      padding:.55rem .82rem;font-weight:800;font-size:.84rem;
+      display:inline-flex;align-items:center;gap:.4rem;
+      cursor:pointer;font-family:inherit;
+    }
+    .hero-action.primary{background:var(--amber);border-color:var(--amber);color:var(--green-deep)}
+    .hero-action.saved{background:#fff;color:var(--green-deep)}
+    .quick-facts{
+      max-width:900px;margin:1rem 0 0;
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.55rem;
+    }
+    .quick-fact{
+      background:rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:12px;padding:.65rem .7rem;
+    }
+    .quick-fact b{
+      display:block;color:rgba(255,255,255,.62);
+      text-transform:uppercase;letter-spacing:.08em;font-size:.62rem;margin-bottom:.14rem;
+    }
+    .quick-fact span{display:flex;align-items:center;gap:.35rem;color:#fff;font-size:.83rem;font-weight:800}
+    @media(max-width:760px){
+      .quick-facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .hero-action{font-size:.8rem}
+    }
 
     /* SCORE */
     .score-card{
@@ -254,6 +285,22 @@
       color:#374151;transition:border-color .15s;
     }
     .share-btn:hover{border-color:var(--green);color:var(--green)}
+    .trust-list{display:grid;gap:.55rem;margin-top:.7rem}
+    .trust-item{
+      display:flex;align-items:flex-start;gap:.55rem;
+      border:1px solid #E5E7EB;background:#FAFAFA;
+      border-radius:12px;padding:.68rem .75rem;
+    }
+    .trust-item svg{width:17px;height:17px;color:var(--green);margin-top:.08rem;flex:0 0 auto}
+    .trust-item strong{display:block;color:var(--green-deep);font-size:.86rem}
+    .trust-item span{display:block;color:var(--gray);font-size:.8rem;line-height:1.4}
+    .report-form{display:grid;gap:.7rem}
+    .report-form select,.report-form textarea{
+      width:100%;border:1.5px solid #E5E7EB;border-radius:10px;
+      padding:.72rem .82rem;font:inherit;font-size:.9rem;background:#fff;color:#111827;
+    }
+    .report-form textarea{min-height:86px;resize:vertical}
+    .report-help{font-size:.78rem;color:var(--gray);line-height:1.45}
 
     /* RATING PANEL */
     .rating-panel{
@@ -310,6 +357,17 @@
       width:28px;height:28px;border:0;border-radius:999px;background:#E5E7EB;color:#334155;
       display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
     }
+    .rating-tags{
+      display:flex;gap:.45rem;flex-wrap:wrap;justify-content:center;margin:.8rem 0;
+    }
+    .rating-tag{
+      border:1.5px solid #D1D5DB;background:#fff;color:var(--green-deep);
+      border-radius:999px;padding:.42rem .68rem;font-size:.78rem;font-weight:800;
+      cursor:pointer;font-family:inherit;
+    }
+    .rating-tag.active{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+    .review-tags{display:flex;gap:.35rem;flex-wrap:wrap;margin:.45rem 0 0}
+    .review-tag{background:#F0FDF4;color:#166534;border-radius:999px;padding:.18rem .5rem;font-size:.72rem;font-weight:800}
     .review-photo{
       display:block;width:100%;max-height:190px;object-fit:cover;border-radius:12px;
       margin-top:.65rem;border:1px solid #E5E7EB;background:#F8FAFC;
@@ -380,7 +438,7 @@
   <script src="/data.js?v=2.8"></script>
   <script src="/auth.js?v=2.1"></script>
   <script src="/analytics.js?v=1.0"></script>
-  <script src="/business-cta.js?v=2.3"></script>
+  <script src="/business-cta.js?v=2.5"></script>
   <script>
   (async function(){
     function escapeHtml(value) {
@@ -405,6 +463,46 @@
 
     function isImageUrl(value) {
       return /\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(String(value || '').trim());
+    }
+
+    const FAVORITES_KEY = 'glutengo_favoritos_v1';
+
+    function readFavoriteSlugs() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed.filter(Boolean).slice(0, 80) : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function writeFavoriteSlugs(slugs) {
+      try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(slugs.slice(0, 80))); } catch (_) {}
+    }
+
+    function isFavorite(slugValue) {
+      return readFavoriteSlugs().indexOf(slugValue) !== -1;
+    }
+
+    function formatDateLabel(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return 'A confirmar';
+      const date = new Date(raw);
+      if (!Number.isFinite(date.getTime())) return 'A confirmar';
+      return date.toLocaleDateString('es-UY', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function sourceLabel(lugar) {
+      const plan = String((lugar && lugar.plan) || 'basico').toLowerCase();
+      const source = String((lugar && lugar.source) || '').toLowerCase();
+      if (plan === 'certificado') return 'Revisado por GlutenGo';
+      if (plan === 'verificado') return 'Actualizado por el local';
+      if (source === 'admin' || source === 'owner') return 'Revisado en admin';
+      return 'Fuente pública/comunidad';
+    }
+
+    function offerLabel(lugar) {
+      return lugar && lugar.tipo === 'exclusivo' ? '100% GF' : 'Opciones SG';
     }
 
     function trackDetail(eventType, metadata) {
@@ -526,6 +624,8 @@
         featuredPlacement: place.featuredPlacement || 'none',
         benefits: place.benefits || {},
         source: place.source || 'admin',
+        created_at: place.created_at || '',
+        updated_at: place.updated_at || '',
       };
     }
 
@@ -676,13 +776,23 @@
         </div>`;
     const menuSectionHtml = `
         <!-- MENÚ -->
-        <div class="card menu-card">
+        <div class="card menu-card" id="menu-card">
           <h2>
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
             Menú y opciones
           </h2>
           ${menuBodyHtml}
         </div>`;
+
+    const updatedLabel = formatDateLabel(lugar.updated_at || lugar.created_at);
+    const sourceText = sourceLabel(lugar);
+    const menuHeroAction = menuUrl
+      ? `<a class="hero-action primary" href="#menu-card">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+          Ver menú
+        </a>`
+      : '';
+    const favoriteActive = isFavorite(lugar.slug);
 
     const mapSectionHtml = hasCoords ? `
         <!-- MAPA -->
@@ -720,6 +830,19 @@
             ${categoryIcon(lugar.category)}
             ${formatCategory(lugar.category)}
           </span>
+        </div>
+        <div class="hero-actions">
+          <button type="button" id="favorite-btn" class="hero-action ${favoriteActive ? 'saved' : ''}" onclick="toggleFavorite()">
+            ${favoriteActive ? 'Guardado' : 'Guardar'}
+          </button>
+          ${menuHeroAction}
+          <a class="hero-action" href="#reportar-datos">Reportar dato incorrecto</a>
+        </div>
+        <div class="quick-facts">
+          <div class="quick-fact"><b>Oferta</b><span>${offerLabel(lugar)}</span></div>
+          <div class="quick-fact"><b>Zona</b><span>${escapeHtml(lugar.neighborhood || 'A confirmar')}</span></div>
+          <div class="quick-fact"><b>Categoría</b><span>${categoryIcon(lugar.category)} ${formatCategory(lugar.category)}</span></div>
+          <div class="quick-fact"><b>Actualización</b><span>${updatedLabel}</span></div>
         </div>
         <div class="source-alert">
           <strong>Información pública y comunitaria:</strong> GlutenGo es un puente informativo, no una recomendación médica ni una garantía del local. Confirmá siempre horarios, disponibilidad, ingredientes y protocolo sin gluten antes de consumir, especialmente si hay riesgo de contaminación cruzada.
@@ -778,6 +901,46 @@
         ${mapSectionHtml}
 
         ${contactSectionHtml}
+
+        <!-- TRANSPARENCIA -->
+        <div class="card">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.4 8.5-8 9-4.6-.5-8-4-8-9V7l8-4z"/><path d="M9 12l2 2 4-5"/></svg>
+            Cómo leer esta ficha
+          </h2>
+          <div class="trust-list">
+            <div class="trust-item">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01"/><circle cx="12" cy="12" r="9"/></svg>
+              <div><strong>${sourceText}</strong><span>La información puede venir de fuentes públicas, comunidad, locales o revisión interna.</span></div>
+            </div>
+            <div class="trust-item">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+              <div><strong>Confirmá antes de ir</strong><span>Menú, horarios, disponibilidad y protocolo pueden cambiar sin aviso.</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REPORTAR DATO -->
+        <div class="card" id="reportar-datos">
+          <h2>
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+            Reportar dato incorrecto
+          </h2>
+          <form class="report-form" id="place-report-form" onsubmit="submitPlaceReport(event)">
+            <select id="report-issue" aria-label="Dato a revisar">
+              <option value="menu">Menú u opciones sin gluten incorrectas</option>
+              <option value="ubicacion">Ubicación o dirección incorrecta</option>
+              <option value="horarios">Horarios incorrectos</option>
+              <option value="contacto">Contacto incorrecto</option>
+              <option value="cerrado">El local cerró o no existe</option>
+              <option value="seguridad">Duda de protocolo o contaminación cruzada</option>
+              <option value="otro">Otro dato a revisar</option>
+            </select>
+            <textarea id="report-message" maxlength="700" placeholder="Contanos brevemente qué habría que revisar."></textarea>
+            <p class="report-help">Para evitar spam, te pedimos entrar con Google antes de enviar el reporte. No publicamos tu correo.</p>
+            <button class="btn-rate" id="btn-place-report" type="submit">Enviar reporte a GlutenGo</button>
+          </form>
+        </div>
 
         <!-- COMPARTIR -->
         <div class="card">
@@ -850,6 +1013,67 @@
       });
     };
 
+    window.toggleFavorite = function() {
+      const current = readFavoriteSlugs();
+      const idx = current.indexOf(lugar.slug);
+      const btn = document.getElementById('favorite-btn');
+      if (idx === -1) {
+        current.unshift(lugar.slug);
+        writeFavoriteSlugs(current);
+        if (btn) { btn.classList.add('saved'); btn.textContent = 'Guardado'; }
+        showToast('Guardado en tus favoritos');
+        trackDetail('cta_click', { target: 'favorite-add' });
+      } else {
+        current.splice(idx, 1);
+        writeFavoriteSlugs(current);
+        if (btn) { btn.classList.remove('saved'); btn.textContent = 'Guardar'; }
+        showToast('Quitado de favoritos');
+        trackDetail('cta_click', { target: 'favorite-remove' });
+      }
+    };
+
+    window.submitPlaceReport = function(event) {
+      if (event) event.preventDefault();
+      const btn = document.getElementById('btn-place-report');
+      const issue = (document.getElementById('report-issue') || {}).value || 'otro';
+      const message = ((document.getElementById('report-message') || {}).value || '').trim();
+      if (message.length < 6) {
+        showToast('Contanos qué dato hay que revisar', true);
+        return;
+      }
+      if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
+      window.GlutenAuth.getSession().then(function(session) {
+        const token = session ? session.access_token : null;
+        if (!token) {
+          showToast('Entrá con Google para enviar el reporte', true);
+          if (btn) { btn.disabled = false; btn.textContent = 'Enviar reporte a GlutenGo'; }
+          return;
+        }
+        return fetch('/api/place-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token: token,
+            slug: lugar.slug,
+            placeName: lugar.name,
+            issueType: issue,
+            message: message
+          })
+        })
+        .then(function(res) { return res.json().then(function(data) { return { ok: res.ok, data: data }; }); })
+        .then(function(result) {
+          if (!result.ok || !result.data.ok) throw new Error(result.data.error || 'No se pudo enviar');
+          document.getElementById('report-message').value = '';
+          showToast('Gracias. Lo revisamos desde administración.');
+          trackDetail('cta_click', { target: 'place-report-submit', issue: issue });
+        });
+      }).catch(function(err) {
+        showToast(err.message || 'No se pudo enviar el reporte', true);
+      }).finally(function() {
+        if (btn) { btn.disabled = false; btn.textContent = 'Enviar reporte a GlutenGo'; }
+      });
+    };
+
     // ── Toast
     function showToast(msg, isError) {
       var t = document.getElementById('rating-toast');
@@ -898,6 +1122,9 @@
         var coment = r.comentario
           ? '<p style="margin:.4rem 0 0;font-size:.88rem;color:#374151;line-height:1.5">"' + escapeHtml(r.comentario) + '"</p>'
           : '';
+        var tags = Array.isArray(r.tagLabels) && r.tagLabels.length
+          ? '<div class="review-tags">' + r.tagLabels.map(function(tag) { return '<span class="review-tag">' + escapeHtml(tag) + '</span>'; }).join('') + '</div>'
+          : '';
         var photo = r.photoUrl
           ? '<a href="' + escapeHtml(r.photoUrl) + '" target="_blank" rel="noopener"><img class="review-photo" src="' + escapeHtml(r.photoUrl) + '" alt="Foto compartida por la comunidad"></a>'
           : '';
@@ -907,6 +1134,7 @@
             '<span style="font-size:.78rem;color:#9CA3AF">' + fecha + '</span>' +
           '</div>' +
           '<div style="margin:.3rem 0">' + stars + '</div>' +
+          tags +
           coment +
           photo +
         '</div>';
@@ -934,7 +1162,15 @@
     var selectedStars = 0;
     var ratingStarted = false;
     var ratingPhotoPayload = null;
+    var selectedRatingTags = [];
     var STAR_LABELS = ['','Peligroso: contaminación cruzada','Mala experiencia','Regular: pedir con cuidado','Buena experiencia','Excelente experiencia'];
+    var RATING_TAGS = [
+      { key: 'buena_atencion', label: 'Buena atención' },
+      { key: 'personal_informado', label: 'Personal informado' },
+      { key: 'opciones_claras', label: 'Opciones claras' },
+      { key: 'cuidado_contaminacion', label: 'Cuidado contaminación' },
+      { key: 'volveria', label: 'Volvería' }
+    ];
 
     function renderStars() {
       var h = '';
@@ -944,6 +1180,14 @@
       }
       document.getElementById('stars-row').innerHTML = h;
       document.getElementById('star-label').textContent = selectedStars ? STAR_LABELS[selectedStars] : 'Tocá una estrella para calificar';
+    }
+    function renderRatingTags() {
+      var target = document.getElementById('rating-tags');
+      if (!target) return;
+      target.innerHTML = RATING_TAGS.map(function(tag) {
+        var active = selectedRatingTags.indexOf(tag.key) !== -1;
+        return '<button type="button" class="rating-tag' + (active ? ' active' : '') + '" onclick="toggleRatingTag(\'' + tag.key + '\')">' + escapeHtml(tag.label) + '</button>';
+      }).join('');
     }
     window.selectStar  = function(n){
       selectedStars = n;
@@ -960,6 +1204,12 @@
     window.unhoverStar = function(){
       document.querySelectorAll('.star-btn').forEach(function(b){ b.classList.remove('hovered'); });
       document.getElementById('star-label').textContent = selectedStars ? STAR_LABELS[selectedStars] : 'Tocá una estrella para calificar';
+    };
+    window.toggleRatingTag = function(key) {
+      var idx = selectedRatingTags.indexOf(key);
+      if (idx === -1) selectedRatingTags.push(key);
+      else selectedRatingTags.splice(idx, 1);
+      renderRatingTags();
     };
 
     function setPhotoPreview(payload) {
@@ -1057,7 +1307,7 @@
           return;
         }
         var comentario = (document.getElementById('rating-comment')||{}).value || '';
-        var body = { token: token, slug: slug, score: selectedStars, comentario: comentario };
+        var body = { token: token, slug: slug, score: selectedStars, comentario: comentario, tags: selectedRatingTags };
         if (ratingPhotoPayload) body.photo = ratingPhotoPayload;
 
         fetch('/api/rating', {
@@ -1111,6 +1361,7 @@
               '<h2><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>Valorar este lugar</h2>' +
               '<div class="star-group" id="stars-row"></div>' +
               '<div class="star-label" id="star-label">Tocá una estrella para calificar</div>' +
+              '<div class="rating-tags" id="rating-tags"></div>' +
               '<textarea class="rating-comment" id="rating-comment" placeholder="¿Cómo fue tu experiencia? (opcional)" maxlength="400"></textarea>' +
               '<div class="rating-photo-row">' +
                 '<input class="rating-photo-input" id="rating-photo" type="file" accept="image/*" capture="environment" onchange="handleRatingPhotoChange(event)">' +
@@ -1127,6 +1378,7 @@
               '<button class="btn-rate" id="btn-send-rating" onclick="submitRating()">Enviar valoración</button>' +
             '</div>';
           renderStars();
+          renderRatingTags();
         } else {
           section.innerHTML =
             '<div class="rating-auth">' +

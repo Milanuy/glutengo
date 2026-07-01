@@ -955,11 +955,18 @@
       <div class="section-head">
         <div>
           <div class="section-kicker">Comunidad</div>
-          <div class="section-title">Fotos de calificaciones</div>
-          <div class="section-sub">Aprobá solo fotos reales y útiles. Si una foto no corresponde, queda oculta para los usuarios.</div>
+          <div class="section-title">Reportes de datos y fotos</div>
+          <div class="section-sub">Revisá avisos de usuarios sobre fichas y aprobá solo fotos reales y útiles.</div>
         </div>
-        <button class="btn-sm btn-expire" onclick="loadPhotoRatings()">↻ Refrescar fotos</button>
+        <button class="btn-sm btn-expire" onclick="loadCommunity()">↻ Refrescar comunidad</button>
       </div>
+      <div style="margin-bottom:1rem">
+        <div class="section-kicker">Datos a revisar</div>
+        <div id="place-report-list" class="owner-request-list">
+          <div class="owner-request-empty">Cargando reportes…</div>
+        </div>
+      </div>
+      <div class="section-kicker" style="margin-top:1rem">Fotos de calificaciones</div>
       <div id="rating-photos-list" class="rating-photo-grid">
         <div class="empty" style="grid-column:1/-1;background:#fff;border:1px solid var(--border);border-radius:16px">Cargando fotos…</div>
       </div>
@@ -983,6 +990,7 @@ var API     = '/api/admin-businesses';
 var RATINGS_API = '/api/admin-ratings';
 var ANALYTICS_API = '/api/analytics';
 var OWNER_REQUESTS_API = '/api/admin-owner-requests';
+var PLACE_REPORTS_API = '/api/place-report';
 var SOCIAL_API = '/api/admin-social-metrics';
 var INSTAGRAM_PROFILE = {
   handle: 'glutengo.uy',
@@ -993,6 +1001,7 @@ var adminToken = '';
 var allBiz  = [];
 var allPhotoRatings = [];
 var allOwnerRequests = [];
+var allPlaceReports = [];
 var allSocialMetrics = [];
 var curFilter = 'todos';
 var curSearch = '';
@@ -1027,7 +1036,7 @@ function doLogin() {
       document.getElementById('admin-app').style.display = 'block';
       processData(data);
       loadOwnerRequests();
-      loadPhotoRatings();
+      loadCommunity();
       loadAnalytics();
       loadSocialMetrics();
       setAdminModule(currentAdminModule || 'locales');
@@ -1075,6 +1084,7 @@ function setAdminModule(module, btn) {
     if (!allSocialMetrics.length) loadSocialMetrics();
   }
   if (currentAdminModule === 'metricas' && adminToken) loadAnalytics();
+  if (currentAdminModule === 'comunidad' && adminToken) loadCommunity();
 }
 
 // ── LOAD DATA ──────────────────────────────────────────────────────────────
@@ -2635,6 +2645,94 @@ function localNameForSlug(slug) {
   return slug;
 }
 
+function cleanRatingComment(value) {
+  return String(value || '').replace(/^\[\[gg_tags:[a-z0-9_,]+\]\]\s*\n?/, '').trim();
+}
+
+var PLACE_REPORT_STATUS_LABELS = {
+  pending: 'Pendiente',
+  reviewed: 'Revisado',
+  rejected: 'Descartado'
+};
+
+function renderPlaceReports() {
+  var target = document.getElementById('place-report-list');
+  if (!target) return;
+  if (!allPlaceReports.length) {
+    target.innerHTML = '<div class="owner-request-empty">No hay reportes pendientes de usuarios.</div>';
+    return;
+  }
+  target.innerHTML = allPlaceReports.map(function(report) {
+    var date = report.created_at ? new Date(report.created_at).toLocaleString('es-UY') : 'Sin fecha';
+    var localName = report.placeName || localNameForSlug(report.slug);
+    var status = report.status || 'pending';
+    var actions = '';
+    if (status === 'pending') {
+      actions =
+        '<button class="btn-sm btn-approve" onclick="reviewPlaceReport(\'' + esc(report.id) + '\',\'reviewed\')">Marcar revisado</button>' +
+        '<button class="btn-sm btn-reject" onclick="reviewPlaceReport(\'' + esc(report.id) + '\',\'rejected\')">Descartar</button>';
+    }
+    return '<article class="owner-request-card">' +
+      '<div class="owner-request-head">' +
+        '<div>' +
+          '<div class="owner-request-title">' + esc(localName) + '</div>' +
+          '<div class="owner-request-meta">' + esc(report.issueLabel || 'Dato a revisar') + ' · ' + esc(date) + '</div>' +
+        '</div>' +
+        '<div class="owner-request-actions">' + actions + '</div>' +
+      '</div>' +
+      '<div class="owner-request-grid">' +
+        '<div class="owner-request-field"><b>Local</b><span>' + esc(localName) + '</span></div>' +
+        '<div class="owner-request-field"><b>Estado</b><span>' + esc(PLACE_REPORT_STATUS_LABELS[status] || status) + '</span></div>' +
+        '<div class="owner-request-field"><b>Ficha</b><span><a href="/lugar.html?slug=' + encodeURIComponent(report.slug || '') + '" target="_blank" rel="noopener">Abrir ficha</a></span></div>' +
+        '<div class="owner-request-field"><b>Tipo</b><span>' + esc(report.issueLabel || 'Dato a revisar') + '</span></div>' +
+      '</div>' +
+      '<div class="owner-request-note"><strong>Mensaje del usuario:</strong> ' + esc(report.message || 'Sin detalle') + '</div>' +
+    '</article>';
+  }).join('');
+}
+
+function loadPlaceReports() {
+  if (!adminToken) return Promise.resolve();
+  return fetch(PLACE_REPORTS_API + '?status=pending', { headers: { 'x-admin-token': adminToken } })
+    .then(function(r) {
+      if (!r.ok) throw new Error('Error ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      allPlaceReports = Array.isArray(data) ? data : [];
+      renderPlaceReports();
+    })
+    .catch(function(err) {
+      allPlaceReports = [];
+      renderPlaceReports();
+      showToast('No se pudieron cargar reportes: ' + err.message);
+    });
+}
+
+function reviewPlaceReport(id, action) {
+  return fetch(PLACE_REPORTS_API, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-token': adminToken },
+    body: JSON.stringify({ id: id, action: action }),
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('Error ' + r.status);
+    return r.json();
+  })
+  .then(function() {
+    allPlaceReports = allPlaceReports.filter(function(report) { return !sameId(report.id, id); });
+    renderPlaceReports();
+    showToast(action === 'reviewed' ? 'Reporte marcado revisado' : 'Reporte descartado');
+  })
+  .catch(function(err) {
+    showToast('Error: ' + err.message);
+  });
+}
+
+function loadCommunity() {
+  return Promise.all([loadPlaceReports(), loadPhotoRatings()]);
+}
+
 function renderPhotoRatings() {
   var target = document.getElementById('rating-photos-list');
   if (!target) return;
@@ -2658,6 +2756,7 @@ function renderPhotoRatings() {
     if (status !== 'pending') {
       actions += '<button class="btn-sm btn-expire" onclick="setPhotoStatus(\'' + esc(r.id) + '\',\'pending\')">Volver a revisar</button>';
     }
+    var cleanComment = cleanRatingComment(r.comentario);
     return '<article class="rating-photo-card">' +
       '<a href="' + esc(r.photo_url || '') + '" target="_blank" rel="noopener">' +
         '<img class="rating-photo-thumb" src="' + esc(r.photo_url || '') + '" alt="Foto subida por la comunidad">' +
@@ -2668,7 +2767,7 @@ function renderPhotoRatings() {
           '<span class="badge ' + badgeClass + '">' + esc(PHOTO_STATUS_LABELS[status] || status) + '</span>' +
         '</div>' +
         '<div class="rating-photo-stars">' + esc(stars || '—') + '</div>' +
-        (r.comentario ? '<div class="rating-photo-comment">"' + esc(r.comentario) + '"</div>' : '<div class="rating-photo-comment" style="color:var(--gray)">Sin comentario.</div>') +
+        (cleanComment ? '<div class="rating-photo-comment">"' + esc(cleanComment) + '"</div>' : '<div class="rating-photo-comment" style="color:var(--gray)">Sin comentario.</div>') +
         '<div class="actions">' + actions + '</div>' +
       '</div>' +
     '</article>';

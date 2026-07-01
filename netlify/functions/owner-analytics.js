@@ -250,6 +250,7 @@ function summarize(rows, businesses, days) {
     }
 
     if (row.event_type === 'cta_click') {
+      if (meta.kind === 'place_report') return;
       report.listingClicks += 1;
       report.daily[date].clicks += 1;
       addChannel(report, meta.target || 'open-place-card');

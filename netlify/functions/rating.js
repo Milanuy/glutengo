@@ -22,6 +22,13 @@ const MAX_PHOTO_BYTES = 2.5 * 1024 * 1024;
 const MAX_NEW_RATINGS_PER_DAY = 12;
 const MAX_RATING_PHOTOS_PER_DAY = 3;
 const RATING_EDIT_COOLDOWN_MS = 60 * 1000;
+const RATING_TAG_LABELS = {
+  buena_atencion: 'Buena atención',
+  personal_informado: 'Personal informado',
+  opciones_claras: 'Opciones claras',
+  cuidado_contaminacion: 'Cuidado contaminación',
+  volveria: 'Volvería',
+};
 const PHOTO_TYPES = {
   'image/jpeg': 'jpg',
   'image/png':  'png',
@@ -47,6 +54,35 @@ function userKeyFromEmail(email) {
   return 'sha256:' + createHash('sha256')
     .update(String(email || '').trim().toLowerCase())
     .digest('hex');
+}
+
+function normalizeTags(tags) {
+  if (!Array.isArray(tags)) return [];
+  const allowed = Object.keys(RATING_TAG_LABELS);
+  const seen = new Set();
+  return tags
+    .map((tag) => String(tag || '').trim())
+    .filter((tag) => allowed.includes(tag) && !seen.has(tag) && seen.add(tag))
+    .slice(0, 5);
+}
+
+function encodeComment(comment, tags) {
+  const cleanComment = comment ? String(comment).trim().slice(0, 420) : '';
+  const cleanTags = normalizeTags(tags);
+  if (!cleanTags.length) return cleanComment || null;
+  return '[[gg_tags:' + cleanTags.join(',') + ']]' + (cleanComment ? '\n' + cleanComment : '');
+}
+
+function decodeComment(raw) {
+  const value = String(raw || '');
+  const match = value.match(/^\[\[gg_tags:([a-z0-9_,]+)\]\]\s*\n?/);
+  if (!match) return { comentario: raw || null, tags: [], tagLabels: [] };
+  const tags = normalizeTags(match[1].split(','));
+  return {
+    comentario: value.slice(match[0].length).trim() || null,
+    tags,
+    tagLabels: tags.map((tag) => RATING_TAG_LABELS[tag]).filter(Boolean),
+  };
 }
 
 function publicStorageUrl(path) {
@@ -170,9 +206,12 @@ exports.handler = async function (event) {
       const avg    = rows.reduce(function(s, r) { return s + r.score; }, 0) / count;
       const score  = Math.round((avg - 1) * 25);
       const recent = rows.slice(0, 5).map(function(r) {
+        const parsed = decodeComment(r.comentario);
         return {
           score:      r.score,
-          comentario: r.comentario,
+          comentario: parsed.comentario,
+          tags:       parsed.tags,
+          tagLabels:  parsed.tagLabels,
           photoUrl:    hasPhotoColumn && (!hasPhotoStatus || r.photo_status === 'approved') ? (r.photo_url || '') : '',
           fecha:      r.created_at ? r.created_at.slice(0, 10) : null,
           autor:      'Miembro GlutenGo',
@@ -201,6 +240,7 @@ exports.handler = async function (event) {
     const score      = payload.score;
     const comentario = payload.comentario;
     const photo      = payload.photo;
+    const tags       = normalizeTags(payload.tags);
 
     if (!token || !slug) {
       return { statusCode: 400, headers: corsHeaders, body: JSON.stringify({ error: 'token y slug son requeridos' }) };
@@ -276,7 +316,7 @@ exports.handler = async function (event) {
     }
 
     // ── 3. Upsert usando service role (bypassa RLS)
-    const comentarioTrimmed = comentario ? String(comentario).trim().slice(0, 500) : null;
+    const comentarioTrimmed = encodeComment(comentario, tags);
     let uploadedPhoto = null;
     let photoWarning = '';
     if (photo && photo.dataUrl) {
