@@ -16,6 +16,7 @@ const SERVICE_KEY =
 
 const BUCKET = 'business-assets';
 const MAX_BYTES = 3 * 1024 * 1024;
+const MAX_ASSET_UPLOADS_PER_DAY = 20;
 const TYPES = {
   'image/jpeg': 'jpg',
   'image/png': 'png',
@@ -79,6 +80,31 @@ async function ownsBusiness(id, email) {
   return Boolean(rows[0]);
 }
 
+async function recentAssetUploadCount(businessId) {
+  const since = Date.now() - 24 * 60 * 60 * 1000;
+  const res = await fetch(SUPABASE_URL + '/storage/v1/object/list/' + BUCKET, {
+    method: 'POST',
+    headers: {
+      apikey: SERVICE_KEY,
+      Authorization: 'Bearer ' + SERVICE_KEY,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prefix: businessId + '/',
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'created_at', order: 'desc' },
+    }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const rows = await res.json();
+  if (!Array.isArray(rows)) return 0;
+  return rows.filter(function(row) {
+    const created = Date.parse(row.created_at || row.updated_at || '');
+    return Number.isFinite(created) && created >= since;
+  }).length;
+}
+
 function parseDataUrl(file) {
   const dataUrl = String(file && file.dataUrl || '');
   const match = dataUrl.match(/^data:(image\/(?:jpeg|png|webp|svg\+xml));base64,([a-zA-Z0-9+/=]+)$/);
@@ -115,6 +141,18 @@ exports.handler = async function(event) {
   const kind = ['logo', 'photo', 'menu'].includes(requestedKind) ? requestedKind : 'photo';
   if (!businessId) return json(400, { error: 'business_id requerido' });
   if (!(await ownsBusiness(businessId, email))) return json(403, { error: 'Este local no esta vinculado a tu email' });
+
+  try {
+    const recentCount = await recentAssetUploadCount(businessId);
+    if (recentCount >= MAX_ASSET_UPLOADS_PER_DAY) {
+      return json(429, {
+        error: 'Llegaste al máximo de archivos por hoy. Escribinos por WhatsApp si necesitás subir más material.'
+      });
+    }
+  } catch (err) {
+    console.error('Owner asset rate limit error:', err.message);
+    return json(500, { error: 'No pudimos validar la carga. Intentá de nuevo en unos minutos.' });
+  }
 
   let parsed;
   try { parsed = parseDataUrl(body.file); } catch (err) {

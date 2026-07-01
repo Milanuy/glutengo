@@ -19,6 +19,9 @@ const SERVICE_KEY   =
   process.env.SERVICE_ROLE_KEY;
 const PHOTO_BUCKET = 'rating-photos';
 const MAX_PHOTO_BYTES = 2.5 * 1024 * 1024;
+const MAX_NEW_RATINGS_PER_DAY = 12;
+const MAX_RATING_PHOTOS_PER_DAY = 3;
+const RATING_EDIT_COOLDOWN_MS = 60 * 1000;
 const PHOTO_TYPES = {
   'image/jpeg': 'jpg',
   'image/png':  'png',
@@ -97,6 +100,26 @@ async function ratingPhotoColumnsReady() {
     { headers: serviceHeaders() }
   );
   return res.ok;
+}
+
+async function recentRatingRows(userKey) {
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const res = await fetch(
+    SUPABASE_URL + '/rest/v1/ratings?select=id,slug,photo_url,updated_at' +
+      '&email=eq.' + encodeURIComponent(userKey) +
+      '&updated_at=gte.' + encodeURIComponent(since) +
+      '&limit=25',
+    { headers: serviceHeaders() }
+  );
+  if (!res.ok) throw new Error(await res.text());
+  const rows = await res.json();
+  return Array.isArray(rows) ? rows : [];
+}
+
+function isRecentEdit(row) {
+  if (!row || !row.updated_at) return false;
+  const updated = Date.parse(row.updated_at);
+  return Number.isFinite(updated) && Date.now() - updated < RATING_EDIT_COOLDOWN_MS;
 }
 
 exports.handler = async function (event) {
@@ -208,17 +231,49 @@ exports.handler = async function (event) {
 
     // ── 2. Verificar si ya existe rating para este usuario+lugar
     let existingId = null;
+    let existingRating = null;
     try {
       const checkRes = await fetch(
-        SUPABASE_URL + '/rest/v1/ratings?select=id&email=eq.' + encodeURIComponent(userKey) +
+        SUPABASE_URL + '/rest/v1/ratings?select=id,updated_at,photo_url&email=eq.' + encodeURIComponent(userKey) +
         '&slug=eq.' + encodeURIComponent(slug),
         { headers: serviceHeaders() }
       );
       if (checkRes.ok) {
         const rows = await checkRes.json();
-        if (rows.length > 0) existingId = rows[0].id;
+        if (rows.length > 0) {
+          existingRating = rows[0];
+          existingId = existingRating.id;
+        }
       }
     } catch (_) { /* continuar con insert */ }
+
+    try {
+      const hasPhotoRequest = Boolean(photo && photo.dataUrl);
+      const recentRows = await recentRatingRows(userKey);
+      const otherRecentRows = recentRows.filter(function(row) {
+        return String(row.id) !== String(existingId || '');
+      });
+      const photoRows = recentRows.filter(function(row) {
+        return row.photo_url && String(row.id) !== String(existingId || '');
+      });
+
+      if (existingId && isRecentEdit(existingRating)) {
+        return { statusCode: 429, headers: corsHeaders,
+          body: JSON.stringify({ error: 'Esperá un minuto antes de volver a editar tu valoración.' }) };
+      }
+      if (!existingId && otherRecentRows.length >= MAX_NEW_RATINGS_PER_DAY) {
+        return { statusCode: 429, headers: corsHeaders,
+          body: JSON.stringify({ error: 'Llegaste al máximo de valoraciones por hoy. Probá de nuevo mañana.' }) };
+      }
+      if (hasPhotoRequest && photoRows.length >= MAX_RATING_PHOTOS_PER_DAY && !existingRating?.photo_url) {
+        return { statusCode: 429, headers: corsHeaders,
+          body: JSON.stringify({ error: 'Llegaste al máximo de fotos por hoy. Probá de nuevo mañana.' }) };
+      }
+    } catch (err) {
+      console.error('Rating rate limit error:', err.message);
+      return { statusCode: 500, headers: corsHeaders,
+        body: JSON.stringify({ error: 'No pudimos validar la valoración. Intentá de nuevo en unos minutos.' }) };
+    }
 
     // ── 3. Upsert usando service role (bypassa RLS)
     const comentarioTrimmed = comentario ? String(comentario).trim().slice(0, 500) : null;

@@ -36,6 +36,7 @@ const ALLOWED_CONFIG_FIELDS = new Set([
   'menuUrl',
   'menuHighlights',
 ]);
+const MAX_OWNER_UPDATE_REQUESTS_PER_DAY = 10;
 
 function json(statusCode, body) {
   return { statusCode, headers: corsHeaders, body: JSON.stringify(body || {}) };
@@ -193,6 +194,21 @@ async function ownerBusiness(id, email) {
   return rows[0] || null;
 }
 
+async function recentOwnerRequestCount(email) {
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const res = await fetch(
+    SUPABASE_URL + '/rest/v1/business_update_requests' +
+      '?select=id' +
+      '&owner_email=eq.' + encodeURIComponent(email) +
+      '&created_at=gte.' + encodeURIComponent(since) +
+      '&limit=' + (MAX_OWNER_UPDATE_REQUESTS_PER_DAY + 1),
+    { headers: serviceHeaders() }
+  );
+  if (!res.ok) throw new Error(await res.text());
+  const rows = await res.json();
+  return Array.isArray(rows) ? rows.length : 0;
+}
+
 exports.handler = async function(event) {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: corsHeaders, body: '' };
   if (!SUPABASE_URL || !SERVICE_KEY) return json(500, { error: 'Supabase no configurado' });
@@ -236,6 +252,18 @@ exports.handler = async function(event) {
 
     const business = await ownerBusiness(businessId, email);
     if (!business) return json(403, { error: 'Este local no esta vinculado a tu email' });
+
+    try {
+      const recentCount = await recentOwnerRequestCount(email);
+      if (recentCount >= MAX_OWNER_UPDATE_REQUESTS_PER_DAY) {
+        return json(429, {
+          error: 'Llegaste al máximo de solicitudes de cambios por hoy. Escribinos por WhatsApp si necesitás ayuda.'
+        });
+      }
+    } catch (err) {
+      console.error('Owner update rate limit error:', err.message);
+      return json(500, { error: 'No pudimos validar la solicitud. Intentá de nuevo en unos minutos.' });
+    }
 
     const payload = sanitizePayload(body);
     const res = await fetch(SUPABASE_URL + '/rest/v1/business_update_requests', {
