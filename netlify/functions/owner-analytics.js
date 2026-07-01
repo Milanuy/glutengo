@@ -14,6 +14,8 @@ const SERVICE_KEY =
   process.env.SUPABASE_SERVICE_KEY ||
   process.env.SUPABASE_SECRET_KEY ||
   process.env.SERVICE_ROLE_KEY;
+const APP_TIME_ZONE = 'America/Montevideo';
+const LOCAL_OFFSET = '-03:00';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -92,15 +94,41 @@ function businessPublic(row) {
   };
 }
 
+function pad2(value) {
+  return String(value).padStart(2, '0');
+}
+
+function dateKeyInAppTimeZone(value) {
+  const date = value instanceof Date ? value : new Date(value);
+  if (!Number.isFinite(date.getTime())) return '';
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: APP_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+  const byType = {};
+  parts.forEach((part) => {
+    if (part.type !== 'literal') byType[part.type] = part.value;
+  });
+  return byType.year + '-' + byType.month + '-' + byType.day;
+}
+
+function addDaysToDateKey(dateKey, amount) {
+  const parts = String(dateKey || '').split('-').map(Number);
+  if (parts.length !== 3 || parts.some((part) => !Number.isFinite(part))) return '';
+  const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2] + amount, 12));
+  return date.getUTCFullYear() + '-' + pad2(date.getUTCMonth() + 1) + '-' + pad2(date.getUTCDate());
+}
+
 function dayKey(value) {
-  return new Date(value).toISOString().slice(0, 10);
+  return dateKeyInAppTimeZone(value);
 }
 
 function localStartFromDays(days) {
-  const start = new Date();
-  start.setDate(start.getDate() - days + 1);
-  start.setHours(0, 0, 0, 0);
-  return start;
+  const today = dateKeyInAppTimeZone(new Date());
+  const start = addDaysToDateKey(today, -days + 1);
+  return new Date(start + 'T00:00:00.000' + LOCAL_OFFSET);
 }
 
 function channelLabel(target) {
@@ -138,10 +166,11 @@ function collectListingContext(report, meta) {
 
 function newReport(business, days) {
   const daily = {};
+  const today = dateKeyInAppTimeZone(new Date());
+  const start = addDaysToDateKey(today, -days + 1);
   for (let i = days - 1; i >= 0; i -= 1) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    daily[d.toISOString().slice(0, 10)] = { date: d.toISOString().slice(0, 10), views: 0, clicks: 0 };
+    const date = addDaysToDateKey(start, days - 1 - i);
+    daily[date] = { date, views: 0, clicks: 0 };
   }
   return {
     business,

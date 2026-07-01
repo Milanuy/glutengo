@@ -14,6 +14,8 @@ const SERVICE_KEY =
   process.env.SUPABASE_SECRET_KEY ||
   process.env.SERVICE_ROLE_KEY;
 const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'glutengo2026';
+const APP_TIME_ZONE = 'America/Montevideo';
+const LOCAL_OFFSET = '-03:00';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -120,8 +122,44 @@ function missingAnalyticsTable(raw) {
   return /analytics_events|PGRST205|42P01|does not exist|schema cache/i.test(String(raw || ''));
 }
 
+function pad2(value) {
+  return String(value).padStart(2, '0');
+}
+
+function dateKeyInAppTimeZone(value) {
+  const date = value instanceof Date ? value : new Date(value);
+  if (!Number.isFinite(date.getTime())) return '';
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: APP_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+  const byType = {};
+  parts.forEach((part) => {
+    if (part.type !== 'literal') byType[part.type] = part.value;
+  });
+  return byType.year + '-' + byType.month + '-' + byType.day;
+}
+
+function addDaysToDateKey(dateKey, amount) {
+  const parts = String(dateKey || '').split('-').map(Number);
+  if (parts.length !== 3 || parts.some((part) => !Number.isFinite(part))) return '';
+  const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2] + amount, 12));
+  return date.getUTCFullYear() + '-' + pad2(date.getUTCMonth() + 1) + '-' + pad2(date.getUTCDate());
+}
+
+function daysBetweenDateKeys(from, to) {
+  const a = String(from || '').split('-').map(Number);
+  const b = String(to || '').split('-').map(Number);
+  if (a.length !== 3 || b.length !== 3 || a.some((part) => !Number.isFinite(part)) || b.some((part) => !Number.isFinite(part))) return 1;
+  const start = Date.UTC(a[0], a[1] - 1, a[2]);
+  const end = Date.UTC(b[0], b[1] - 1, b[2]);
+  return Math.max(1, Math.floor((end - start) / (24 * 60 * 60 * 1000)) + 1);
+}
+
 function dayKey(value) {
-  return new Date(value).toISOString().slice(0, 10);
+  return dateKeyInAppTimeZone(value);
 }
 
 function dateOnly(value) {
@@ -135,11 +173,11 @@ function monthOnly(value) {
 }
 
 function localStart(date) {
-  return new Date(date + 'T00:00:00.000-03:00');
+  return new Date(date + 'T00:00:00.000' + LOCAL_OFFSET);
 }
 
 function localEnd(date) {
-  return new Date(date + 'T23:59:59.999-03:00');
+  return new Date(date + 'T23:59:59.999' + LOCAL_OFFSET);
 }
 
 function parseDateRange(query) {
@@ -152,49 +190,44 @@ function parseDateRange(query) {
   let end;
   let mode = 'days';
   let label = '';
+  let fromDate = '';
+  let toDate = '';
 
   if (month) {
     const parts = month.split('-').map(Number);
-    const startDate = month + '-01';
+    fromDate = month + '-01';
     const endDay = new Date(Date.UTC(parts[0], parts[1], 0)).getUTCDate();
-    const endDate = month + '-' + String(endDay).padStart(2, '0');
-    start = localStart(startDate);
-    end = localEnd(endDate);
+    toDate = month + '-' + pad2(endDay);
     mode = 'month';
     label = month;
   } else if (day) {
-    start = localStart(day);
-    end = localEnd(day);
+    fromDate = day;
+    toDate = day;
     mode = 'day';
     label = day;
   } else if (from || to) {
-    start = localStart(from || to);
-    end = localEnd(to || from);
-    if (start > end) {
-      const swap = start;
-      start = end;
-      end = swap;
-    }
+    fromDate = from || to;
+    toDate = to || from;
+    if (fromDate > toDate) [fromDate, toDate] = [toDate, fromDate];
     mode = 'range';
-    label = (from || to) + ' / ' + (to || from);
+    label = fromDate + ' / ' + toDate;
   } else {
     const days = Math.max(1, Math.min(Number(query.days || 7), 90));
-    start = new Date();
-    start.setDate(start.getDate() - days + 1);
-    start.setHours(0, 0, 0, 0);
-    end = new Date();
+    toDate = dateKeyInAppTimeZone(new Date());
+    fromDate = addDaysToDateKey(toDate, -days + 1);
     mode = 'days';
     label = String(days);
   }
 
-  const maxMs = 90 * 24 * 60 * 60 * 1000;
-  if (end.getTime() - start.getTime() > maxMs) {
-    end = new Date(start.getTime() + maxMs);
-    end.setHours(23, 59, 59, 999);
+  if (daysBetweenDateKeys(fromDate, toDate) > 90) {
+    toDate = addDaysToDateKey(fromDate, 89);
   }
 
-  const days = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)));
-  return { start, end, days, mode, label };
+  start = localStart(fromDate);
+  end = localEnd(toDate);
+
+  const days = daysBetweenDateKeys(fromDate, toDate);
+  return { start, end, days, mode, label, from: fromDate, to: toDate, timeZone: APP_TIME_ZONE };
 }
 
 function addCount(map, key, amount) {
@@ -413,12 +446,11 @@ function summarize(rows, range, filters) {
   const countedSourceSessions = new Set();
   const countedLocationSessions = new Set();
   const daily = {};
-  const today = new Date().toISOString().slice(0, 10);
+  const today = dateKeyInAppTimeZone(new Date());
 
   for (let i = 0; i < range.days; i += 1) {
-    const d = new Date(range.start.getTime());
-    d.setUTCDate(d.getUTCDate() + i);
-    daily[d.toISOString().slice(0, 10)] = { date: d.toISOString().slice(0, 10), pageViews: 0, placeViews: 0, clicks: 0 };
+    const date = addDaysToDateKey(range.from, i);
+    daily[date] = { date, pageViews: 0, placeViews: 0, clicks: 0 };
   }
 
   rows.forEach((row) => {
@@ -517,8 +549,9 @@ function summarize(rows, range, filters) {
     range: {
       mode: range.mode,
       label: range.label,
-      from: range.start.toISOString().slice(0, 10),
-      to: range.end.toISOString().slice(0, 10),
+      from: range.from,
+      to: range.to,
+      timeZone: range.timeZone,
       navigation: filters || {},
     },
     totals,
